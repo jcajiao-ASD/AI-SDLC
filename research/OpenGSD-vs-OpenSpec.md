@@ -1,3 +1,17 @@
+---
+id: open-gsd-vs-openspec
+title: "Open GSD vs. OpenSpec para un SDLC centrado en GitHub Copilot"
+slug: open-gsd-vs-openspec
+summary: "Compara Open GSD y OpenSpec por propósito, ceremonia, persistencia, verificación, Git y estrategia de adopción."
+category: metodologias
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: comparacion-frameworks
+role: catalog
+---
+
 # Open GSD vs. OpenSpec para un SDLC centrado en GitHub Copilot
 
 > **Fecha de corte:** 20 de julio de 2026.  

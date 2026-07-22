@@ -1,3 +1,18 @@
+---
+id: comparacion-skills-sdlc
+title: "Comparación de conjuntos de skills para un SDLC asistido por IA"
+slug: comparacion-skills-sdlc
+summary: "Compara OpenSpec, GitHub Spec Kit, Superpowers y Open GSD mediante lentes de adopción y piso de calidad."
+category: metodologias
+status: vigente
+cutoffDate: "2026-07-21"
+revalidateAfter: "2027-01-21"
+evidenceLevel: mixta
+decisionType: seleccion-framework
+role: featured-source
+featuredStory: seleccion-framework
+---
+
 # Comparación de conjuntos de skills para un SDLC asistido por IA: OpenSpec, GitHub Spec Kit, Superpowers y Open GSD
 
 [<- volver al índice](_index.md)
@@ -62,12 +77,14 @@ capacitación/onboarding, facilidad de uso y bajo consumo de contexto/tokens) co
 **piso de calidad al 35 %**, el **recomendado por defecto para este perfil es
 OpenSpec**, con **66,1/100**. El orden completo es:
 
+<!-- ai-sdlc-dataset: id=framework-adoption-ranking schema=weighted-ranking unit=score-100 -->
 | Puesto | Framework | Puntaje adopción-first /100 | Confianza |
 | ---: | --- | ---: | --- |
 | 1 | **OpenSpec** | **66,1** | Media |
 | 2 | GitHub Spec Kit | 59,6 | Media |
 | 3 | Superpowers | 54,4 | Media |
 | 4 | Open GSD / GSD Core | 47,8 | Media |
+<!-- /ai-sdlc-dataset -->
 
 OpenSpec lidera por diseño estructural verificado en fuente primaria: su modelo
 **delta-first** (`openspec/specs/` vs. `openspec/changes/`) y su **perfil `core`
@@ -81,12 +98,14 @@ Con la pregunta anterior —control/precisión/organización/efectividad como ob
 *único*— el orden se **invierte**: gana **Open GSD / GSD Core con 67,8/100**, y
 **OpenSpec queda último con 46,6/100**:
 
+<!-- ai-sdlc-dataset: id=framework-quality-ranking schema=weighted-ranking unit=score-100 -->
 | Puesto | Framework | Puntaje piso-de-calidad /100 | Confianza |
 | ---: | --- | ---: | --- |
 | 1 | **Open GSD / GSD Core** | **67,8** | Media |
 | 2 | Superpowers | 58,9 | Media |
 | 3 | GitHub Spec Kit | 55,8 | Media |
 | 4 | OpenSpec | 46,6 | Media |
+<!-- /ai-sdlc-dataset -->
 
 **Punto de equilibrio (aproximado).** El resultado depende de cuánto peso total se
 asigne a las dimensiones de adopción frente al piso de calidad. Un barrido
@@ -523,11 +542,13 @@ El ganador depende de cuánto peso total se asigne a las dimensiones de adopció
 internas E:F:G:H:I:J = 12:12:12:10:10:9 y A:B:C:D = 10:9:8:8, un barrido continuo
 de 0 % a 100 % de peso de adopción arroja:
 
+<!-- ai-sdlc-dataset: id=framework-sensitivity schema=sensitivity-series unit=percent-weight -->
 | Peso agregado de adopción (resto = piso de calidad) | Líder |
 | --- | --- |
 | 0 % – ~33,5 % | **GSD Core** |
 | ~33,5 % – ~38,3 % | **GitHub Spec Kit** (banda angosta, margen mínimo) |
 | ~38,3 % – 100 % | **OpenSpec** (margen creciente monótono) |
+<!-- /ai-sdlc-dataset -->
 
 El diseño base de la lente primaria (65 % de adopción) queda **~26,7 puntos
 porcentuales por encima** del cruce hacia OpenSpec: margen razonable, no ajustado

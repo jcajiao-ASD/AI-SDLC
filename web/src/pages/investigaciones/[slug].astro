@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EvidencePanel from '../../components/EvidencePanel.astro';
+import { loadStudies, renderStudy } from '../../lib/research';
+import { withBase } from '../../lib/paths';
+import type { ResearchStudy } from '../../lib/types';
+
+export async function getStaticPaths() {
+	const studies = await loadStudies();
+	return studies.map((study) => ({
+		params: { slug: study.metadata.slug },
+		props: { study },
+	}));
+}
+
+interface Props {
+	study: ResearchStudy;
+}
+
+const { study } = Astro.props;
+const studies = await loadStudies();
+const html = await renderStudy(study, studies);
+---
+
+<BaseLayout title={study.metadata.title} description={study.metadata.summary}>
+	<header class="study-hero">
+		<div class="shell study-hero__inner">
+			<div>
+				<p class="eyebrow">{study.metadata.category} · {study.metadata.decisionType}</p>
+				<h1>{study.metadata.title}</h1>
+				<p>{study.metadata.summary}</p>
+				{study.metadata.featuredStory && (
+					<a class="button-link" href={withBase(`/historias/${study.metadata.featuredStory}/`)}>
+						Ver historia interactiva
+					</a>
+				)}
+			</div>
+			<EvidencePanel metadata={study.metadata} />
+		</div>
+	</header>
+	<article class="shell prose" set:html={html} />
+</BaseLayout>
+
+<style>
+	.study-hero {
+		padding-block: var(--space-7);
+	}
+
+	.study-hero__inner {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(20rem, 0.8fr);
+		gap: var(--space-6);
+		align-items: start;
+	}
+
+	h1 {
+		margin: 0;
+		font-family: var(--font-serif);
+		font-size: var(--step-3);
+		font-weight: 500;
+		line-height: 1.08;
+	}
+
+	header p:not(.eyebrow) {
+		color: var(--color-ink-soft);
+		font-size: var(--step-1);
+	}
+
+	@media (max-width: 850px) {
+		.study-hero__inner {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

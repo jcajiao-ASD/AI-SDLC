@@ -1,3 +1,17 @@
+---
+id: github-spec-kit
+title: "GitHub Spec Kit para desarrollo agéntico de software"
+slug: github-spec-kit
+summary: "Investiga Specification-Driven Development con GitHub Spec Kit, sus artefactos, persistencia, seguridad y evidencia."
+category: metodologias
+status: vigente
+cutoffDate: "2026-07-21"
+revalidateAfter: "2027-01-21"
+evidenceLevel: mixta
+decisionType: evaluacion-framework
+role: catalog
+---
+
 # GitHub Spec Kit para desarrollo agéntico de software
 
 [<- volver al índice](_index.md)

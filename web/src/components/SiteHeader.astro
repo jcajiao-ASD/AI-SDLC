@@ -1,0 +1,76 @@
+---
+import { withBase } from '../lib/paths';
+---
+
+<header class="site-header">
+	<div class="shell site-header__inner">
+		<a class="brand" href={withBase('/')}>
+			<span class="brand__mark" aria-hidden="true">AI</span>
+			<span>Observatorio SDLC</span>
+		</a>
+		<nav aria-label="Navegación principal">
+			<a href={withBase('/investigaciones/')}>Investigaciones</a>
+			<a href={withBase('/metodologia/')}>Metodología</a>
+			<a href={withBase('/sistema-diseno/')}>Sistema de diseño</a>
+		</nav>
+	</div>
+</header>
+
+<style>
+	.site-header {
+		position: sticky;
+		z-index: 20;
+		top: 0;
+		border-bottom: 1px solid var(--color-line);
+		background: rgb(247 246 241 / 92%);
+		backdrop-filter: blur(12px);
+	}
+
+	.site-header__inner {
+		display: flex;
+		min-height: 4.5rem;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-4);
+	}
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--color-ink);
+		font-weight: 850;
+		text-decoration: none;
+	}
+
+	.brand__mark {
+		display: grid;
+		width: 2rem;
+		aspect-ratio: 1;
+		place-items: center;
+		border-radius: 50%;
+		background: var(--color-brand);
+		color: white;
+		font-size: 0.72rem;
+	}
+
+	nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-4);
+		font-size: var(--step--1);
+		font-weight: 700;
+	}
+
+	nav a {
+		text-decoration: none;
+	}
+
+	@media (max-width: 700px) {
+		.site-header__inner {
+			align-items: flex-start;
+			flex-direction: column;
+			padding-block: var(--space-3);
+		}
+	}
+</style>

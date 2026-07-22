@@ -1,3 +1,17 @@
+---
+id: comparativa-agentes-ia-mono-llm
+title: "Comparativa de Agentes de IA para Codificación con un Único Proveedor de LLM"
+slug: comparativa-agentes-ia-mono-llm
+summary: "Compara Claude Code, Codex CLI y Gemini CLI, incluyendo rendimiento, integración y riesgo de dependencia del proveedor."
+category: agentes
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: comparacion-agentes
+role: catalog
+---
+
 # Comparativa de Agentes de IA para Codificación con un Único Proveedor de LLM
 
 [<- back](_index.md)

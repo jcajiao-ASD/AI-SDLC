@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryHero from '../../components/StoryHero.astro';
+import ExecutiveSummary from '../../components/ExecutiveSummary.astro';
+import Caveat from '../../components/Caveat.astro';
+import EvidencePanel from '../../components/EvidencePanel.astro';
+import DataTable from '../../components/DataTable.astro';
+import BarChart from '../../components/BarChart';
+import { findDataset, findStudy, loadStudies } from '../../lib/research';
+import { column, plainText, rankingBars } from '../../lib/datasets';
+import { withBase } from '../../lib/paths';
+
+const studies = await loadStudies();
+const study = findStudy(studies, 'comparativa-llms-sdlc');
+const ranking = findDataset(studies, 'llm-global-ranking');
+const sdlcMap = findDataset(studies, 'llm-sdlc-map');
+const bars = rankingBars(ranking);
+const phaseHeader = column(sdlcMap, /fase del sdlc/);
+const modelHeader = column(sdlcMap, /mejor llm/);
+const whyHeader = column(sdlcMap, /por que/);
+---
+
+<BaseLayout
+	title="Qué LLM usar en cada fase del SDLC"
+	description="Historia de decisión sobre modelos generalistas y especialistas por fase del ciclo de desarrollo."
+>
+	<StoryHero
+		eyebrow="Historia 1 · Modelos"
+		title="No necesitas un único mejor modelo. Necesitas el adecuado para cada fase."
+		description="El ranking general identifica equilibrio; el mapa por fase revela dónde cambian las fortalezas."
+	>
+		<ExecutiveSummary>
+			<p>
+				<strong>GPT-5.6 Sol</strong> es el generalista más equilibrado;
+				<strong>Claude Fable 5</strong> domina trabajo de calidad y razonamiento;
+				<strong>Gemini 3.x</strong> destaca en coste, velocidad y contexto.
+			</p>
+		</ExecutiveSummary>
+		<div class="hero-caveat">
+			<Caveat>
+				<p>Los rankings reflejan modos de esfuerzo, harnesses y cortes concretos. No son una jerarquía universal ni permanente.</p>
+			</Caveat>
+		</div>
+	</StoryHero>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Comparación</p>
+				<h2>El mejor generalista bajo el perfil equilibrado</h2>
+				<p>Scorecard de decisión 0–100; no representa porcentaje de productividad.</p>
+			</header>
+			<div class="chart-grid">
+				<BarChart
+					data={bars}
+					title="Ranking ponderado de LLMs"
+					description="GPT-5.6 Sol lidera el perfil equilibrado."
+					client:visible
+				/>
+				<div>
+					<Caveat title="Cómo leer la puntuación">
+						<p>Es un modelo ordinal ponderado con pesos explícitos. Una diferencia de puntos no equivale a mejora porcentual medida.</p>
+					</Caveat>
+					<DataTable dataset={ranking} caption="Ranking ponderado de LLMs" />
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Mapa SDLC</p>
+				<h2>La recomendación cambia con el trabajo.</h2>
+			</header>
+			<div class="phase-grid">
+				{sdlcMap.rows.map((row) => (
+					<article class="card">
+						<p class="phase">{plainText(row[phaseHeader])}</p>
+						<h3>{plainText(row[modelHeader])}</h3>
+						<p>{plainText(row[whyHeader])}</p>
+					</article>
+				))}
+			</div>
+			<details>
+				<summary>Consultar tabla completa accesible</summary>
+				<DataTable dataset={sdlcMap} caption="Mejor LLM por fase del SDLC" />
+			</details>
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell evidence-grid">
+			<div>
+				<p class="eyebrow">Recomendación</p>
+				<h2>Usa una estrategia multi-modelo y empieza con esfuerzo bajo.</h2>
+				<p class="lede">
+					Escala razonamiento solo en arquitectura, depuración difícil o cambios
+					críticos. Para documentación y volumen, prioriza coste y velocidad.
+				</p>
+				<a class="button-link" href={withBase('/metodologia/')}>Entender metodología</a>
+				<a class="button-link button-link--secondary" href={withBase(`/investigaciones/${study.metadata.slug}/`)}>
+					Leer estudio completo
+				</a>
+			</div>
+			<EvidencePanel metadata={study.metadata} />
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero-caveat {
+		max-width: 50rem;
+		margin-top: var(--space-4);
+	}
+
+	.phase-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-4);
+	}
+
+	.phase {
+		color: var(--color-brand);
+		font-size: var(--step--1);
+		font-weight: 900;
+	}
+
+	details {
+		margin-top: var(--space-5);
+	}
+
+	summary {
+		cursor: pointer;
+		font-weight: 800;
+	}
+
+	.evidence-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-6);
+		align-items: start;
+	}
+
+	@media (max-width: 750px) {
+		.phase-grid,
+		.evidence-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

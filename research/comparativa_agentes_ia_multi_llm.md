@@ -1,3 +1,17 @@
+---
+id: comparativa-agentes-ia-multi-llm
+title: "Comparativa de Agentes de IA para Codificación con Planes Multi-LLM"
+slug: comparativa-agentes-ia-multi-llm
+summary: "Compara Copilot CLI, Cursor CLI, Junie CLI y OpenCode por modelos, harness, integración, apertura y coste."
+category: agentes
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: comparacion-agentes
+role: catalog
+---
+
 # Comparativa de Agentes de IA para Codificación con Planes Multi-LLM
 
 [<- back](_index.md)

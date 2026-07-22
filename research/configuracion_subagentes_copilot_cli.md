@@ -1,3 +1,17 @@
+---
+id: configuracion-subagentes-copilot-cli
+title: "Configuración de Modelos para los Subagentes de GitHub Copilot CLI"
+slug: configuracion-subagentes-copilot-cli
+summary: "Propone una configuración multi-modelo para subagentes de Copilot CLI según velocidad, precisión, complejidad y seguridad."
+category: seleccion
+status: vigente
+cutoffDate: "2026-07-21"
+revalidateAfter: "2027-01-21"
+evidenceLevel: mixta
+decisionType: configuracion-subagentes
+role: catalog
+---
+
 # Configuración de Modelos para los Subagentes de GitHub Copilot CLI
 
 [<- volver al índice](_index.md)

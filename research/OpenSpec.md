@@ -1,3 +1,17 @@
+---
+id: openspec
+title: "OpenSpec para un SDLC basado en GitHub Copilot"
+slug: openspec
+summary: "Investiga OpenSpec como capa ligera de especificaciones y cambios persistentes para desarrollo asistido por agentes."
+category: metodologias
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: evaluacion-framework
+role: catalog
+---
+
 # OpenSpec para un SDLC basado en GitHub Copilot
 
 > **Fecha de corte:** 20 de julio de 2026.  

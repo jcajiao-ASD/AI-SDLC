@@ -1,0 +1,56 @@
+---
+import Badge from './Badge.astro';
+import { isPastRevalidation } from '../lib/research';
+import { withBase } from '../lib/paths';
+import type { ResearchStudy } from '../lib/types';
+
+interface Props {
+	study: ResearchStudy;
+}
+
+const { study } = Astro.props;
+const stale = isPastRevalidation(study.metadata);
+---
+
+<article
+	class="card research-card"
+	data-category={study.metadata.category}
+	data-status={study.metadata.status}
+	data-year={study.metadata.cutoffDate.slice(0, 4)}
+	data-decision={study.metadata.decisionType}
+>
+	<div class="meta-row">
+		<Badge>{study.metadata.category}</Badge>
+		<Badge tone={stale ? 'warning' : 'success'}>{stale ? 'revalidar' : study.metadata.status}</Badge>
+	</div>
+	<h2><a href={withBase(`/investigaciones/${study.metadata.slug}/`)}>{study.metadata.title}</a></h2>
+	<p>{study.metadata.summary}</p>
+	<p class="research-card__date">Corte: <time datetime={study.metadata.cutoffDate}>{study.metadata.cutoffDate}</time></p>
+</article>
+
+<style>
+	.research-card {
+		display: flex;
+		flex-direction: column;
+	}
+
+	h2 {
+		margin: var(--space-4) 0 var(--space-2);
+		font-size: var(--step-1);
+	}
+
+	h2 a {
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+
+	p {
+		color: var(--color-ink-soft);
+	}
+
+	.research-card__date {
+		margin-top: auto;
+		font-size: var(--step--1);
+		font-weight: 700;
+	}
+</style>

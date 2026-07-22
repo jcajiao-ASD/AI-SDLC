@@ -1,3 +1,18 @@
+---
+id: seleccion-agente-codificacion-sdlc
+title: "Selección de un Agente de Codificación para el SDLC de un Ingeniero de Software"
+slug: seleccion-agente-codificacion-sdlc
+summary: "Sintetiza las comparativas de agentes y modelos para recomendar una herramienta según ecosistema, prioridades y coste."
+category: seleccion
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: seleccion-agente
+role: featured-source
+featuredStory: seleccion-agente
+---
+
 # Selección de un Agente de Codificación para el SDLC de un Ingeniero de Software
 
 [<- back](_index.md)
@@ -157,12 +172,14 @@ alcanzan**, de forma **nativa** o vía **BYOK**. Es decir, la cobertura de model
 frontera **crea la lista corta y ya no es el diferenciador**; la elección depende
 de la integración, el *harness*, la gobernanza, el precio y el ecosistema:
 
+<!-- ai-sdlc-dataset: id=agent-candidate-matrix schema=candidate-matrix unit=mixed -->
 | Candidato | ¿Tiene Fable 5? | ¿Tiene GPT-5.6 Sol? | ¿Tiene Gemini 3.x? | Harness / SDLC | Entrada / consumo |
 | --- | --- | --- | --- | --- | --- |
 | **Copilot CLI** | ✅ | ✅ | ✅ (3.1 Pro, 3.5 Flash) | Plan + Autopilot + agentes Task/Explore/Review/Plan + *fleet*; **integración GitHub nativa issue→PR** | **$10/mes (Pro)**; incluye 1.500 AI Credits/mes |
 | **OpenCode** | Vía BYOK | Vía BYOK | Vía BYOK | Multi-agente, LSP, Plan/Build; **local-first**, 75+ proveedores | **Software gratis (MIT)**; API/BYOK de pago |
 | **Cursor CLI** | ✅ nativo | ✅ nativo (Sol/Terra/Luna) | ✅ nativo (3.1 Pro, 3.5 Flash) | Composer 2.5 propio + *cloud agents* + BYOK; integración Jira | $20 |
 | **Junie CLI** | ✅ nativo | ⚠️ Vía BYOK (nativo ≤ GPT-5.5) | ✅ nativo (3.1 Pro, 3.5 Flash) | Modo Plan + **JetBrains** + BYOK/OpenRouter; líder SWE-Rebench | $100/año + IDE |
+<!-- /ai-sdlc-dataset -->
 
 Fuentes del catálogo y capacidades: [Multi §4.1][Multi §4.2][Multi §4.3][Multi
 §4.4][Multi §6][Multi §8]. **Verificación de los catálogos de Cursor y Junie contra
@@ -330,6 +347,7 @@ la condición GitHub-céntrica** y mientras su catálogo cubra las necesidades.
 
 ## 11. Recomendación final por perfil
 
+<!-- ai-sdlc-dataset: id=agent-profile-recommendations schema=profile-recommendation unit=categorical -->
 | Perfil del equipo / necesidad | Herramienta seleccionada |
 | --- | --- |
 | **GitHub es el sistema central del SDLC** y se priorizan issue→PR, gobernanza y el menor precio mensual de entrada entre los planes comerciales comparados | **GitHub Copilot CLI** (opción predeterminada) |
@@ -339,6 +357,7 @@ la condición GitHub-céntrica** y mientras su catálogo cubra las necesidades.
 | GitHub no es central y no existe una alineación clara | **Piloto entre Cursor y la herramienta alineada al ecosistema** (Junie para JetBrains u OpenCode para BYOK/apertura) |
 | Necesita un modelo *cloud* fuera del catálogo de la herramienta principal | **Cursor, Junie u OpenCode**, según catálogo, BYOK y ecosistema |
 | Solo trabaja con un proveedor y prioriza integración vertical | **Codex CLI** (OpenAI) o **Claude Code** (Anthropic) como caso especial, asumiendo el *lock-in* |
+<!-- /ai-sdlc-dataset -->
 
 **Veredicto condicionado:** no existe un ganador universal. Para el perfil
 empresarial de referencia, se selecciona **GitHub Copilot CLI solo si GitHub es el

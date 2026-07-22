@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Badge from '../components/Badge.astro';
+import ResearchCard from '../components/ResearchCard.astro';
+import { loadStudies } from '../lib/research';
+import { withBase } from '../lib/paths';
+
+const studies = await loadStudies();
+const latestStudies = studies.slice(0, 3);
+const stories = [
+	{
+		title: 'Qué LLM usar en cada fase del SDLC',
+		description: 'Distingue al mejor generalista de los especialistas en arquitectura, DevOps, documentación y mantenimiento.',
+		href: '/historias/llm-por-fase/',
+		label: 'Modelos',
+	},
+	{
+		title: 'Qué agente elegir según tu ecosistema',
+		description: 'Convierte una comparación amplia en una recomendación condicionada por GitHub, IDE, JetBrains o apertura.',
+		href: '/historias/seleccion-agente/',
+		label: 'Agentes',
+	},
+	{
+		title: 'Qué framework agéntico adoptar',
+		description: 'Explora cómo cambia el ganador al priorizar adopción progresiva o un piso de calidad más prescriptivo.',
+		href: '/historias/seleccion-framework/',
+		label: 'Metodologías',
+	},
+];
+---
+
+<BaseLayout
+	title="Decisiones informadas para un SDLC asistido por IA"
+	description="Observatorio editorial de modelos, agentes, protocolos y metodologías para el ciclo de desarrollo de software."
+>
+	<section class="hero">
+		<div class="shell">
+			<p class="eyebrow">Observatorio AI-SDLC · corte julio 2026</p>
+			<h1 class="display">De la investigación extensa a una decisión auditable.</h1>
+			<p class="lede">
+				Compara modelos, agentes y metodologías sin perder de vista la fecha,
+				la confianza, los tradeoffs ni la evidencia original.
+			</p>
+			<div class="hero__actions">
+				<a class="button-link" href={withBase('/investigaciones/')}>Explorar investigaciones</a>
+				<a class="button-link button-link--secondary" href={withBase('/metodologia/')}>Cómo leer la evidencia</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="shell">
+			<p class="eyebrow">Tres decisiones clave</p>
+			<h2 class="section-title">Elige una pregunta, no un archivo.</h2>
+			<div class="grid grid--3">
+				{stories.map((story) => (
+					<article class="card">
+						<Badge tone="info">{story.label}</Badge>
+						<h3>{story.title}</h3>
+						<p>{story.description}</p>
+						<a href={withBase(story.href)}>Abrir historia →</a>
+					</article>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<section class="section section--contrast">
+		<div class="shell">
+			<p class="eyebrow">Investigación reciente</p>
+			<h2 class="section-title">Trece estudios, una fuente de verdad.</h2>
+			<div class="grid grid--3">
+				{latestStudies.map((study) => <ResearchCard study={study} />)}
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="shell principles">
+			<div>
+				<p class="eyebrow">Principio editorial</p>
+				<h2 class="section-title">Una recomendación sin caveats no es una decisión completa.</h2>
+			</div>
+			<p class="lede">
+				Cada historia conserva unidad, ponderación, fecha de corte, confianza,
+				límites de comparabilidad y ruta hacia el estudio que la sustenta.
+			</p>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		padding-block: clamp(5rem, 12vw, 10rem);
+	}
+
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin-top: var(--space-6);
+	}
+
+	.section-title {
+		max-width: 21ch;
+		margin: 0 0 var(--space-6);
+		font-family: var(--font-serif);
+		font-size: var(--step-3);
+		font-weight: 500;
+		line-height: 1.1;
+	}
+
+	.section--contrast {
+		border-block: 1px solid var(--color-line);
+		background: var(--color-surface-muted);
+	}
+
+	.principles {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-7);
+		align-items: end;
+	}
+
+	@media (max-width: 750px) {
+		.principles {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Caveat from '../components/Caveat.astro';
+---
+
+<BaseLayout
+	title="Metodología y evidencia"
+	description="Guía para interpretar niveles de evidencia, scorecards, fechas de corte, confianza y límites de comparación."
+>
+	<header class="shell section">
+		<p class="eyebrow">Metodología</p>
+		<h1 class="display">Cómo interpretar una recomendación sin convertirla en una certeza falsa.</h1>
+		<p class="lede">El observatorio preserva la jerarquía de evidencia y las condiciones que cambian una conclusión.</p>
+	</header>
+
+	<div class="shell methodology">
+		<section>
+			<h2>Jerarquía de evidencia</h2>
+			<div class="grid grid--3">
+				<article class="card"><h3>Primaria verificada</h3><p>Documentación, especificaciones, releases, repositorios y papers originales.</p></article>
+				<article class="card"><h3>Reporte de terceros</h3><p>Benchmarks o análisis externos cuya versión, harness y fecha deben conservarse.</p></article>
+				<article class="card"><h3>Inferencia del autor</h3><p>Síntesis razonada que debe mostrarse como inferencia, no como medición causal.</p></article>
+			</div>
+		</section>
+
+		<section>
+			<h2>Scorecards y ponderaciones</h2>
+			<p>Una scorecard combina criterios y pesos para responder una pregunta de negocio. El resultado es ordinal: ayuda a decidir bajo ese perfil, pero no mide productividad real.</p>
+			<Caveat>
+				<p>Un puntaje 66,1 frente a 59,6 no significa 6,5% más productividad. Significa mayor ajuste documental bajo los pesos declarados.</p>
+			</Caveat>
+		</section>
+
+		<section>
+			<h2>Fecha de corte y revalidación</h2>
+			<p>Modelos, precios, catálogos, integraciones y versiones son volátiles. Cada estudio declara una fecha de corte y una fecha desde la cual requiere revalidación.</p>
+		</section>
+
+		<section>
+			<h2>Límites de comparabilidad</h2>
+			<ul>
+				<li>No se mezclan benchmarks con versiones o task sets distintos.</li>
+				<li>Un resultado de modelo no equivale al rendimiento de todos sus harnesses.</li>
+				<li>Un testimonial o evaluación del mantenedor no se eleva a evidencia independiente.</li>
+				<li>Las síntesis locales enlazan los estudios originales y sus fuentes externas.</li>
+			</ul>
+		</section>
+	</div>
+</BaseLayout>
+
+<style>
+	.methodology {
+		display: grid;
+		gap: var(--space-7);
+		max-width: 70rem;
+	}
+
+	h2 {
+		font-family: var(--font-serif);
+		font-size: var(--step-3);
+		font-weight: 500;
+	}
+</style>

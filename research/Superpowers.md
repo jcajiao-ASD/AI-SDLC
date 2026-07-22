@@ -1,3 +1,17 @@
+---
+id: superpowers
+title: "Superpowers para desarrollo agéntico de software"
+slug: superpowers
+summary: "Evalúa el framework Superpowers, su workflow prescriptivo, TDD, subagentes, métricas, compatibilidad y riesgos."
+category: metodologias
+status: vigente
+cutoffDate: "2026-07-21"
+revalidateAfter: "2027-01-21"
+evidenceLevel: mixta
+decisionType: evaluacion-framework
+role: catalog
+---
+
 # Superpowers para desarrollo agéntico de software
 
 > **Fecha de corte:** 21 de julio de 2026.  

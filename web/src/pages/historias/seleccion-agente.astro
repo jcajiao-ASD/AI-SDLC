@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryHero from '../../components/StoryHero.astro';
+import ExecutiveSummary from '../../components/ExecutiveSummary.astro';
+import Caveat from '../../components/Caveat.astro';
+import EvidencePanel from '../../components/EvidencePanel.astro';
+import DataTable from '../../components/DataTable.astro';
+import RecommendationPicker from '../../components/RecommendationPicker';
+import { findDataset, findStudy, loadStudies } from '../../lib/research';
+import { withBase } from '../../lib/paths';
+
+const studies = await loadStudies();
+const study = findStudy(studies, 'seleccion-agente-codificacion-sdlc');
+const candidates = findDataset(studies, 'agent-candidate-matrix');
+const profiles = findDataset(studies, 'agent-profile-recommendations');
+---
+
+<BaseLayout
+	title="Qué agente elegir según tu ecosistema"
+	description="Historia de decisión para seleccionar un agente de codificación según ecosistema, integración, apertura y coste."
+>
+	<StoryHero
+		eyebrow="Historia 2 · Agentes"
+		title="El ecosistema decide más que una diferencia estrecha de benchmark."
+		description="Los cuatro candidatos multi-LLM cubren modelos frontera. La decisión se desplaza al harness, la integración y la gobernanza."
+	>
+		<ExecutiveSummary>
+			<p>
+				<strong>Copilot CLI</strong> es la opción predeterminada solo cuando
+				GitHub es el centro del SDLC. Fuera de esa condición, Cursor, Junie u
+				OpenCode pueden encajar mejor.
+			</p>
+		</ExecutiveSummary>
+		<div class="hero-caveat">
+			<Caveat>
+				<p>No existe un ganador universal. Precio de entrada, consumo efectivo y catálogo deben revalidarse antes de comprar.</p>
+			</Caveat>
+		</div>
+	</StoryHero>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Contexto del equipo</p>
+				<h2>Empieza por tu sistema central.</h2>
+			</header>
+			<RecommendationPicker client:load />
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Tradeoffs</p>
+				<h2>La cobertura de modelos es el mínimo común, no el desempate.</h2>
+				<p>La tabla conserva catálogo, harness, integración y entrada de coste tal como fueron investigados.</p>
+			</header>
+			<DataTable dataset={candidates} caption="Comparación de agentes multi-LLM" />
+			<Caveat title="Límite de comparabilidad">
+				<p>Los scores de terminal dependen del modelo, harness, versión y tarea. No se fusionan en una escala nueva.</p>
+			</Caveat>
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Recomendación por perfil</p>
+				<h2>Haz explícita la condición que activa cada elección.</h2>
+			</header>
+			<DataTable dataset={profiles} caption="Herramienta recomendada por perfil de equipo" />
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell evidence-grid">
+			<div>
+				<p class="eyebrow">Auditar la decisión</p>
+				<h2>Revisa catálogo, créditos y BYOK con datos actuales.</h2>
+				<a class="button-link" href={withBase(`/investigaciones/${study.metadata.slug}/`)}>Leer estudio completo</a>
+				<a class="button-link button-link--secondary" href={withBase('/metodologia/')}>Entender evidencia</a>
+			</div>
+			<EvidencePanel metadata={study.metadata} />
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero-caveat {
+		max-width: 50rem;
+		margin-top: var(--space-4);
+	}
+
+	.evidence-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-6);
+		align-items: start;
+	}
+
+	@media (max-width: 750px) {
+		.evidence-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

@@ -1,3 +1,18 @@
+---
+id: comparativa-llms-sdlc
+title: "Comparativa de LLMs para Ingeniería de Software en el Ciclo SDLC"
+slug: comparativa-llms-sdlc
+summary: "Evalúa modelos frontera por inteligencia, precio, velocidad, privacidad y precisión agéntica, con recomendaciones por fase."
+category: modelos
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: seleccion-modelo
+role: featured-source
+featuredStory: llm-por-fase
+---
+
 # Comparativa de LLMs para Ingeniería de Software en el Ciclo SDLC
 
 [<- back](_index.md)
@@ -414,11 +429,13 @@ ofrecen **dos perfiles** para mostrar la sensibilidad del resultado.
 Pesos: **Inteligencia 22 % · Agéntica 24 % · Precio 20 % · Tiempo 14 % ·
 Privacidad 20 %**.
 
+<!-- ai-sdlc-dataset: id=llm-global-ranking schema=weighted-ranking unit=score-100 -->
 | Puesto | Modelo | Puntuación ponderada |
 | --- | --- | --- |
 | 🥇 | **GPT-5.6 Sol** | **88.5** |
 | 🥈 | **Gemini 3.1 Pro** | **86.0** |
 | 🥉 | **Claude Fable 5** | **82.9** |
+<!-- /ai-sdlc-dataset -->
 
 ### 10.3 Ponderado — Perfil "Calidad crítica / ingeniería sensible"
 
@@ -461,6 +478,7 @@ HackerRank **ASTRA**, que mide la aptitud de los modelos **por fase del SDLC** y
 recuerda que **la especialización, no la dominancia universal, define 2026**
 [29][30].
 
+<!-- ai-sdlc-dataset: id=llm-sdlc-map schema=sdlc-map unit=categorical -->
 | Fase del SDLC | Qué exige la fase | **Mejor LLM** | Alternativa / económico | Por qué |
 | --- | --- | --- | --- | --- |
 | **1. Requisitos y especificación** | Comprensión de lenguaje natural ambiguo, razonamiento, ingerir mucha documentación de stakeholders, investigación de mercado/normativa | **GPT-5.6 Sol** (razonamiento) | **Gemini 3.1 Pro** (1M contexto + *grounding* con Google Search para requisitos investigados) | Razonamiento frontera para desambiguar y estructurar; Gemini si hay que leer corpus enormes o investigar en la web [3][8][29] |
@@ -471,6 +489,7 @@ recuerda que **la especialización, no la dominancia universal, define 2026**
 | **6. DevOps / CI-CD / despliegue** | Autonomía en terminal real, IaC (YAML/Docker/K8s), recuperación de errores | **GPT-5.6 Sol** | Gemini 3.5 Flash (scripts baratos) | #1 en Terminal-Bench y uso de computadora (OSWorld); la fase más "agéntica de terminal" [3][11][16] |
 | **7. Documentación** | Escritura técnica clara, mucho volumen, coste/velocidad | **Gemini 3.1 Pro** | GPT-5.6 Luna; Claude Haiku 4.5 | 1M de contexto + bajo coste + alta velocidad para documentar repos enteros de forma económica [8][12] |
 | **8. Mantenimiento y depuración** | Comprensión de código heredado, contexto masivo, depuración de larga duración | **Claude Fable 5** | Sonnet 5; Grok 4.5 (contexto 2M) | 1M de contexto + fiabilidad en cadenas largas sin perder el hilo; Grok si el repo excede 1M de tokens [1][22] |
+<!-- /ai-sdlc-dataset -->
 
 **Síntesis de la tabla:**
 

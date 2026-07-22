@@ -1,3 +1,17 @@
+---
+id: agentes-personalizados-copilot-cli
+title: "Agentes Personalizados en GitHub Copilot CLI"
+slug: agentes-personalizados-copilot-cli
+summary: "Analiza cuándo crear agentes personalizados, cómo gobernarlos y qué portafolio piloto resulta justificable."
+category: agentes
+status: vigente
+cutoffDate: "2026-07-21"
+revalidateAfter: "2027-01-21"
+evidenceLevel: mixta
+decisionType: gobernanza-agentes
+role: catalog
+---
+
 # Agentes Personalizados en GitHub Copilot CLI
 
 [<- volver al índice](_index.md)

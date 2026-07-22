@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Badge from '../components/Badge.astro';
+import ExecutiveSummary from '../components/ExecutiveSummary.astro';
+import Caveat from '../components/Caveat.astro';
+---
+
+<BaseLayout
+	title="Sistema de diseño"
+	description="Fundamentos, componentes y codificaciones visuales del observatorio editorial AI-SDLC."
+>
+	<header class="shell section">
+		<p class="eyebrow">Sistema de diseño</p>
+		<h1 class="display">Claridad editorial con datos como protagonista.</h1>
+		<p class="lede">Fundamentos y patrones compartidos antes de las composiciones de producto.</p>
+	</header>
+
+	<div class="shell showcase">
+		<section>
+			<h2>Color semántico</h2>
+			<div class="swatches">
+				<div class="swatch swatch--brand">Decisión / marca</div>
+				<div class="swatch swatch--accent">Énfasis</div>
+				<div class="swatch swatch--warning">Advertencia</div>
+				<div class="swatch swatch--info">Información</div>
+			</div>
+		</section>
+
+		<section>
+			<h2>Estados y evidencia</h2>
+			<div class="meta-row">
+				<Badge tone="success">Vigente</Badge>
+				<Badge tone="warning">Revalidación pendiente</Badge>
+				<Badge tone="info">Evidencia mixta</Badge>
+				<Badge>Metodologías</Badge>
+			</div>
+		</section>
+
+		<section>
+			<h2>Jerarquía editorial</h2>
+			<ExecutiveSummary>
+				<p>La conclusión ejecutiva debe entenderse antes de cualquier interacción.</p>
+			</ExecutiveSummary>
+			<Caveat>
+				<p>El caveat material se presenta cerca de la afirmación que limita.</p>
+			</Caveat>
+		</section>
+
+		<section>
+			<h2>Tabla accesible</h2>
+			<div class="table-scroll" tabindex="0" role="region" aria-label="Ejemplo de codificación">
+				<table class="data-table">
+					<thead><tr><th>Señal</th><th>Representación</th><th>Alternativa no cromática</th></tr></thead>
+					<tbody>
+						<tr><td>Vigencia</td><td>Verde / ámbar</td><td>Texto de estado</td></tr>
+						<tr><td>Confianza</td><td>Badge informativo</td><td>Etiqueta explícita</td></tr>
+						<tr><td>Selección</td><td>Contorno y contraste</td><td>Foco y atributo seleccionado</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</div>
+</BaseLayout>
+
+<style>
+	.showcase {
+		display: grid;
+		gap: var(--space-7);
+	}
+
+	h2 {
+		font-family: var(--font-serif);
+		font-size: var(--step-3);
+		font-weight: 500;
+	}
+
+	.swatches {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--space-3);
+	}
+
+	.swatch {
+		display: grid;
+		min-height: 8rem;
+		place-items: end start;
+		padding: var(--space-4);
+		border-radius: var(--radius-lg);
+		color: white;
+		font-weight: 800;
+	}
+
+	.swatch--brand { background: var(--color-brand); }
+	.swatch--accent { background: var(--color-accent); }
+	.swatch--warning { background: var(--color-warning); }
+	.swatch--info { background: var(--color-info); }
+
+	section > :global(.summary),
+	section > :global(.caveat) {
+		margin-bottom: var(--space-4);
+	}
+
+	@media (max-width: 700px) {
+		.swatches {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+</style>

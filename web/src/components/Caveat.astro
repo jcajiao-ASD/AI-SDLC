@@ -1,0 +1,26 @@
+---
+interface Props {
+	title?: string;
+}
+
+const { title = 'Límite de interpretación' } = Astro.props;
+---
+
+<aside class="caveat" aria-label={title}>
+	<strong>{title}</strong>
+	<div><slot /></div>
+</aside>
+
+<style>
+	.caveat {
+		padding: var(--space-4) var(--space-5);
+		border-left: 4px solid var(--color-warning);
+		border-radius: 0 var(--radius-md) var(--radius-md) 0;
+		background: var(--color-warning-bg);
+		color: #5f390d;
+	}
+
+	.caveat :global(p) {
+		margin: var(--space-2) 0 0;
+	}
+</style>

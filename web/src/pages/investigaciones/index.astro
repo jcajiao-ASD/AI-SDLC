@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CatalogFilter from '../../components/CatalogFilter';
+import { loadStudies } from '../../lib/research';
+import { withBase } from '../../lib/paths';
+
+const studies = await loadStudies();
+const items = studies.map((study) => ({
+	id: study.metadata.id,
+	title: study.metadata.title,
+	summary: study.metadata.summary,
+	category: study.metadata.category,
+	status: study.metadata.status,
+	year: study.metadata.cutoffDate.slice(0, 4),
+	decisionType: study.metadata.decisionType,
+	href: withBase(`/investigaciones/${study.metadata.slug}/`),
+}));
+---
+
+<BaseLayout
+	title="Investigaciones"
+	description="Catálogo completo de estudios sobre modelos, agentes, integraciones y metodologías AI-SDLC."
+>
+	<header class="shell section">
+		<p class="eyebrow">Catálogo</p>
+		<h1 class="display">La evidencia completa, organizada para explorar.</h1>
+		<p class="lede">
+			Filtra por tema, vigencia o tipo de decisión. Sin JavaScript, los trece
+			estudios siguen disponibles como una lista navegable completa.
+		</p>
+	</header>
+	<section class="shell">
+		<CatalogFilter items={items} client:load />
+	</section>
+</BaseLayout>

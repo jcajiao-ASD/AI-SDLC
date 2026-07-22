@@ -1,3 +1,17 @@
+---
+id: open-gsd
+title: "Open GSD y GSD Core para un SDLC basado en GitHub Copilot"
+slug: open-gsd
+summary: "Investiga GSD Core como framework agentivo de ciclo completo, con planificación, subagentes, verificación y entrega."
+category: metodologias
+status: vigente
+cutoffDate: "2026-07-20"
+revalidateAfter: "2027-01-20"
+evidenceLevel: mixta
+decisionType: evaluacion-framework
+role: catalog
+---
+
 # Open GSD y GSD Core para un SDLC basado en GitHub Copilot
 
 > **Fecha de corte:** 20 de julio de 2026.  

@@ -1,3 +1,17 @@
+---
+id: investigacion-mcp-sdlc
+title: "Model Context Protocol (MCP) para agentes de codificación y el SDLC"
+slug: investigacion-mcp-sdlc
+summary: "Estudia arquitectura, beneficios, métricas, seguridad y adopción de MCP para integrar agentes con herramientas del SDLC."
+category: integraciones
+status: vigente
+cutoffDate: "2026-07-21"
+revalidateAfter: "2027-01-21"
+evidenceLevel: mixta
+decisionType: integracion-protocolo
+role: catalog
+---
+
 # Model Context Protocol (MCP) para agentes de codificación y el SDLC
 
 [<- volver al índice](_index.md)
