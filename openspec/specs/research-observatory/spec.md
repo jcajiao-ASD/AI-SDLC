@@ -5,13 +5,14 @@ TBD.
 ## Requirements
 
 ### Requirement: Portada orientada a decisiones
-La portada SHALL presentar preguntas estratégicas, hallazgos vigentes, acceso a
-las historias insignia y rutas hacia la evidencia antes que una lista plana de
+La portada SHALL presentar el configurador integrado como acceso para componer
+un stack, mantener visibles las tres áreas de decisión y sus historias
+insignia, y ofrecer rutas hacia la evidencia antes que una lista plana de
 documentos.
 
 #### Scenario: Primera visita
 - **WHEN** un líder técnico abre la portada
-- **THEN** SHALL identificar las tres áreas de decisión y acceder a una recomendación sin conocer los nombres de los archivos
+- **THEN** SHALL poder iniciar una recomendación integrada y acceder por separado a agentes, modelos y metodologías sin conocer los nombres de los archivos
 
 ### Requirement: Catálogo completo y navegable
 El observatorio SHALL listar los trece estudios con título, resumen, categoría,

@@ -1,7 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EvidencePanel from '../../components/EvidencePanel.astro';
-import { loadStudies, renderStudy } from '../../lib/research';
+import {
+	loadStudies,
+	renderStudy,
+	storyDefinitions,
+} from '../../lib/research';
 import { withBase } from '../../lib/paths';
 import type { ResearchStudy } from '../../lib/types';
 
@@ -20,6 +24,13 @@ interface Props {
 const { study } = Astro.props;
 const studies = await loadStudies();
 const html = await renderStudy(study, studies);
+const relatedStories = [
+	study.metadata.featuredStory,
+	...(study.metadata.relatedStories ?? []),
+].filter(
+	(value, index, values): value is keyof typeof storyDefinitions =>
+		Boolean(value) && values.indexOf(value) === index,
+);
 ---
 
 <BaseLayout title={study.metadata.title} description={study.metadata.summary}>
@@ -29,10 +40,14 @@ const html = await renderStudy(study, studies);
 				<p class="eyebrow">{study.metadata.category} · {study.metadata.decisionType}</p>
 				<h1>{study.metadata.title}</h1>
 				<p>{study.metadata.summary}</p>
-				{study.metadata.featuredStory && (
-					<a class="button-link" href={withBase(`/historias/${study.metadata.featuredStory}/`)}>
-						Ver historia interactiva
-					</a>
+				{relatedStories.length > 0 && (
+					<div class="story-actions">
+						{relatedStories.map((story) => (
+							<a class="button-link" href={withBase(`/historias/${story}/`)}>
+								{storyDefinitions[story]}
+							</a>
+						))}
+					</div>
 				)}
 			</div>
 			<EvidencePanel metadata={study.metadata} />
@@ -64,6 +79,12 @@ const html = await renderStudy(study, studies);
 	header p:not(.eyebrow) {
 		color: var(--color-ink-soft);
 		font-size: var(--step-1);
+	}
+
+	.story-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
 	}
 
 	@media (max-width: 850px) {

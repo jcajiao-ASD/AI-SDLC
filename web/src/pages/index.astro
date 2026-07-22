@@ -49,6 +49,25 @@ const stories = [
 		</div>
 	</section>
 
+	<section class="section stack-cta-section">
+		<div class="shell">
+			<article class="stack-cta">
+				<div>
+					<p class="eyebrow">Vista transversal</p>
+					<h2>Configura un stack compatible de agente, modelo y proceso.</h2>
+					<p>
+						Combina las tres decisiones y verifica catálogo nativo, BYOK,
+						plugins e integraciones antes de tratar el resultado como final.
+					</p>
+				</div>
+				<a class="button-link" href={withBase('/historias/configurador-stack/')}>
+					<span>Configurar stack</span>
+					<ArrowRight class="icon" aria-hidden="true" focusable="false" />
+				</a>
+			</article>
+		</div>
+	</section>
+
 	<section class="section">
 		<div class="shell">
 			<p class="eyebrow">Tres decisiones clave</p>
@@ -114,6 +133,30 @@ const stories = [
 		line-height: 1.1;
 	}
 
+	.stack-cta-section {
+		padding-top: 0;
+	}
+
+	.stack-cta {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--space-5);
+		align-items: center;
+		padding: var(--space-6);
+		border: 1px solid var(--color-brand);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		box-shadow: var(--shadow-md);
+	}
+
+	.stack-cta h2 {
+		margin: 0;
+		font-family: var(--font-serif);
+		font-size: var(--step-2);
+		font-weight: 500;
+		line-height: 1.2;
+	}
+
 	.story-link {
 		display: inline-flex;
 		align-items: center;
@@ -133,6 +176,7 @@ const stories = [
 	}
 
 	@media (max-width: 750px) {
+		.stack-cta,
 		.principles {
 			grid-template-columns: 1fr;
 		}

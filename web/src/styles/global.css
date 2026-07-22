@@ -312,6 +312,7 @@ input {
 
 .filters label,
 .picker label,
+.stack-configurator label,
 .sensitivity label {
 	display: grid;
 	gap: var(--space-2);
@@ -321,13 +322,110 @@ input {
 }
 
 .filters select,
+.stack-configurator select,
 .picker select {
 	width: 100%;
+	min-width: 0;
 	padding: 0.65rem 0.75rem;
 	border: 1px solid var(--color-line);
 	border-radius: var(--radius-sm);
 	background: white;
 	color: var(--color-ink);
+}
+
+.stack-configurator {
+	display: grid;
+	gap: var(--space-5);
+	padding: var(--space-5);
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-lg);
+	background: var(--color-surface);
+}
+
+.stack-configurator h3 {
+	margin: 0;
+}
+
+.stack-configurator__controls {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-4);
+}
+
+.stack-layer-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-4);
+}
+
+.stack-configurator__controls,
+.stack-configurator__controls > *,
+.stack-layer-grid,
+.stack-layer-grid > *,
+.stack-result {
+	min-width: 0;
+}
+
+.stack-layer {
+	padding: var(--space-4);
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-md);
+	background: var(--color-surface-muted);
+}
+
+.stack-layer h4 {
+	margin-block: var(--space-1);
+	font-size: var(--step-1);
+}
+
+.stack-layer__label,
+.stack-result__status {
+	margin: 0;
+	color: var(--color-brand);
+	font-size: var(--step--1);
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.stack-result {
+	padding: var(--space-5);
+	border: 2px solid var(--color-line);
+	border-radius: var(--radius-lg);
+	background: var(--color-paper);
+	overflow-wrap: anywhere;
+}
+
+.stack-result--verificado {
+	border-color: var(--color-success);
+}
+
+.stack-result--verificado-condicionado,
+.stack-result--no-confirmado {
+	border-color: var(--color-warning);
+	background: var(--color-warning-bg);
+}
+
+.stack-result--incompatible {
+	border-color: var(--color-accent);
+}
+
+.stack-result h4 {
+	margin-block: var(--space-1) var(--space-4);
+	font-size: var(--step-2);
+}
+
+.stack-combination {
+	margin-top: var(--space-4);
+	padding: var(--space-4);
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-md);
+	background: var(--color-surface);
+}
+
+.stack-combination h5,
+.stack-result h5 {
+	margin-block: 0 var(--space-2);
+	font-size: var(--step-0);
 }
 
 .catalog__grid {
@@ -432,7 +530,9 @@ input {
 	.grid--3,
 	.chart-grid,
 	.catalog__grid,
-	.filters {
+	.filters,
+	.stack-configurator__controls,
+	.stack-layer-grid {
 		grid-template-columns: 1fr;
 	}
 

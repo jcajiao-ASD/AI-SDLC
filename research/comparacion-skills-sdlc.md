@@ -5,20 +5,22 @@ slug: comparacion-skills-sdlc
 summary: "Compara OpenSpec, GitHub Spec Kit, Superpowers y Open GSD mediante lentes de adopción y piso de calidad."
 category: metodologias
 status: vigente
-cutoffDate: "2026-07-21"
-revalidateAfter: "2027-01-21"
+cutoffDate: "2026-07-22"
+revalidateAfter: "2027-01-22"
 evidenceLevel: mixta
 decisionType: seleccion-framework
 role: featured-source
 featuredStory: seleccion-framework
+relatedStories:
+  - configurador-stack
 ---
 
 # Comparación de conjuntos de skills para un SDLC asistido por IA: OpenSpec, GitHub Spec Kit, Superpowers y Open GSD
 
 [<- volver al índice](_index.md)
 
-> **Fecha de corte:** 21 de julio de 2026.  
-> **Acceso a fuentes:** 21 de julio de 2026.  
+> **Fecha de corte:** 22 de julio de 2026.  
+> **Acceso a fuentes:** 22 de julio de 2026.  
 > **Estado:** investigación vigente al corte; versiones, integraciones y señales
 > de adopción deben revalidarse antes de una decisión y caducan en seis meses o
 > dos ciclos de release relevantes, lo que ocurra primero.
@@ -759,14 +761,47 @@ hubiese competido en el ranking.
 
 ## 10. Mejor alternativa por escenario
 
-| Escenario | Recomendación | Por qué |
-| --- | --- | --- |
-| **Adopción progresiva y liderada por humanos, brownfield, mínima ceremonia, Git/CI ya gobernados** | **OpenSpec** + gobernanza externa obligatoria | Máxima flexibilidad, integración progresiva y facilidad de uso; el piso de calidad se repone con controles de plataforma (§9, §11) |
-| Gobierno de requisitos y auditoría documental antes de construir | **GitHub Spec Kit** | Mayor precisión 29148, análisis de consistencia y revisión humana más formalizada (G1, H2) |
-| Repositorio con pruebas maduras, foco en disciplina de implementación | **Superpowers** | TDD obligatorio y revisión por tarea maximizan la efectividad (D3) |
-| Equipo regulado, control-first, orquestación autónoma end-to-end | **Open GSD** + gates deterministas de plataforma | Máximo control por defecto; piso de calidad más alto (§6.5) |
-| Feature grande multiarchivo/multisesión con autonomía deseada | **Open GSD** | Recuperación de contexto, olas y verificación integrada |
-| Hotfix trivial / cambio mecánico reversible | Copilot directo + pruebas/revisión; quizá ninguno | La ceremonia de cualquier framework supera el valor |
+<!-- ai-sdlc-dataset: id=framework-profile-recommendations schema=profile-recommendation unit=categorical -->
+| Clave de contexto | Escenario | Candidatos | Recomendación | Motivo | Caveat |
+| --- | --- | --- | --- | --- | --- |
+| `adopcion-progresiva` | **Adopción progresiva y liderada por humanos, brownfield, mínima ceremonia, Git/CI ya gobernados** | `primary:openspec` | **OpenSpec** + gobernanza externa obligatoria | Máxima flexibilidad, integración progresiva y facilidad de uso. | El piso de calidad se repone con controles deterministas de plataforma (§9, §11). |
+| `gobierno-requisitos` | Gobierno de requisitos y auditoría documental antes de construir | `primary:spec-kit` | **GitHub Spec Kit** | Mayor precisión 29148, análisis de consistencia y revisión humana formalizada. | Introduce más fases y ceremonia que OpenSpec. |
+| `tdd` | Repositorio con pruebas maduras, foco en disciplina de implementación | `primary:superpowers` | **Superpowers** | TDD obligatorio y revisión por tarea maximizan la disciplina de implementación. | Sus hard gates elevan ceremonia, tokens y latencia. |
+| `regulado` | Equipo regulado, control-first, orquestación autónoma end-to-end | `primary:gsd-core` | **Open GSD** + gates deterministas de plataforma | Ofrece el piso de calidad y control por defecto más alto. | La integración y profundidad de hooks dependen del runtime. |
+| `feature-grande` | Feature grande multiarchivo/multisesión con autonomía deseada | `primary:gsd-core` | **Open GSD** | Recuperación de contexto, olas y verificación integrada. | Mayor ceremonia y superficie operativa. |
+| `hotfix` | Hotfix trivial / cambio mecánico reversible | `none:none` | Copilot directo + pruebas/revisión; quizá ningún framework | La ceremonia de cualquier framework supera el valor esperado. | La ausencia de framework no elimina pruebas, revisión ni controles de Git/CI. |
+<!-- /ai-sdlc-dataset -->
+
+<details>
+<summary>Compatibilidad entre agentes y capas de especificación/proceso</summary>
+
+“Nativa” significa que el proyecto documenta directamente ese runtime o genera
+sus artefactos. “Condicionada” exige una opción de instalación, plugin o modo
+skills. “No confirmada” conserva la ausencia de evidencia oficial como
+incertidumbre, no como incompatibilidad.
+
+<!-- ai-sdlc-dataset: id=agent-framework-compatibility schema=compatibility-matrix unit=categorical -->
+| Clave de agente | Agente | Clave de componente | Componente | Estado | Mecanismo | Nota | Fuente | Verificado el |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `copilot-cli` | GitHub Copilot CLI | `openspec` | OpenSpec 1.6.0 | nativa | Skills en `.github/skills/openspec-*/SKILL.md` | Los prompt files son para IDE; Copilot CLI consume las skills. | <https://github.com/Fission-AI/OpenSpec/blob/v1.6.0/docs/supported-tools.md> | 2026-07-22 |
+| `cursor` | Cursor | `openspec` | OpenSpec 1.6.0 | nativa | Skills y comandos bajo `.cursor/` | Integración documentada directamente por OpenSpec. | <https://github.com/Fission-AI/OpenSpec/blob/v1.6.0/docs/supported-tools.md> | 2026-07-22 |
+| `junie` | Junie | `openspec` | OpenSpec 1.6.0 | nativa | Skills y comandos bajo `.junie/` | Integración documentada directamente por OpenSpec. | <https://github.com/Fission-AI/OpenSpec/blob/v1.6.0/docs/supported-tools.md> | 2026-07-22 |
+| `opencode` | OpenCode | `openspec` | OpenSpec 1.6.0 | nativa | Skills y comandos bajo `.opencode/` | Integración documentada directamente por OpenSpec. | <https://github.com/Fission-AI/OpenSpec/blob/v1.6.0/docs/supported-tools.md> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `spec-kit` | GitHub Spec Kit 0.13.2 | condicionada | `--integration copilot --integration-options="--skills"` | El modo Copilot predeterminado aún genera prompts/agents heredados que no equivalen a skills de CLI. | <https://github.com/github/spec-kit/blob/v0.13.2/docs/reference/integrations.md> | 2026-07-22 |
+| `cursor` | Cursor | `spec-kit` | GitHub Spec Kit 0.13.2 | nativa | Integración incorporada `cursor-agent` | Spec Kit la lista como integración soportada. | <https://github.com/github/spec-kit/blob/v0.13.2/docs/reference/integrations.md> | 2026-07-22 |
+| `junie` | Junie | `spec-kit` | GitHub Spec Kit 0.13.2 | nativa | Integración incorporada `junie` | Spec Kit la lista como integración soportada. | <https://github.com/github/spec-kit/blob/v0.13.2/docs/reference/integrations.md> | 2026-07-22 |
+| `opencode` | OpenCode | `spec-kit` | GitHub Spec Kit 0.13.2 | nativa | Integración incorporada `opencode` | Spec Kit la lista como integración soportada. | <https://github.com/github/spec-kit/blob/v0.13.2/docs/reference/integrations.md> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `superpowers` | Superpowers 6.1.1 | condicionada | Marketplace y plugin de Copilot | Requiere instalar el plugin; no es comportamiento incorporado del agente. | <https://github.com/obra/superpowers/blob/v6.1.1/README.md> | 2026-07-22 |
+| `cursor` | Cursor | `superpowers` | Superpowers 6.1.1 | condicionada | Marketplace/plugin de Cursor | Requiere instalar el plugin en Cursor Agent. | <https://github.com/obra/superpowers/blob/v6.1.1/README.md> | 2026-07-22 |
+| `junie` | Junie | `superpowers` | Superpowers 6.1.1 | no-confirmada | Sin integración oficial localizada | La release revisada documenta otros harnesses, pero no Junie. | <https://github.com/obra/superpowers/blob/v6.1.1/README.md> | 2026-07-22 |
+| `opencode` | OpenCode | `superpowers` | Superpowers 6.1.1 | condicionada | Plugin propio de OpenCode | Requiere instalación y carga mediante el sistema de plugins/skills. | <https://github.com/obra/superpowers/blob/v6.1.1/.opencode/INSTALL.md> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `gsd-core` | GSD Core 1.7.0 | nativa | Instalador con destino `--copilot` | Runtime de primera clase con skills, instrucciones y hooks adaptados. | <https://github.com/open-gsd/gsd-core/blob/v1.7.0/docs/how-to/install-on-your-runtime.md> | 2026-07-22 |
+| `cursor` | Cursor | `gsd-core` | GSD Core 1.7.0 | nativa | Instalador con destino `--cursor` | Runtime de primera clase con artefactos adaptados. | <https://github.com/open-gsd/gsd-core/blob/v1.7.0/docs/how-to/install-on-your-runtime.md> | 2026-07-22 |
+| `junie` | Junie | `gsd-core` | GSD Core 1.7.0 | no-confirmada | Sin runtime Junie oficial localizado | La guía revisada no documenta un destino Junie. | <https://github.com/open-gsd/gsd-core/blob/v1.7.0/docs/how-to/install-on-your-runtime.md> | 2026-07-22 |
+| `opencode` | OpenCode | `gsd-core` | GSD Core 1.7.0 | nativa | Instalador con destino `--opencode` | Runtime de primera clase con comandos, agentes, skills y plugin. | <https://github.com/open-gsd/gsd-core/blob/v1.7.0/docs/how-to/install-on-your-runtime.md> | 2026-07-22 |
+<!-- /ai-sdlc-dataset -->
+
+</details>
 
 Estas recomendaciones condicionales **conviven** con el recomendado por defecto:
 para el perfil de adopción declarado, OpenSpec es la elección predeterminada; los
@@ -921,7 +956,7 @@ ampliar, ajustar o detener.
 
 ## 13. Referencias
 
-> Fecha de acceso a todas las fuentes: **21 de julio de 2026**.
+> Fecha de acceso a todas las fuentes: **22 de julio de 2026**.
 
 ### Fuentes primarias de los frameworks
 

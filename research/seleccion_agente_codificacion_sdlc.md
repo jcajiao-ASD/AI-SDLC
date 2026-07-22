@@ -5,12 +5,14 @@ slug: seleccion-agente-codificacion-sdlc
 summary: "Sintetiza las comparativas de agentes y modelos para recomendar una herramienta según ecosistema, prioridades y coste."
 category: seleccion
 status: vigente
-cutoffDate: "2026-07-20"
-revalidateAfter: "2027-01-20"
+cutoffDate: "2026-07-22"
+revalidateAfter: "2027-01-22"
 evidenceLevel: mixta
 decisionType: seleccion-agente
 role: featured-source
 featuredStory: seleccion-agente
+relatedStories:
+  - configurador-stack
 ---
 
 # Selección de un Agente de Codificación para el SDLC de un Ingeniero de Software
@@ -18,7 +20,7 @@ featuredStory: seleccion-agente
 [<- back](_index.md)
 
 > **Estado:** Vigente. Decisión basada en la investigación con corte a **mediados
-> de julio de 2026** (datos recogidos el 20 de julio de 2026).
+> de julio de 2026** (datos revalidados el 22 de julio de 2026).
 > **Alcance:** este documento **no** vuelve a medir; **decide**. Sintetiza las tres
 > investigaciones hermanas —[Mono-LLM](comparativa_agentes_ia_mono_llm.md),
 > [Multi-LLM](comparativa_agentes_ia_multi_llm.md) y
@@ -167,23 +169,23 @@ descartan como herramienta única para este objetivo.**
 Filtrado el campo a los agentes multi-LLM, se comparan según los criterios de §2.
 Un primer chequeo —¿qué agente tiene disponibles los tres cerebros ganadores por
 fase (Fable 5, GPT-5.6 Sol, Gemini 3.x)— arroja un resultado **verificado contra
-fuentes oficiales** (acceso 20-jul-2026) que conviene subrayar: **los cuatro los
+fuentes oficiales** (revalidación 22-jul-2026) que conviene subrayar: **los cuatro los
 alcanzan**, de forma **nativa** o vía **BYOK**. Es decir, la cobertura de modelos
 frontera **crea la lista corta y ya no es el diferenciador**; la elección depende
 de la integración, el *harness*, la gobernanza, el precio y el ecosistema:
 
 <!-- ai-sdlc-dataset: id=agent-candidate-matrix schema=candidate-matrix unit=mixed -->
-| Candidato | ¿Tiene Fable 5? | ¿Tiene GPT-5.6 Sol? | ¿Tiene Gemini 3.x? | Harness / SDLC | Entrada / consumo |
-| --- | --- | --- | --- | --- | --- |
-| **Copilot CLI** | Sí | Sí | Sí (3.1 Pro, 3.5 Flash) | Plan + Autopilot + agentes Task/Explore/Review/Plan + *fleet*; **integración GitHub nativa issue→PR** | **$10/mes (Pro)**; incluye 1.500 AI Credits/mes |
-| **OpenCode** | Vía BYOK | Vía BYOK | Vía BYOK | Multi-agente, LSP, Plan/Build; **local-first**, 75+ proveedores | **Software gratis (MIT)**; API/BYOK de pago |
-| **Cursor CLI** | Nativo | Nativo (Sol/Terra/Luna) | Nativo (3.1 Pro, 3.5 Flash) | Composer 2.5 propio + *cloud agents* + BYOK; integración Jira | $20 |
-| **Junie CLI** | Nativo | Limitado: vía BYOK (nativo ≤ GPT-5.5) | Nativo (3.1 Pro, 3.5 Flash) | Modo Plan + **JetBrains** + BYOK/OpenRouter; líder SWE-Rebench | $100/año + IDE |
+| Clave de agente | Candidato | ¿Tiene Fable 5? | ¿Tiene GPT-5.6 Sol? | ¿Tiene Gemini 3.x? | Harness / SDLC | Entrada / consumo |
+| --- | --- | --- | --- | --- | --- | --- |
+| `copilot-cli` | **Copilot CLI** | Sí | Sí | Sí (3.1 Pro, 3.5 Flash) | Plan + Autopilot + agentes Task/Explore/Review/Plan + *fleet*; **integración GitHub nativa issue→PR** | **$10/mes (Pro)**; incluye 1.500 AI Credits/mes |
+| `opencode` | **OpenCode** | Vía BYOK | Vía BYOK | Vía BYOK | Multi-agente, LSP, Plan/Build; **local-first**, 75+ proveedores | **Software gratis (MIT)**; API/BYOK de pago |
+| `cursor` | **Cursor CLI** | Nativo | Nativo (Sol/Terra/Luna) | Nativo (3.1 Pro, 3.5 Flash) | Composer 2.5 propio + *cloud agents* + BYOK; integración Jira | $20 |
+| `junie` | **Junie CLI** | Nativo | Nativo (Sol/Terra/Luna) | Nativo (3.1 Pro, 3.5 Flash) | Modo Plan + **JetBrains** + BYOK/OpenRouter; líder SWE-Rebench | $100/año + IDE |
 <!-- /ai-sdlc-dataset -->
 
 Fuentes del catálogo y capacidades: [Multi §4.1][Multi §4.2][Multi §4.3][Multi
 §4.4][Multi §6][Multi §8]. **Verificación de los catálogos de Cursor y Junie contra
-fuentes oficiales (acceso 20-jul-2026):** Cursor —*Modelos y precios*
+fuentes oficiales (acceso 22-jul-2026):** Cursor —*Modelos y precios*
 (<https://cursor.com/es/docs/models-and-pricing>)— y JetBrains AI —*Supported
 models* (<https://www.jetbrains.com/help/ai-assistant/supported-llms.html>)—, más la
 documentación de BYOK de Junie CLI.
@@ -193,9 +195,9 @@ documentación de BYOK de Junie CLI.
 - **La cobertura de los tres cerebros frontera es un mínimo común, no un
   diferenciador.** **Cursor** los lista **de forma nativa** (Claude Fable 5, GPT-5.6
   Sol/Terra/Luna, Gemini 3.1 Pro/3.5 Flash) además de BYOK; **Junie** trae **Fable 5
-  y Gemini 3.x nativos** en el catálogo de JetBrains AI y alcanza **GPT-5.6 vía
-  BYOK/OpenRouter** (su máximo OpenAI nativo es GPT-5.5); **Copilot CLI** los conmuta
-  con `/model`; **OpenCode** los alcanza vía BYOK. **Los cuatro pueden ejecutar la
+  y Gemini 3.x nativos** en el catálogo de JetBrains AI, que ahora también lista
+  **GPT-5.6 Sol/Terra/Luna de forma nativa**; **Copilot CLI** los conmuta con
+  `/model`; **OpenCode** los alcanza mediante proveedor/BYOK. **Los cuatro pueden ejecutar la
   estrategia multi-modelo de [SDLC §11].**
 - **Por eso la elección se decide en el ajuste al perfil:** para equipos
   GitHub-céntricos, **Copilot CLI** destaca por el flujo *issue→PR* nativo, la
@@ -207,9 +209,43 @@ documentación de BYOK de Junie CLI.
 - **Cursor es una alternativa general, no solo de nicho:** puede ser preferible
   cuando pesan más la experiencia IDE-first, Jira, BYOK, Composer y el catálogo
   frontera nativo, aunque su plan de entrada sea **$20**.
-- **Alineación de ecosistema:** **Junie** brilla dentro de JetBrains y necesita
-  BYOK para GPT-5.6; **OpenCode** maximiza apertura y BYOK, a cambio de gestionar
+- **Alineación de ecosistema:** **Junie** brilla dentro de JetBrains y ya cubre
+  GPT-5.6 desde JetBrains AI; **OpenCode** maximiza apertura y BYOK, a cambio de gestionar
   claves y proveedores [Multi §4.2][Multi §4.3][Multi §4.4][Multi §7].
+
+<details>
+<summary>Compatibilidad exacta entre agentes y modelos primarios del mapa SDLC</summary>
+
+La matriz distingue catálogo nativo de configuración condicionada por proveedor
+o BYOK. La disponibilidad comercial sigue dependiendo del plan, la superficie y
+las políticas del proveedor.
+
+<!-- ai-sdlc-dataset: id=agent-model-compatibility schema=compatibility-matrix unit=categorical -->
+| Clave de agente | Agente | Clave de componente | Componente | Estado | Mecanismo | Nota | Fuente | Verificado el |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `copilot-cli` | GitHub Copilot CLI | `gpt-5-6-sol` | GPT-5.6 Sol | nativa | Catálogo Copilot y selector `/model` | Depende del plan y de la disponibilidad de la superficie CLI. | <https://docs.github.com/en/copilot/reference/ai-models/supported-models> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `claude-fable-5` | Claude Fable 5 | nativa | Catálogo Copilot y selector `/model` | Empresas deben habilitar el modelo; aplica la nota específica de retención de Anthropic. | <https://docs.github.com/en/copilot/reference/ai-models/supported-models> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `claude-sonnet-5` | Claude Sonnet 5 | nativa | Catálogo Copilot y selector `/model` | Depende del plan y de la disponibilidad de la superficie CLI. | <https://docs.github.com/en/copilot/reference/ai-models/supported-models> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `claude-opus-4-8` | Claude Opus 4.8 | nativa | Catálogo Copilot y selector `/model` | Depende del plan y de la disponibilidad de la superficie CLI. | <https://docs.github.com/en/copilot/reference/ai-models/supported-models> | 2026-07-22 |
+| `copilot-cli` | GitHub Copilot CLI | `gemini-3-1-pro` | Gemini 3.1 Pro | nativa | Catálogo Copilot y selector `/model` | El modelo figura como preview y su acceso depende de políticas de modelo. | <https://docs.github.com/en/copilot/reference/ai-models/supported-models> | 2026-07-22 |
+| `cursor` | Cursor | `gpt-5-6-sol` | GPT-5.6 Sol | nativa | Selector de modelos y API pool | Algunos planes heredados exigen Max Mode. | <https://cursor.com/docs/models-and-pricing> | 2026-07-22 |
+| `cursor` | Cursor | `claude-fable-5` | Claude Fable 5 | nativa | Selector de modelos y API pool | Enterprise y Privacy Mode requieren aprobación de retención. | <https://cursor.com/docs/models-and-pricing> | 2026-07-22 |
+| `cursor` | Cursor | `claude-sonnet-5` | Claude Sonnet 5 | nativa | Selector de modelos y API pool | Algunos planes heredados exigen Max Mode. | <https://cursor.com/docs/models-and-pricing> | 2026-07-22 |
+| `cursor` | Cursor | `claude-opus-4-8` | Claude Opus 4.8 | nativa | Selector de modelos y API pool | Algunos planes heredados exigen Max Mode. | <https://cursor.com/docs/models-and-pricing> | 2026-07-22 |
+| `cursor` | Cursor | `gemini-3-1-pro` | Gemini 3.1 Pro | nativa | Selector de modelos y API pool | Sujeto al catálogo y facturación vigentes de Cursor. | <https://cursor.com/docs/models-and-pricing> | 2026-07-22 |
+| `junie` | Junie / JetBrains AI | `gpt-5-6-sol` | GPT-5.6 Sol | nativa | Servicio JetBrains AI | La evidencia corresponde al catálogo de JetBrains AI usado por Junie. | <https://www.jetbrains.com/help/ai-assistant/supported-llms.html> | 2026-07-22 |
+| `junie` | Junie / JetBrains AI | `claude-fable-5` | Claude Fable 5 | nativa | Servicio JetBrains AI | La evidencia corresponde al catálogo de JetBrains AI usado por Junie. | <https://www.jetbrains.com/help/ai-assistant/supported-llms.html> | 2026-07-22 |
+| `junie` | Junie / JetBrains AI | `claude-sonnet-5` | Claude Sonnet 5 | nativa | Servicio JetBrains AI | La evidencia corresponde al catálogo de JetBrains AI usado por Junie. | <https://www.jetbrains.com/help/ai-assistant/supported-llms.html> | 2026-07-22 |
+| `junie` | Junie / JetBrains AI | `claude-opus-4-8` | Claude Opus 4.8 | nativa | Servicio JetBrains AI | El catálogo oficial lo denomina “Claude 4.8 Opus”. | <https://www.jetbrains.com/help/ai-assistant/supported-llms.html> | 2026-07-22 |
+| `junie` | Junie / JetBrains AI | `gemini-3-1-pro` | Gemini 3.1 Pro | nativa | Servicio JetBrains AI | La evidencia corresponde al catálogo de JetBrains AI usado por Junie. | <https://www.jetbrains.com/help/ai-assistant/supported-llms.html> | 2026-07-22 |
+| `opencode` | OpenCode | `gpt-5-6-sol` | GPT-5.6 Sol | condicionada | Proveedor configurado con `/connect` y selección en `/models` | La disponibilidad exacta depende del proveedor o endpoint configurado. | <https://opencode.ai/docs/providers> | 2026-07-22 |
+| `opencode` | OpenCode | `claude-fable-5` | Claude Fable 5 | condicionada | Anthropic, OpenRouter u otro proveedor configurado | OpenCode documenta acceso por proveedor; el catálogo exacto depende de este. | <https://opencode.ai/docs/providers> | 2026-07-22 |
+| `opencode` | OpenCode | `claude-sonnet-5` | Claude Sonnet 5 | condicionada | Anthropic, OpenRouter u otro proveedor configurado | OpenCode documenta acceso por proveedor; el catálogo exacto depende de este. | <https://opencode.ai/docs/providers> | 2026-07-22 |
+| `opencode` | OpenCode | `claude-opus-4-8` | Claude Opus 4.8 | condicionada | Anthropic, OpenRouter u otro proveedor configurado | OpenCode documenta acceso por proveedor; el catálogo exacto depende de este. | <https://opencode.ai/docs/providers> | 2026-07-22 |
+| `opencode` | OpenCode | `gemini-3-1-pro` | Gemini 3.1 Pro | condicionada | Google Vertex AI u otro proveedor configurado | OpenCode documenta acceso por proveedor; el catálogo exacto depende de este. | <https://opencode.ai/docs/providers> | 2026-07-22 |
+<!-- /ai-sdlc-dataset -->
+
+</details>
 
 ## 7. La selección condicionada: Copilot CLI si GitHub es el centro
 
@@ -348,15 +384,15 @@ la condición GitHub-céntrica** y mientras su catálogo cubra las necesidades.
 ## 11. Recomendación final por perfil
 
 <!-- ai-sdlc-dataset: id=agent-profile-recommendations schema=profile-recommendation unit=categorical -->
-| Perfil del equipo / necesidad | Herramienta seleccionada |
-| --- | --- |
-| **GitHub es el sistema central del SDLC** y se priorizan issue→PR, gobernanza y el menor precio mensual de entrada entre los planes comerciales comparados | **GitHub Copilot CLI** (opción predeterminada) |
-| Prioriza experiencia **IDE-first**, Jira, BYOK y catálogo frontera nativo | **Cursor** (alternativa general) |
-| La organización vive en el ecosistema JetBrains | **Junie CLI** |
-| Prioriza máxima apertura, BYOK total o control de proveedores | **OpenCode** |
-| GitHub no es central y no existe una alineación clara | **Piloto entre Cursor y la herramienta alineada al ecosistema** (Junie para JetBrains u OpenCode para BYOK/apertura) |
-| Necesita un modelo *cloud* fuera del catálogo de la herramienta principal | **Cursor, Junie u OpenCode**, según catálogo, BYOK y ecosistema |
-| Solo trabaja con un proveedor y prioriza integración vertical | **Codex CLI** (OpenAI) o **Claude Code** (Anthropic) como caso especial, asumiendo el *lock-in* |
+| Clave de contexto | Configurable | Perfil del equipo / necesidad | Candidatos | Herramienta seleccionada | Motivo | Caveat |
+| --- | --- | --- | --- | --- | --- | --- |
+| `github` | sí | **GitHub es el sistema central del SDLC** y se priorizan issue→PR, gobernanza y el menor precio mensual de entrada entre los planes comerciales comparados | `primary:copilot-cli` | **GitHub Copilot CLI** (opción predeterminada) | Integración nativa issue→PR y gobernanza GitHub. | Catálogo, créditos y coste efectivo deben revalidarse. |
+| `ide-jira` | sí | Prioriza experiencia **IDE-first**, Jira, BYOK y catálogo frontera nativo | `primary:cursor` | **Cursor** (alternativa general) | Prioriza IDE, Jira, BYOK y catálogo frontera nativo. | Debe pilotarse con el flujo y las políticas reales del equipo. |
+| `jetbrains` | sí | La organización vive en el ecosistema JetBrains | `primary:junie` | **Junie CLI** | Se alinea con herramientas, modelos e inspecciones JetBrains. | La disponibilidad y el coste dependen de JetBrains AI o del proveedor BYOK elegido. |
+| `apertura` | sí | Prioriza máxima apertura, BYOK total o control de proveedores | `primary:opencode` | **OpenCode** | Software MIT, local-first y acceso a numerosos proveedores. | El equipo administra claves, proveedores, coste y gobernanza. |
+| `sin-centro` | sí | GitHub no es central y no existe una alineación clara | `pilot:cursor;pilot:junie;pilot:opencode` | **Piloto entre Cursor y la herramienta alineada al ecosistema** | La evidencia no establece un ganador universal fuera de un ecosistema central. | El resultado requiere tareas representativas y coste efectivo observado antes de decidir. |
+| `modelo-externo` | no | Necesita un modelo *cloud* fuera del catálogo de la herramienta principal | `-` | **Cursor, Junie u OpenCode**, según catálogo, BYOK y ecosistema | Es un caso de disponibilidad puntual, no un perfil estable del configurador. | Debe verificarse el modelo exacto en el momento de la decisión. |
+| `mono-proveedor` | no | Solo trabaja con un proveedor y prioriza integración vertical | `-` | **Codex CLI** o **Claude Code** como caso especial | La integración vertical puede compensar la ausencia de estrategia multi-modelo. | Asume lock-in y queda fuera de la matriz de agentes multi-LLM. |
 <!-- /ai-sdlc-dataset -->
 
 **Veredicto condicionado:** no existe un ganador universal. Para el perfil
@@ -420,6 +456,10 @@ referencias primarias:
    <https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing>.
 9. GitHub Blog — *GitHub Copilot is moving to usage-based billing*.
    <https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/>.
+10. GitHub Docs — *Supported AI models in GitHub Copilot*.
+    <https://docs.github.com/en/copilot/reference/ai-models/supported-models>.
+11. OpenCode — *Providers*.
+    <https://opencode.ai/docs/providers>.
 
 > Para las fuentes primarias (anuncios oficiales, *leaderboards*, políticas de
 > privacidad y precios), véanse las secciones **Referencias** de cada documento

@@ -1,24 +1,40 @@
 ---
 import type { ResearchDataset } from '../lib/types';
-import { plainText } from '../lib/datasets';
+import { renderInlineMarkdown } from '../lib/research';
 
 interface Props {
 	dataset: ResearchDataset;
 	caption: string;
+	hiddenColumns?: string[];
 }
 
-const { dataset, caption } = Astro.props;
+const { dataset, caption, hiddenColumns = [] } = Astro.props;
+const visibleHeaders = dataset.headers.filter(
+	(header) => !hiddenColumns.includes(header),
+);
+const renderedRows = await Promise.all(
+	dataset.rows.map(async (row) =>
+		Object.fromEntries(
+			await Promise.all(
+				visibleHeaders.map(async (header) => [
+					header,
+					await renderInlineMarkdown(row[header]),
+				]),
+			),
+		),
+	),
+);
 ---
 
 <div class="table-scroll" tabindex="0" role="region" aria-label={caption}>
 	<table class="data-table">
 		<caption class="sr-only">{caption}</caption>
 		<thead>
-			<tr>{dataset.headers.map((header) => <th scope="col">{header}</th>)}</tr>
+			<tr>{visibleHeaders.map((header) => <th scope="col">{header}</th>)}</tr>
 		</thead>
 		<tbody>
-			{dataset.rows.map((row) => (
-				<tr>{dataset.headers.map((header) => <td>{plainText(row[header])}</td>)}</tr>
+			{renderedRows.map((row) => (
+				<tr>{visibleHeaders.map((header) => <td set:html={row[header]} />)}</tr>
 			))}
 		</tbody>
 	</table>

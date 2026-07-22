@@ -5,8 +5,8 @@ slug: comparativa-agentes-ia-multi-llm
 summary: "Compara Copilot CLI, Cursor CLI, Junie CLI y OpenCode por modelos, harness, integración, apertura y coste."
 category: agentes
 status: vigente
-cutoffDate: "2026-07-20"
-revalidateAfter: "2027-01-20"
+cutoffDate: "2026-07-22"
+revalidateAfter: "2027-01-22"
 evidenceLevel: mixta
 decisionType: comparacion-agentes
 role: catalog
@@ -139,7 +139,7 @@ modelo puede puntuar muy distinto según el harness que lo envuelva [1][35].
   base abierta Kimi K2.5 + RL específico de Cursor) y un *model picker* que permite
   usar además **Claude (Fable 5, Opus 4.8, Sonnet 5)**, **GPT-5.6 (Sol/Terra/Luna)**
   y **Gemini 3.x (3.1 Pro / 3.5 Flash)**, entre otros, con **BYOK** [21][23]
-  (catálogo oficial verificado el 20-jul-2026:
+  (catálogo oficial revalidado el 22-jul-2026:
   <https://cursor.com/es/docs/models-and-pricing>).
 - **Benchmarks:** Composer 2.5 obtiene **79.8 % en SWE-bench Multilingual**
   (paridad cercana con Opus 4.7 a ~1/10 del costo por token) [22]; **61.7 en
@@ -159,9 +159,10 @@ modelo puede puntuar muy distinto según el harness que lo envuelva [1][35].
   Grok y otros; además **modelos locales** y **cientos de modelos vía BYOK /
   OpenRouter** [25][32]. Permite asignar modelos distintos por tipo de tarea [24].
   Su **catálogo nativo** (JetBrains AI) ya incluye **Claude Fable 5, Sonnet 5,
-  Opus 4.8 y Gemini 3.1 Pro / 3.5 Flash**; el máximo de OpenAI **nativo** es
-  **GPT-5.5**, por lo que **GPT-5.6 se accede vía BYOK/OpenRouter** (verificado el
-  20-jul-2026: <https://www.jetbrains.com/help/ai-assistant/supported-llms.html>).
+  Opus 4.8, Gemini 3.1 Pro / 3.5 Flash y GPT-5.6 Luna / Sol / Terra**. La
+  afirmación anterior de que GPT-5.6 requería BYOK queda corregida tras
+  revalidación del 22-jul-2026:
+  <https://www.jetbrains.com/help/ai-assistant/supported-llms.html>.
 - **Benchmarks:** **líder en la ejecución pública de SWE-Rebench** con **61.6 % de
   tareas resueltas** y **72.7 % de pass@5** [26]. En Terminal-Bench queda por
   debajo de Codex CLI en el ciclo reciente; su fuerte es la integración con las

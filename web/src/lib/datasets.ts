@@ -1,5 +1,13 @@
 import type { ResearchDataset } from './types';
-import { numericValue } from './research';
+
+function numericValue(value: string): number | undefined {
+	const normalized = value
+		.replace(/<[^>]+>/g, '')
+		.replace(/[*_]/g, '')
+		.replace(',', '.')
+		.match(/-?\d+(?:\.\d+)?/);
+	return normalized ? Number(normalized[0]) : undefined;
+}
 
 export function plainText(value: string): string {
 	return value

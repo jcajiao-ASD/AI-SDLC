@@ -28,6 +28,7 @@ export interface ResearchMetadata {
 	decisionType: string;
 	role: (typeof researchRoles)[number];
 	featuredStory?: string;
+	relatedStories?: string[];
 }
 
 export interface ResearchStudy {
@@ -49,7 +50,8 @@ export type DatasetSchema =
 	| 'sdlc-map'
 	| 'candidate-matrix'
 	| 'profile-recommendation'
-	| 'sensitivity-series';
+	| 'sensitivity-series'
+	| 'compatibility-matrix';
 
 export interface ResearchDataset extends DatasetDeclaration {
 	headers: string[];

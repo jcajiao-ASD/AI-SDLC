@@ -7,6 +7,7 @@ import EvidencePanel from '../../components/EvidencePanel.astro';
 import DataTable from '../../components/DataTable.astro';
 import RecommendationPicker from '../../components/RecommendationPicker';
 import { findDataset, findStudy, loadStudies } from '../../lib/research';
+import { recommendationOptions } from '../../lib/stack';
 import { withBase } from '../../lib/paths';
 
 const studies = await loadStudies();
@@ -44,7 +45,10 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 				<p class="eyebrow">Contexto del equipo</p>
 				<h2>Empieza por tu sistema central.</h2>
 			</header>
-			<RecommendationPicker client:load />
+			<RecommendationPicker
+				options={recommendationOptions(profiles)}
+				client:load
+			/>
 		</div>
 	</section>
 
@@ -55,7 +59,11 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 				<h2>La cobertura de modelos es el mínimo común, no el desempate.</h2>
 				<p>La tabla conserva catálogo, harness, integración y entrada de coste tal como fueron investigados.</p>
 			</header>
-			<DataTable dataset={candidates} caption="Comparación de agentes multi-LLM" />
+			<DataTable
+				dataset={candidates}
+				caption="Comparación de agentes multi-LLM"
+				hiddenColumns={['Clave de agente']}
+			/>
 			<Caveat title="Límite de comparabilidad">
 				<p>Los scores de terminal dependen del modelo, harness, versión y tarea. No se fusionan en una escala nueva.</p>
 			</Caveat>
@@ -68,7 +76,11 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 				<p class="eyebrow">Recomendación por perfil</p>
 				<h2>Haz explícita la condición que activa cada elección.</h2>
 			</header>
-			<DataTable dataset={profiles} caption="Herramienta recomendada por perfil de equipo" />
+			<DataTable
+				dataset={profiles}
+				caption="Herramienta recomendada por perfil de equipo"
+				hiddenColumns={['Clave de contexto', 'Configurable', 'Candidatos']}
+			/>
 		</div>
 	</section>
 
@@ -79,6 +91,7 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 				<h2>Revisa catálogo, créditos y BYOK con datos actuales.</h2>
 				<a class="button-link" href={withBase(`/investigaciones/${study.metadata.slug}/`)}>Leer estudio completo</a>
 				<a class="button-link button-link--secondary" href={withBase('/metodologia/')}>Entender evidencia</a>
+				<a class="button-link button-link--secondary" href={withBase('/historias/configurador-stack/')}>Configurar stack completo</a>
 			</div>
 			<EvidencePanel metadata={study.metadata} />
 		</div>

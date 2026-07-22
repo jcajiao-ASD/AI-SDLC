@@ -1,7 +1,8 @@
 # Observatorio AI-SDLC
 
 Frontend editorial estático para explorar las investigaciones de `../research/`
-como catálogo y tres historias de decisión. Astro genera HTML para GitHub Pages;
+como catálogo, tres historias de decisión y un configurador transversal de stack.
+Astro genera HTML para GitHub Pages;
 Preact hidrata únicamente filtros y exploradores, y Observable Plot representa
 datasets canónicos definidos dentro de los Markdown.
 
@@ -61,7 +62,8 @@ Valores permitidos:
 - `status`: `vigente`, `requiere-revalidacion`, `historico`.
 - `evidenceLevel`: `alta`, `media`, `baja`, `mixta`.
 - `role`: `catalog`, `featured-source`. Una fuente destacada también declara
-  `featuredStory`.
+  `featuredStory`; `relatedStories` permite añadir rutas secundarias como
+  `configurador-stack`.
 
 La construcción falla ante campos ausentes, fechas inválidas, slugs duplicados o
 un estudio omitido.
@@ -81,6 +83,12 @@ Una visualización consume la misma tabla que funciona como fallback accesible:
 No se mantienen copias JSON/YAML. Los identificadores, esquemas y columnas se
 validan estrictamente. Si una historia cambia, debe actualizarse la tabla
 canónica y conservar cerca sus caveats, unidad, fecha y fuentes.
+
+Las reglas de selección usan claves técnicas y candidatos `rol:clave`, con roles
+`primary`, `co-primary`, `alternative`, `pilot` y `none`. Las matrices
+`compatibility-matrix` usan formato largo y registran agente, componente, estado,
+mecanismo, nota, fuente y fecha. Sus estados válidos son `nativa`,
+`condicionada`, `incompatible` y `no-confirmada`.
 
 ## Publicación y rollback
 

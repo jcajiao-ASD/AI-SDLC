@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryHero from '../../components/StoryHero.astro';
+import ExecutiveSummary from '../../components/ExecutiveSummary.astro';
+import Caveat from '../../components/Caveat.astro';
+import EvidencePanel from '../../components/EvidencePanel.astro';
+import DataTable from '../../components/DataTable.astro';
+import StackConfigurator from '../../components/StackConfigurator';
+import { findDataset, findStudy, loadStudies } from '../../lib/research';
+import {
+	compatibilityRecords,
+	recommendationOptions,
+} from '../../lib/stack';
+import { withBase } from '../../lib/paths';
+
+const studies = await loadStudies();
+const agentStudy = findStudy(studies, 'seleccion-agente-codificacion-sdlc');
+const modelStudy = findStudy(studies, 'comparativa-llms-sdlc');
+const frameworkStudy = findStudy(studies, 'comparacion-skills-sdlc');
+const agentRules = findDataset(studies, 'agent-profile-recommendations');
+const modelRules = findDataset(studies, 'llm-sdlc-map');
+const frameworkRules = findDataset(studies, 'framework-profile-recommendations');
+const agentModels = findDataset(studies, 'agent-model-compatibility');
+const agentFrameworks = findDataset(studies, 'agent-framework-compatibility');
+
+const sourceLinks = {
+	agent: withBase(`/investigaciones/${agentStudy.metadata.slug}/#11-recomendación-final-por-perfil`),
+	model: withBase(`/investigaciones/${modelStudy.metadata.slug}/#11-el-mejor-llm-por-fase-del-sdlc`),
+	framework: withBase(`/investigaciones/${frameworkStudy.metadata.slug}/#10-mejor-alternativa-por-escenario`),
+};
+---
+
+<BaseLayout
+	title="Configurar un stack AI-SDLC compatible"
+	description="Recomendación trazable de agente, modelo y capa de especificación con compatibilidad verificada."
+>
+	<StoryHero
+		eyebrow="Vista transversal · Stack AI-SDLC"
+		title="Compón tres decisiones sin fingir que pertenecen a una misma escala."
+		description="El configurador conserva la recomendación de cada estudio y comprueba si el agente soporta realmente el modelo y la capa de proceso resultantes."
+	>
+		<ExecutiveSummary>
+			<p>
+				Selecciona contexto, fase y escenario. Solo una combinación con
+				compatibilidad nativa o condicionada documentada se presenta como stack
+				final.
+			</p>
+		</ExecutiveSummary>
+		<div class="hero-caveat">
+			<Caveat>
+				<p>No existe una puntuación global de stacks. Catálogos, plugins, BYOK y soporte por runtime son observaciones fechadas al 22 de julio de 2026.</p>
+			</Caveat>
+		</div>
+	</StoryHero>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Configuración</p>
+				<h2>Tres entradas independientes, una compatibilidad explícita.</h2>
+			</header>
+			<StackConfigurator
+				agentOptions={recommendationOptions(agentRules)}
+				modelOptions={recommendationOptions(modelRules)}
+				frameworkOptions={recommendationOptions(frameworkRules)}
+				modelCompatibility={compatibilityRecords(agentModels)}
+				frameworkCompatibility={compatibilityRecords(agentFrameworks)}
+				defaults={{
+					agent: 'github',
+					model: 'diseno',
+					framework: 'adopcion-progresiva',
+				}}
+				sourceLinks={sourceLinks}
+				client:load
+			/>
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Reglas canónicas</p>
+				<h2>La interfaz no guarda una segunda copia de las conclusiones.</h2>
+				<p>Estas tablas Markdown alimentan tanto la configuración inicial como los controles hidratados.</p>
+			</header>
+			<details>
+				<summary>Contextos de agente</summary>
+				<DataTable
+					dataset={agentRules}
+					caption="Reglas de selección de agente"
+					hiddenColumns={['Clave de contexto', 'Configurable', 'Candidatos']}
+				/>
+			</details>
+			<details>
+				<summary>Modelos por fase del SDLC</summary>
+				<DataTable
+					dataset={modelRules}
+					caption="Reglas de modelo por fase"
+					hiddenColumns={['Clave de contexto', 'Candidatos']}
+				/>
+			</details>
+			<details open>
+				<summary>Escenarios de proceso</summary>
+				<DataTable
+					dataset={frameworkRules}
+					caption="Reglas de framework por escenario"
+					hiddenColumns={['Clave de contexto', 'Candidatos']}
+				/>
+			</details>
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Compatibilidad verificable</p>
+				<h2>Nativa, condicionada, incompatible o no confirmada.</h2>
+			</header>
+			<details open>
+				<summary>Agente ↔ modelo</summary>
+				<DataTable
+					dataset={agentModels}
+					caption="Compatibilidad entre agentes y modelos"
+					hiddenColumns={['Clave de agente', 'Clave de componente']}
+				/>
+			</details>
+			<details open>
+				<summary>Agente ↔ capa de especificación/proceso</summary>
+				<DataTable
+					dataset={agentFrameworks}
+					caption="Compatibilidad entre agentes y frameworks"
+					hiddenColumns={['Clave de agente', 'Clave de componente']}
+				/>
+			</details>
+		</div>
+	</section>
+
+	<section class="story-section">
+		<div class="shell">
+			<header>
+				<p class="eyebrow">Profundizar</p>
+				<h2>Audita cada decisión en su historia especializada.</h2>
+			</header>
+			<div class="story-links">
+				<a class="button-link" href={withBase('/historias/seleccion-agente/')}>Selección de agente</a>
+				<a class="button-link button-link--secondary" href={withBase('/historias/llm-por-fase/')}>Modelo por fase</a>
+				<a class="button-link button-link--secondary" href={withBase('/historias/seleccion-framework/')}>Selección de framework</a>
+				<a class="button-link button-link--secondary" href={withBase('/metodologia/')}>Metodología</a>
+			</div>
+			<div class="evidence-stack">
+				<EvidencePanel metadata={agentStudy.metadata} label="Evidencia de selección de agente" />
+				<EvidencePanel metadata={modelStudy.metadata} label="Evidencia de selección de modelo" />
+				<EvidencePanel metadata={frameworkStudy.metadata} label="Evidencia de selección de framework" />
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero-caveat {
+		max-width: 50rem;
+		margin-top: var(--space-4);
+	}
+
+	details {
+		margin-top: var(--space-4);
+	}
+
+	summary {
+		cursor: pointer;
+		font-weight: 800;
+	}
+
+	.story-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+	}
+
+	.evidence-stack {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--space-4);
+		margin-top: var(--space-6);
+	}
+
+	@media (max-width: 900px) {
+		.evidence-stack {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

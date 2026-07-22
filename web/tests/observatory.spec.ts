@@ -1,9 +1,10 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-test('la portada conduce a las tres decisiones', async ({ page }) => {
+test('la portada conduce al configurador y a las tres decisiones', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('decisión auditable');
+	await expect(page.getByRole('link', { name: /Configurar stack/ })).toBeVisible();
 	await expect(page.getByRole('link', { name: /Abrir historia/ })).toHaveCount(3);
 	const results = await new AxeBuilder({ page }).analyze();
 	expect(results.violations).toEqual([]);
@@ -68,6 +69,7 @@ test('la tipografía no provoca desplazamiento horizontal de página', async ({ 
 		'/historias/llm-por-fase/',
 		'/historias/seleccion-agente/',
 		'/historias/seleccion-framework/',
+		'/historias/configurador-stack/',
 		'/sistema-diseno/',
 	]) {
 		await page.goto(route);
@@ -92,6 +94,7 @@ for (const route of [
 	'/historias/llm-por-fase/',
 	'/historias/seleccion-agente/',
 	'/historias/seleccion-framework/',
+	'/historias/configurador-stack/',
 ]) {
 	test(`la ruta ${route} no presenta violaciones automáticas de accesibilidad`, async ({ page }) => {
 		await page.goto(route);
@@ -112,7 +115,76 @@ test('el contenido principal permanece disponible sin JavaScript', async ({ brow
 	await expect(page.getByRole('table', { name: 'Herramienta recomendada por perfil de equipo' })).toBeVisible();
 	await page.goto('/historias/seleccion-framework/');
 	await expect(page.getByRole('table', { name: 'Ranking de frameworks con lente adopción-first' })).toBeVisible();
+	await page.goto('/historias/configurador-stack/');
+	await expect(page.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
+	await expect(page.getByText('Límite de interpretación', { exact: true })).toBeVisible();
+	await expect(page.getByRole('table', { name: 'Compatibilidad entre agentes y modelos' })).toBeVisible();
+	const frameworkTable = page.getByRole('table', {
+		name: 'Compatibilidad entre agentes y frameworks',
+	});
+	await expect(frameworkTable).toBeVisible();
+	await expect(
+		frameworkTable.getByRole('row', {
+			name: /Junie.*Superpowers.*no-confirmada/i,
+		}),
+	).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Fuente oficial' }).first()).toBeVisible();
 	await context.close();
+});
+
+test('el configurador conserva semántica, compatibilidad y alternativas', async ({ page }) => {
+	await page.goto('/historias/configurador-stack/');
+
+	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
+	await expect(page.getByLabel('Fase del SDLC')).toHaveValue('diseno');
+	await expect(page.getByLabel('Escenario de proceso')).toHaveValue('adopcion-progresiva');
+	await expect(page.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
+	const agentSelector = page.getByLabel('Contexto del agente');
+	await agentSelector.focus();
+	await page.keyboard.press('ArrowDown');
+	await expect(agentSelector).toHaveValue('ide-jira');
+	await expect(page.getByRole('link', { name: 'Auditar estudio fuente' }).first()).toHaveAttribute(
+		'href',
+		/investigaciones\/seleccion-agente-codificacion-sdlc/,
+	);
+	await agentSelector.selectOption('github');
+
+	await page.getByLabel('Fase del SDLC').selectOption('implementacion');
+	await expect(page.getByText('Stacks compatibles documentados', { exact: true })).toBeVisible();
+	await expect(page.locator('.stack-combination')).toHaveCount(2);
+
+	await page.getByLabel('Contexto del agente').selectOption('sin-centro');
+	await expect(page.getByText('La selección requiere un piloto comparativo', { exact: true })).toBeVisible();
+	await expect(page.getByText(/Cursor, Junie, OpenCode/)).toBeVisible();
+
+	await page.getByLabel('Contexto del agente').selectOption('jetbrains');
+	await page.getByLabel('Fase del SDLC').selectOption('pruebas');
+	await page.getByLabel('Escenario de proceso').selectOption('tdd');
+	await expect(page.getByText('No hay un stack verificable con estas selecciones', { exact: true })).toBeVisible();
+	await expect(
+		page.locator('.stack-result li').filter({
+			hasText: /Cursor.*Superpowers.*condicionada/i,
+		}),
+	).toBeVisible();
+
+	await page.getByLabel('Contexto del agente').selectOption('github');
+	await page.getByLabel('Fase del SDLC').selectOption('devops');
+	await page.getByLabel('Escenario de proceso').selectOption('hotfix');
+	await expect(page.getByRole('heading', { name: /sin framework/ })).toBeVisible();
+});
+
+test('el resultado inicial SSR coincide con la primera hidratación', async ({ browser, page }) => {
+	const withoutJavaScript = await browser.newContext({ javaScriptEnabled: false });
+	const staticPage = await withoutJavaScript.newPage();
+	await staticPage.goto('/historias/configurador-stack/');
+	const staticResult = await staticPage.locator('.stack-result').innerText();
+
+	await page.goto('/historias/configurador-stack/');
+	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
+	const hydratedResult = await page.locator('.stack-result').innerText();
+
+	expect(hydratedResult).toBe(staticResult);
+	await withoutJavaScript.close();
 });
 
 test('los iconos se renderizan como SVG inline local', async ({ page }) => {

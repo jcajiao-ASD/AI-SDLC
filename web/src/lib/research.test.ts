@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
 	assertNoEmojiPresentation,
+	assertKnownStoryReferences,
 	findEmojiPresentation,
 	findDataset,
 	loadStudies,
@@ -12,10 +13,26 @@ import {
 import { rankingBars } from './datasets';
 
 describe('contrato editorial', () => {
-	it('carga exactamente los trece estudios y siete datasets canónicos', async () => {
+	it('carga los trece estudios y el conjunto exacto de datasets canónicos', async () => {
 		const studies = await loadStudies();
 		expect(studies).toHaveLength(13);
-		expect(studies.flatMap((study) => study.datasets)).toHaveLength(7);
+		expect(
+			studies
+				.flatMap((study) => study.datasets)
+				.map(({ id }) => id)
+				.sort(),
+		).toEqual([
+			'agent-candidate-matrix',
+			'agent-framework-compatibility',
+			'agent-model-compatibility',
+			'agent-profile-recommendations',
+			'framework-adoption-ranking',
+			'framework-profile-recommendations',
+			'framework-quality-ranking',
+			'framework-sensitivity',
+			'llm-global-ranking',
+			'llm-sdlc-map',
+		]);
 	});
 
 	it('rechaza metadatos incompletos con el campo localizado', () => {
@@ -33,6 +50,67 @@ describe('contrato editorial', () => {
 | A | 1 |
 <!-- /ai-sdlc-dataset -->`;
 		expect(() => parseDatasets(markdown, 'bad.md')).toThrow(/falta una columna/);
+	});
+
+	it('rechaza roles, claves y reglas sin candidato principal', () => {
+		const table = (candidates: string) => `<!-- ai-sdlc-dataset: id=bad schema=profile-recommendation unit=categorical -->
+| Clave de contexto | Perfil | Candidatos | Herramienta | Motivo | Caveat |
+| --- | --- | --- | --- | --- | --- |
+| contexto | Perfil válido | ${candidates} | Herramienta válida | Motivo suficientemente explícito | Caveat suficientemente explícito |
+<!-- /ai-sdlc-dataset -->`;
+
+		expect(() => parseDatasets(table('winner:tool'), 'bad.md')).toThrow(
+			/rol de candidato inválido/,
+		);
+		expect(() => parseDatasets(table('primary:Clave_Mala'), 'bad.md')).toThrow(
+			/clave de candidato inválida/,
+		);
+		expect(() => parseDatasets(table('alternative:tool'), 'bad.md')).toThrow(
+			/no contiene candidato principal/,
+		);
+	});
+
+	it('rechaza estados, parejas duplicadas y procedencia ausente', () => {
+		const compatibility = (rows: string) => `<!-- ai-sdlc-dataset: id=bad schema=compatibility-matrix unit=categorical -->
+| Clave de agente | Agente | Clave de componente | Componente | Estado | Mecanismo | Nota | Fuente | Verificado el |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+${rows}
+<!-- /ai-sdlc-dataset -->`;
+		const validRow =
+			'| agent | Agent | component | Component | nativa | Directa | Nota | https://example.com | 2026-07-22 |';
+
+		expect(() =>
+			parseDatasets(
+				compatibility(validRow.replace('nativa', 'desconocida')),
+				'bad.md',
+			),
+		).toThrow(/estado de compatibilidad inválido/);
+		expect(() =>
+			parseDatasets(compatibility(`${validRow}\n${validRow}`), 'bad.md'),
+		).toThrow(/relación duplicada/);
+		expect(() =>
+			parseDatasets(
+				compatibility(validRow.replace('https://example.com', '')),
+				'bad.md',
+			),
+		).toThrow(/carece de mecanismo, nota o fuente/);
+	});
+
+	it('rechaza historias relacionadas duplicadas o inexistentes', async () => {
+		const studies = await loadStudies();
+		const metadata = studies[0].metadata;
+		expect(
+			metadataSchema.safeParse({
+				...metadata,
+				relatedStories: ['configurador-stack', 'configurador-stack'],
+			}).success,
+		).toBe(false);
+		expect(() =>
+			assertKnownStoryReferences(
+				{ ...metadata, relatedStories: ['historia-inexistente'] },
+				'ejemplo.md',
+			),
+		).toThrow(/historia relacionada inexistente/);
 	});
 
 	it('rechaza un estudio cuya fecha solo aparece en la prosa', () => {

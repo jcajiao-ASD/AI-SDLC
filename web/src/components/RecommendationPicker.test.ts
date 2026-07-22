@@ -1,28 +1,36 @@
 import { describe, expect, it } from 'vitest';
-import { agentRecommendations } from './RecommendationPicker';
+import { findDataset, loadStudies } from '../lib/research';
+import { recommendationOptions } from '../lib/stack';
 
 describe('reglas de recomendación de agentes', () => {
-	it('condiciona Copilot CLI al ecosistema GitHub', () => {
-		expect(agentRecommendations.github.tool).toBe('GitHub Copilot CLI');
-		expect(agentRecommendations.github.caveat).toMatch(/condicionada/i);
-	});
+	it('deriva cada opción configurable desde el dataset canónico', async () => {
+		const studies = await loadStudies();
+		const options = recommendationOptions(
+			findDataset(studies, 'agent-profile-recommendations'),
+		);
 
-	it('no fuerza un ganador cuando no hay ecosistema central', () => {
-		expect(agentRecommendations.unclear.tool).toBe('Piloto comparativo');
-	});
-
-	it('cubre cada perfil declarado con una regla y un caveat', () => {
-		expect(Object.keys(agentRecommendations)).toEqual([
+		expect(options.map(({ key }) => key)).toEqual([
 			'github',
-			'ide',
+			'ide-jira',
 			'jetbrains',
-			'open',
-			'unclear',
+			'apertura',
+			'sin-centro',
 		]);
-		for (const recommendation of Object.values(agentRecommendations)) {
-			expect(recommendation.tool.length).toBeGreaterThan(3);
-			expect(recommendation.reason.length).toBeGreaterThan(20);
-			expect(recommendation.caveat.length).toBeGreaterThan(20);
+		expect(
+			options.find(({ key }) => key === 'github')?.recommendation,
+		).toMatch(/GitHub Copilot CLI/);
+		expect(
+			options.find(({ key }) => key === 'sin-centro')?.candidates,
+		).toEqual([
+			{ role: 'pilot', key: 'cursor' },
+			{ role: 'pilot', key: 'junie' },
+			{ role: 'pilot', key: 'opencode' },
+		]);
+
+		for (const option of options) {
+			expect(option.recommendation.length).toBeGreaterThan(3);
+			expect(option.reason.length).toBeGreaterThan(20);
+			expect(option.caveat.length).toBeGreaterThan(20);
 		}
 	});
 });

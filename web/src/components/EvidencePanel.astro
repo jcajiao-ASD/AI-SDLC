@@ -5,13 +5,14 @@ import type { ResearchMetadata } from '../lib/types';
 
 interface Props {
 	metadata: ResearchMetadata;
+	label?: string;
 }
 
-const { metadata } = Astro.props;
+const { metadata, label = 'Ficha de evidencia' } = Astro.props;
 const stale = isPastRevalidation(metadata);
 ---
 
-<aside class="evidence" aria-label="Ficha de evidencia">
+<aside class="evidence" aria-label={label}>
 	<div>
 		<p class="evidence__label">Evidencia y vigencia</p>
 		<h2>{metadata.title}</h2>

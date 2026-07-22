@@ -84,7 +84,11 @@ const whyHeader = column(sdlcMap, /por que/);
 			</div>
 			<details>
 				<summary>Consultar tabla completa accesible</summary>
-				<DataTable dataset={sdlcMap} caption="Mejor LLM por fase del SDLC" />
+				<DataTable
+					dataset={sdlcMap}
+					caption="Mejor LLM por fase del SDLC"
+					hiddenColumns={['Clave de contexto', 'Candidatos']}
+				/>
 			</details>
 		</div>
 	</section>
@@ -101,6 +105,9 @@ const whyHeader = column(sdlcMap, /por que/);
 				<a class="button-link" href={withBase('/metodologia/')}>Entender metodología</a>
 				<a class="button-link button-link--secondary" href={withBase(`/investigaciones/${study.metadata.slug}/`)}>
 					Leer estudio completo
+				</a>
+				<a class="button-link button-link--secondary" href={withBase('/historias/configurador-stack/')}>
+					Configurar stack completo
 				</a>
 			</div>
 			<EvidencePanel metadata={study.metadata} />

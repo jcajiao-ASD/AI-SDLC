@@ -11,6 +11,8 @@ evidenceLevel: mixta
 decisionType: seleccion-modelo
 role: featured-source
 featuredStory: llm-por-fase
+relatedStories:
+  - configurador-stack
 ---
 
 # Comparativa de LLMs para Ingeniería de Software en el Ciclo SDLC
@@ -479,16 +481,16 @@ recuerda que **la especialización, no la dominancia universal, define 2026**
 [29][30].
 
 <!-- ai-sdlc-dataset: id=llm-sdlc-map schema=sdlc-map unit=categorical -->
-| Fase del SDLC | Qué exige la fase | **Mejor LLM** | Alternativa / económico | Por qué |
-| --- | --- | --- | --- | --- |
-| **1. Requisitos y especificación** | Comprensión de lenguaje natural ambiguo, razonamiento, ingerir mucha documentación de stakeholders, investigación de mercado/normativa | **GPT-5.6 Sol** (razonamiento) | **Gemini 3.1 Pro** (1M contexto + *grounding* con Google Search para requisitos investigados) | Razonamiento frontera para desambiguar y estructurar; Gemini si hay que leer corpus enormes o investigar en la web [3][8][29] |
-| **2. Diseño y arquitectura** | Razonamiento profundo, análisis de *trade-offs*, visión de sistema completo, contexto amplio | **Claude Fable 5** | GPT-5.6 Sol | Máxima inteligencia bruta (Index 60, HLE 53.3 %) + 1M de contexto para sostener todo el sistema en la cabeza [1][9][10] |
-| **3. Codificación e implementación** | Parcheo correcto, *refactors* multiarchivo, autonomía en el repo | **Claude Fable 5** (calidad) / **GPT-5.6 Sol** (velocidad agéntica) | Sonnet 5; DeepSeek V4 Pro (open) | Fable 5 lidera SWE-bench (~95 %) y no se desvía en cadenas largas; Sol lidera el Coding Agent Index (80) con mejor coste/tarea [11][13][22] |
-| **4. Pruebas y QA** | Fiabilidad/consistencia, cobertura de casos borde, alto volumen a bajo coste | **Claude Sonnet 5** | GPT-5.6 Terra; Haiku 4.5 | Claude destaca en consistencia y generación/explicación de pruebas; Sonnet 5 da 1M de contexto a precio medio [1][29][31] |
-| **5. Revisión de código** | Precisión, pocos falsos positivos, contexto de todo el repo | **Claude Fable 5 / Opus 4.8** | GPT-5.6 Sol (`@codex review` P0/P1) | Lidera SWE-bench Pro (80.3 %) y la comprensión de bases grandes; Sol filtra bien severidad en revisión [13][14][33] |
-| **6. DevOps / CI-CD / despliegue** | Autonomía en terminal real, IaC (YAML/Docker/K8s), recuperación de errores | **GPT-5.6 Sol** | Gemini 3.5 Flash (scripts baratos) | #1 en Terminal-Bench y uso de computadora (OSWorld); la fase más "agéntica de terminal" [3][11][16] |
-| **7. Documentación** | Escritura técnica clara, mucho volumen, coste/velocidad | **Gemini 3.1 Pro** | GPT-5.6 Luna; Claude Haiku 4.5 | 1M de contexto + bajo coste + alta velocidad para documentar repos enteros de forma económica [8][12] |
-| **8. Mantenimiento y depuración** | Comprensión de código heredado, contexto masivo, depuración de larga duración | **Claude Fable 5** | Sonnet 5; Grok 4.5 (contexto 2M) | 1M de contexto + fiabilidad en cadenas largas sin perder el hilo; Grok si el repo excede 1M de tokens [1][22] |
+| Clave de contexto | Candidatos | Fase del SDLC | Qué exige la fase | **Mejor LLM** | Alternativa / económico | Por qué |
+| --- | --- | --- | --- | --- | --- | --- |
+| `requisitos` | `primary:gpt-5-6-sol` | **1. Requisitos y especificación** | Comprensión de lenguaje natural ambiguo, razonamiento, ingerir mucha documentación de stakeholders, investigación de mercado/normativa | **GPT-5.6 Sol** (razonamiento) | **Gemini 3.1 Pro** (1M contexto + *grounding* con Google Search para requisitos investigados) | Razonamiento frontera para desambiguar y estructurar; Gemini si hay que leer corpus enormes o investigar en la web [3][8][29] |
+| `diseno` | `primary:claude-fable-5` | **2. Diseño y arquitectura** | Razonamiento profundo, análisis de *trade-offs*, visión de sistema completo, contexto amplio | **Claude Fable 5** | GPT-5.6 Sol | Máxima inteligencia bruta (Index 60, HLE 53.3 %) + 1M de contexto para sostener todo el sistema en la cabeza [1][9][10] |
+| `implementacion` | `co-primary:claude-fable-5;co-primary:gpt-5-6-sol` | **3. Codificación e implementación** | Parcheo correcto, *refactors* multiarchivo, autonomía en el repo | **Claude Fable 5** (calidad) / **GPT-5.6 Sol** (velocidad agéntica) | Sonnet 5; DeepSeek V4 Pro (open) | Fable 5 lidera SWE-bench (~95 %) y no se desvía en cadenas largas; Sol lidera el Coding Agent Index (80) con mejor coste/tarea [11][13][22] |
+| `pruebas` | `primary:claude-sonnet-5` | **4. Pruebas y QA** | Fiabilidad/consistencia, cobertura de casos borde, alto volumen a bajo coste | **Claude Sonnet 5** | GPT-5.6 Terra; Haiku 4.5 | Claude destaca en consistencia y generación/explicación de pruebas; Sonnet 5 da 1M de contexto a precio medio [1][29][31] |
+| `revision` | `co-primary:claude-fable-5;co-primary:claude-opus-4-8` | **5. Revisión de código** | Precisión, pocos falsos positivos, contexto de todo el repo | **Claude Fable 5 / Opus 4.8** | GPT-5.6 Sol (`@codex review` P0/P1) | Lidera SWE-bench Pro (80.3 %) y la comprensión de bases grandes; Sol filtra bien severidad en revisión [13][14][33] |
+| `devops` | `primary:gpt-5-6-sol` | **6. DevOps / CI-CD / despliegue** | Autonomía en terminal real, IaC (YAML/Docker/K8s), recuperación de errores | **GPT-5.6 Sol** | Gemini 3.5 Flash (scripts baratos) | #1 en Terminal-Bench y uso de computadora (OSWorld); la fase más "agéntica de terminal" [3][11][16] |
+| `documentacion` | `primary:gemini-3-1-pro` | **7. Documentación** | Escritura técnica clara, mucho volumen, coste/velocidad | **Gemini 3.1 Pro** | GPT-5.6 Luna; Claude Haiku 4.5 | 1M de contexto + bajo coste + alta velocidad para documentar repos enteros de forma económica [8][12] |
+| `mantenimiento` | `primary:claude-fable-5` | **8. Mantenimiento y depuración** | Comprensión de código heredado, contexto masivo, depuración de larga duración | **Claude Fable 5** | Sonnet 5; Grok 4.5 (contexto 2M) | 1M de contexto + fiabilidad en cadenas largas sin perder el hilo; Grok si el repo excede 1M de tokens [1][22] |
 <!-- /ai-sdlc-dataset -->
 
 **Síntesis de la tabla:**

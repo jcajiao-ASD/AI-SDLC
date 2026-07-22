@@ -22,6 +22,11 @@ import {
 	type ResearchStudy,
 } from './types';
 import { withBase } from './paths';
+import {
+	isStableKey,
+	parseCandidateReferences,
+	technicalValue,
+} from './recommendation-contract';
 
 const researchDirectory =
 	process.env.RESEARCH_DIR || resolve(process.cwd(), '..', 'research');
@@ -50,6 +55,12 @@ export const metadataSchema = z
 			.string()
 			.regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
 			.optional(),
+		relatedStories: z
+			.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/))
+			.refine((values) => new Set(values).size === values.length, {
+				message: 'relatedStories no puede contener duplicados',
+			})
+			.optional(),
 	})
 	.superRefine((metadata, context) => {
 		if (metadata.revalidateAfter < metadata.cutoffDate) {
@@ -77,6 +88,7 @@ const supportedSchemas = new Set<DatasetSchema>([
 	'candidate-matrix',
 	'profile-recommendation',
 	'sensitivity-series',
+	'compatibility-matrix',
 ]);
 
 export const storyDatasetIds = new Set([
@@ -87,7 +99,19 @@ export const storyDatasetIds = new Set([
 	'framework-adoption-ranking',
 	'framework-quality-ranking',
 	'framework-sensitivity',
+	'framework-profile-recommendations',
+	'agent-model-compatibility',
+	'agent-framework-compatibility',
 ]);
+
+export const storyDefinitions = {
+	'llm-por-fase': 'Qué LLM usar en cada fase del SDLC',
+	'seleccion-agente': 'Qué agente elegir según tu ecosistema',
+	'seleccion-framework': 'Qué framework agéntico adoptar',
+	'configurador-stack': 'Configurar un stack AI-SDLC compatible',
+} as const;
+
+const storySlugs = new Set(Object.keys(storyDefinitions));
 
 export function findEmojiPresentation(value: string): string | undefined {
 	return value.match(emojiPresentationPattern)?.[0];
@@ -173,22 +197,148 @@ function requireHeaders(
 	}
 }
 
+function header(dataset: ResearchDataset, pattern: RegExp): string {
+	const found = dataset.headers.find((candidate) =>
+		pattern.test(normalizeHeader(candidate)),
+	);
+	if (!found) {
+		throw new Error(`Dataset ${dataset.id}: columna no encontrada (${pattern})`);
+	}
+	return found;
+}
+
+function normalizedCell(value: string): string {
+	return value
+		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+		.replace(/[*_`]/g, '')
+		.normalize('NFD')
+		.replace(/\p{Diacritic}/gu, '')
+		.toLowerCase()
+		.trim();
+}
+
+function validateRecommendationRows(dataset: ResearchDataset): void {
+	const contextHeader = header(dataset, /clave de contexto/);
+	const candidatesHeader = header(dataset, /candidatos/);
+	const configurableHeader = dataset.headers.find((candidate) =>
+		/configurable/.test(normalizeHeader(candidate)),
+	);
+
+	for (const [index, row] of dataset.rows.entries()) {
+		if (
+			configurableHeader &&
+			['no', 'false'].includes(normalizedCell(row[configurableHeader]))
+		) {
+			continue;
+		}
+		const contextKey = technicalValue(row[contextHeader]);
+		if (!isStableKey(contextKey)) {
+			throw new Error(
+				`Dataset ${dataset.id}: fila ${index + 1} tiene clave de contexto inválida (${contextKey})`,
+			);
+		}
+		parseCandidateReferences(
+			row[candidatesHeader],
+			`Dataset ${dataset.id}, fila ${index + 1}`,
+		);
+	}
+}
+
+function validateCompatibilityRows(dataset: ResearchDataset): void {
+	const agentKeyHeader = header(dataset, /clave de agente/);
+	const componentKeyHeader = header(dataset, /clave de componente/);
+	const statusHeader = header(dataset, /estado/);
+	const mechanismHeader = header(dataset, /mecanismo/);
+	const noteHeader = header(dataset, /nota/);
+	const sourceHeader = header(dataset, /fuente/);
+	const verifiedHeader = header(dataset, /verificado el/);
+	const statuses = new Set([
+		'nativa',
+		'condicionada',
+		'incompatible',
+		'no-confirmada',
+	]);
+	const pairs = new Set<string>();
+
+	for (const [index, row] of dataset.rows.entries()) {
+		const agentKey = technicalValue(row[agentKeyHeader]);
+		const componentKey = technicalValue(row[componentKeyHeader]);
+		const pair = `${agentKey}:${componentKey}`;
+		if (!isStableKey(agentKey) || !isStableKey(componentKey)) {
+			throw new Error(
+				`Dataset ${dataset.id}: fila ${index + 1} contiene una clave inválida`,
+			);
+		}
+		if (pairs.has(pair)) {
+			throw new Error(`Dataset ${dataset.id}: relación duplicada (${pair})`);
+		}
+		pairs.add(pair);
+		if (!statuses.has(row[statusHeader])) {
+			throw new Error(
+				`Dataset ${dataset.id}: estado de compatibilidad inválido (${row[statusHeader]})`,
+			);
+		}
+		if (
+			!row[mechanismHeader].trim() ||
+			!row[noteHeader].trim() ||
+			!row[sourceHeader].trim()
+		) {
+			throw new Error(
+				`Dataset ${dataset.id}: fila ${index + 1} carece de mecanismo, nota o fuente`,
+			);
+		}
+		if (!datePattern.test(row[verifiedHeader])) {
+			throw new Error(
+				`Dataset ${dataset.id}: fecha de verificación inválida (${row[verifiedHeader]})`,
+			);
+		}
+	}
+}
+
 function validateDatasetShape(dataset: ResearchDataset): void {
 	switch (dataset.schema) {
 		case 'weighted-ranking':
 			requireHeaders(dataset, [/puesto/, /(modelo|framework)/, /(puntuacion|puntaje|total)/]);
 			break;
 		case 'sdlc-map':
-			requireHeaders(dataset, [/fase del sdlc/, /(mejor llm|modelo recomendado)/]);
+			requireHeaders(dataset, [
+				/clave de contexto/,
+				/candidatos/,
+				/fase del sdlc/,
+				/(mejor llm|modelo recomendado)/,
+			]);
+			validateRecommendationRows(dataset);
 			break;
 		case 'candidate-matrix':
-			requireHeaders(dataset, [/candidato/, /(harness|sdlc)/]);
+			requireHeaders(dataset, [/clave de agente/, /candidato/, /(harness|sdlc)/]);
 			break;
 		case 'profile-recommendation':
-			requireHeaders(dataset, [/perfil/, /herramienta/]);
+			requireHeaders(dataset, [
+				/clave de contexto/,
+				/candidatos/,
+				/(perfil|escenario)/,
+				/(herramienta|recomendacion)/,
+				/(motivo|por que)/,
+				/(caveat|limite)/,
+			]);
+			validateRecommendationRows(dataset);
 			break;
 		case 'sensitivity-series':
 			requireHeaders(dataset, [/peso agregado/, /lider/]);
+			break;
+		case 'compatibility-matrix':
+			requireHeaders(dataset, [
+				/clave de agente/,
+				/^agente$/,
+				/clave de componente/,
+				/^componente$/,
+				/estado/,
+				/mecanismo/,
+				/nota/,
+				/fuente/,
+				/verificado el/,
+			]);
+			validateCompatibilityRows(dataset);
 			break;
 	}
 }
@@ -240,6 +390,140 @@ export function parseStudy(
 
 let studiesPromise: Promise<ResearchStudy[]> | undefined;
 
+function datasetById(
+	studies: ResearchStudy[],
+	id: string,
+): ResearchDataset {
+	const dataset = studies.flatMap((study) => study.datasets).find((item) => item.id === id);
+	if (!dataset) throw new Error(`Dataset requerido inexistente: ${id}`);
+	return dataset;
+}
+
+function keysFromColumn(dataset: ResearchDataset, pattern: RegExp): Set<string> {
+	const keyHeader = header(dataset, pattern);
+	return new Set(dataset.rows.map((row) => technicalValue(row[keyHeader])));
+}
+
+function validateRecommendationReferences(
+	dataset: ResearchDataset,
+	allowedKeys: Set<string>,
+): void {
+	const candidatesHeader = header(dataset, /candidatos/);
+	const configurableHeader = dataset.headers.find((candidate) =>
+		/configurable/.test(normalizeHeader(candidate)),
+	);
+	for (const [index, row] of dataset.rows.entries()) {
+		if (
+			configurableHeader &&
+			['no', 'false'].includes(normalizedCell(row[configurableHeader]))
+		) {
+			continue;
+		}
+		for (const reference of parseCandidateReferences(
+			row[candidatesHeader],
+			`Dataset ${dataset.id}, fila ${index + 1}`,
+		)) {
+			if (reference.role !== 'none' && !allowedKeys.has(reference.key)) {
+				throw new Error(
+					`Dataset ${dataset.id}: candidato inexistente (${reference.key})`,
+				);
+			}
+		}
+	}
+}
+
+function normalizedCompatibilityLookup(dataset: ResearchDataset): Map<string, string> {
+	const agentHeader = header(dataset, /clave de agente/);
+	const componentHeader = header(dataset, /clave de componente/);
+	const statusHeader = header(dataset, /estado/);
+	return new Map(
+		dataset.rows.map((row) => [
+			`${technicalValue(row[agentHeader])}:${technicalValue(row[componentHeader])}`,
+			row[statusHeader],
+		]),
+	);
+}
+
+function validateCandidateMatrixConsistency(
+	candidates: ResearchDataset,
+	modelCompatibility: ResearchDataset,
+): void {
+	const agentHeader = header(candidates, /clave de agente/);
+	const compatibility = normalizedCompatibilityLookup(modelCompatibility);
+	const mappings = [
+		{ header: header(candidates, /fable 5/), model: 'claude-fable-5' },
+		{ header: header(candidates, /gpt-5\.6 sol/), model: 'gpt-5-6-sol' },
+		{ header: header(candidates, /gemini 3\.x/), model: 'gemini-3-1-pro' },
+	];
+
+	for (const row of candidates.rows) {
+		for (const mapping of mappings) {
+			const summary = normalizedCell(row[mapping.header]);
+			const expected = summary.includes('byok')
+				? 'condicionada'
+				: summary.includes('nativo') || summary.startsWith('si')
+					? 'nativa'
+					: undefined;
+			if (!expected) continue;
+			const agentKey = technicalValue(row[agentHeader]);
+			const actual = compatibility.get(`${agentKey}:${mapping.model}`);
+			if (actual !== expected) {
+				throw new Error(
+					`Datasets de agentes inconsistentes para ${agentKey}:${mapping.model} (${expected} frente a ${actual ?? 'ausente'})`,
+				);
+			}
+		}
+	}
+}
+
+function validateCrossReferences(studies: ResearchStudy[]): void {
+	for (const study of studies) {
+		assertKnownStoryReferences(study.metadata, study.fileName);
+	}
+
+	const candidates = datasetById(studies, 'agent-candidate-matrix');
+	const agentModel = datasetById(studies, 'agent-model-compatibility');
+	const agentFramework = datasetById(studies, 'agent-framework-compatibility');
+	const agentKeys = keysFromColumn(candidates, /clave de agente/);
+	const modelKeys = keysFromColumn(agentModel, /clave de componente/);
+	const frameworkKeys = keysFromColumn(agentFramework, /clave de componente/);
+
+	for (const matrix of [agentModel, agentFramework]) {
+		for (const key of keysFromColumn(matrix, /clave de agente/)) {
+			if (!agentKeys.has(key)) {
+				throw new Error(`Dataset ${matrix.id}: agente inexistente (${key})`);
+			}
+		}
+	}
+
+	validateRecommendationReferences(
+		datasetById(studies, 'agent-profile-recommendations'),
+		agentKeys,
+	);
+	validateRecommendationReferences(datasetById(studies, 'llm-sdlc-map'), modelKeys);
+	validateRecommendationReferences(
+		datasetById(studies, 'framework-profile-recommendations'),
+		frameworkKeys,
+	);
+	validateCandidateMatrixConsistency(candidates, agentModel);
+}
+
+export function assertKnownStoryReferences(
+	metadata: ResearchMetadata,
+	fileName: string,
+): void {
+	for (const story of [
+		metadata.featuredStory,
+		...(metadata.relatedStories ?? []),
+	].filter((value): value is string => Boolean(value))) {
+		if (!storySlugs.has(story)) {
+			throw new Error(
+				`${fileName}: historia relacionada inexistente (${story})`,
+			);
+		}
+	}
+}
+
 export async function loadStudies(): Promise<ResearchStudy[]> {
 	studiesPromise ??= (async () => {
 		const fileNames = (await readdir(researchDirectory))
@@ -278,6 +562,7 @@ export async function loadStudies(): Promise<ResearchStudy[]> {
 			if (!datasetIds.has(datasetId)) {
 				throw new Error(`Dataset requerido inexistente: ${datasetId}`);
 			}
+			validateCrossReferences(studies);
 		}
 
 		return studies.sort((a, b) =>
@@ -340,16 +625,17 @@ export async function renderStudy(
 	return String(rendered);
 }
 
+export async function renderInlineMarkdown(markdown: string): Promise<string> {
+	const rendered = await unified()
+		.use(remarkParse)
+		.use(remarkGfm)
+		.use(remarkRehype)
+		.use(rehypeStringify)
+		.process(markdown);
+	return String(rendered).replace(/^<p>/, '').replace(/<\/p>\n?$/, '');
+}
+
 export function isPastRevalidation(metadata: ResearchMetadata, today = new Date()): boolean {
 	const isoToday = today.toISOString().slice(0, 10);
 	return metadata.status === 'requiere-revalidacion' || isoToday > metadata.revalidateAfter;
-}
-
-export function numericValue(value: string): number | undefined {
-	const normalized = value
-		.replace(/<[^>]+>/g, '')
-		.replace(/[*_]/g, '')
-		.replace(',', '.')
-		.match(/-?\d+(?:\.\d+)?/);
-	return normalized ? Number(normalized[0]) : undefined;
 }
