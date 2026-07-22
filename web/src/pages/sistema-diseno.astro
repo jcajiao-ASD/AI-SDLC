@@ -39,14 +39,53 @@ import Caveat from '../components/Caveat.astro';
 			</div>
 		</section>
 
-		<section>
-			<h2>Color semántico</h2>
+		<section aria-labelledby="paleta-tinta-costera">
+			<h2 id="paleta-tinta-costera">Paleta Tinta Costera</h2>
+			<p>
+				Los índigos aportan profundidad, el teal concentra los acentos y los
+				tintes claros mantienen una composición abierta y aireada.
+			</p>
 			<div class="swatches">
-				<div class="swatch swatch--brand">Decisión / marca</div>
-				<div class="swatch swatch--accent">Énfasis</div>
-				<div class="swatch swatch--warning">Advertencia</div>
-				<div class="swatch swatch--info">Información</div>
+				<div class="swatch swatch--deep" data-palette-color="#12233F">
+					<div class="swatch__label">
+						<strong>Índigo profundo</strong>
+						<code>#12233F</code>
+						<span>Encabezados, navegación y superficies oscuras</span>
+					</div>
+				</div>
+				<div class="swatch swatch--indigo" data-palette-color="#243B77">
+					<div class="swatch__label">
+						<strong>Índigo interactivo</strong>
+						<code>#243B77</code>
+						<span>Enlaces, botones y estados positivos</span>
+					</div>
+				</div>
+				<div class="swatch swatch--teal" data-palette-color="#2F7EA8">
+					<div class="swatch__label">
+						<strong>Teal de acento</strong>
+						<code>#2F7EA8</code>
+						<span>Iconos, gráficos, foco y acentos</span>
+					</div>
+				</div>
+				<div class="swatch swatch--aqua" data-palette-color="#CBEAF2">
+					<div class="swatch__label">
+						<strong>Aqua pálido</strong>
+						<code>#CBEAF2</code>
+						<span>Fondos destacados y separación de secciones</span>
+					</div>
+				</div>
+				<div class="swatch swatch--paper" data-palette-color="#F7FBFF">
+					<div class="swatch__label">
+						<strong>Blanco costero</strong>
+						<code>#F7FBFF</code>
+						<span>Fondo general y espacio abierto</span>
+					</div>
+				</div>
 			</div>
+			<p class="palette-note">
+				El ámbar se conserva exclusivamente para advertencias; el teal no se usa
+				como texto normal sobre fondos claros.
+			</p>
 		</section>
 
 		<section>
@@ -108,7 +147,7 @@ import Caveat from '../components/Caveat.astro';
 				<table class="data-table">
 					<thead><tr><th>Señal</th><th>Representación</th><th>Alternativa no cromática</th></tr></thead>
 					<tbody>
-						<tr><td>Vigencia</td><td>Verde / ámbar</td><td>Texto de estado</td></tr>
+						<tr><td>Vigencia</td><td>Índigo / ámbar</td><td>Texto e icono de estado</td></tr>
 						<tr><td>Confianza</td><td>Badge informativo</td><td>Etiqueta explícita</td></tr>
 						<tr><td>Selección</td><td>Contorno y contraste</td><td>Foco y atributo seleccionado</td></tr>
 					</tbody>
@@ -167,7 +206,7 @@ import Caveat from '../components/Caveat.astro';
 
 	.swatches {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 		gap: var(--space-3);
 	}
 
@@ -195,19 +234,55 @@ import Caveat from '../components/Caveat.astro';
 	}
 
 	.swatch {
-		display: grid;
-		min-height: 8rem;
-		place-items: end start;
-		padding: var(--space-4);
+		display: flex;
+		flex-direction: column;
+		min-height: 10rem;
+		justify-content: flex-end;
+		align-items: flex-start;
 		border-radius: var(--radius-lg);
-		color: white;
+		overflow: hidden;
+	}
+
+	.swatch__label {
+		display: grid;
+		width: 100%;
+		gap: var(--space-1);
+		margin-top: auto;
+		padding: var(--space-3) var(--space-4);
+		background: var(--color-surface);
+		color: var(--color-ink);
+	}
+
+	.swatch__label strong {
 		font-weight: 800;
 	}
 
-	.swatch--brand { background: var(--color-brand); }
-	.swatch--accent { background: var(--color-accent); }
-	.swatch--warning { background: var(--color-warning); }
-	.swatch--info { background: var(--color-info); }
+	.swatch__label code {
+		color: inherit;
+		font-family: var(--font-mono);
+		font-size: var(--step--1);
+	}
+
+	.swatch__label span {
+		font-size: 0.75rem;
+		line-height: 1.4;
+	}
+
+	.swatch--deep { background: var(--color-coast-deep); }
+	.swatch--indigo { background: var(--color-coast-indigo); }
+	.swatch--teal { background: var(--color-coast-teal); }
+	.swatch--aqua {
+		background: var(--color-coast-aqua);
+	}
+	.swatch--paper {
+		border: 1px solid var(--color-line-strong);
+		background: var(--color-coast-paper);
+	}
+
+	.palette-note {
+		max-width: var(--measure);
+		color: var(--color-ink-soft);
+	}
 
 	section > :global(.summary),
 	section > :global(.caveat) {
@@ -217,10 +292,6 @@ import Caveat from '../components/Caveat.astro';
 	@media (max-width: 700px) {
 		.type-specimens {
 			grid-template-columns: 1fr;
-		}
-
-		.swatches {
-			grid-template-columns: 1fr 1fr;
 		}
 
 		.icon-specimens {

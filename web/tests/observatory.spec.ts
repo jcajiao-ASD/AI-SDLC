@@ -52,6 +52,57 @@ test('JetBrains Mono carga localmente sus variantes reales', async ({ page }) =>
 	expect(fontRequests.every((url) => new URL(url).origin === pageOrigin)).toBe(true);
 });
 
+test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ page }) => {
+	await page.goto('/sistema-diseno/');
+
+	const tokens = await page.evaluate(() => {
+		const styles = getComputedStyle(document.documentElement);
+		return Object.fromEntries(
+			[
+				'--color-coast-deep',
+				'--color-coast-indigo',
+				'--color-coast-teal',
+				'--color-coast-aqua',
+				'--color-coast-paper',
+			].map((name) => [name, styles.getPropertyValue(name).trim().toLowerCase()]),
+		);
+	});
+	expect(tokens).toEqual({
+		'--color-coast-deep': '#12233f',
+		'--color-coast-indigo': '#243b77',
+		'--color-coast-teal': '#2f7ea8',
+		'--color-coast-aqua': '#cbeaf2',
+		'--color-coast-paper': '#f7fbff',
+	});
+
+	await expect(page.locator('[data-palette-color]')).toHaveCount(5);
+	await expect(page.locator('.swatch--aqua')).toHaveCSS('color', 'rgb(18, 35, 63)');
+	await expect(page.locator('.swatch--paper')).toHaveCSS('color', 'rgb(18, 35, 63)');
+
+	const successBadge = page.getByText('Vigente', { exact: true });
+	await expect(successBadge).toHaveCSS('color', 'rgb(36, 59, 119)');
+	await expect(successBadge).toHaveCSS('background-color', 'rgb(203, 234, 242)');
+	await expect(successBadge).toHaveCSS('border-top-color', 'rgb(36, 59, 119)');
+
+	const infoBadge = page.getByText('Evidencia mixta', { exact: true });
+	await expect(infoBadge).toHaveCSS('color', 'rgb(18, 35, 63)');
+	await expect(infoBadge).toHaveCSS('border-top-color', 'rgb(47, 126, 168)');
+
+	const results = await new AxeBuilder({ page }).analyze();
+	expect(results.violations).toEqual([]);
+
+	await page.goto('/');
+	const storyLink = page.getByRole('link', { name: 'Abrir historia' }).first();
+	await storyLink.hover();
+	await expect(storyLink).toHaveCSS('color', 'rgb(36, 59, 119)');
+
+	await page.goto('/historias/llm-por-fase/');
+	await page.locator('.chart-host').first().scrollIntoViewIfNeeded();
+	const chartBar = page.locator('.chart-host svg g[aria-label="bar"] rect').first();
+	await expect(chartBar).toBeVisible();
+	await expect(chartBar).toHaveCSS('fill', 'rgb(47, 126, 168)');
+});
+
 test('el catálogo filtra y conserva rutas navegables', async ({ page }) => {
 	await page.goto('/investigaciones/');
 	await expect(page.getByText('13 investigaciones visibles')).toBeVisible();

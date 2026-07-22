@@ -19,6 +19,9 @@ export default function BarChart({ data, title, description, max = 100 }: Props)
 
 	useEffect(() => {
 		if (!host.current) return;
+		const rootStyles = getComputedStyle(document.documentElement);
+		const coastTeal = rootStyles.getPropertyValue('--color-coast-teal').trim();
+		const coastDeep = rootStyles.getPropertyValue('--color-coast-deep').trim();
 		const chart = Plot.plot({
 			ariaLabel: `${title}. ${description}`,
 			height: Math.max(260, data.length * 54),
@@ -31,7 +34,7 @@ export default function BarChart({ data, title, description, max = 100 }: Props)
 					x: 'value',
 					y: 'label',
 					sort: { y: '-x' },
-					fill: '#155e4b',
+					fill: coastTeal,
 					tip: true,
 					title: (datum) => `${datum.label}: ${datum.value}${datum.detail ? ` · ${datum.detail}` : ''}`,
 				}),
@@ -40,7 +43,7 @@ export default function BarChart({ data, title, description, max = 100 }: Props)
 					y: 'label',
 					text: (datum) => String(datum.value),
 					dx: 16,
-					fill: '#17211c',
+					fill: coastDeep,
 					fontWeight: 700,
 				}),
 			],
