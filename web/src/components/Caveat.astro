@@ -1,4 +1,6 @@
 ---
+import { TriangleAlert } from '@lucide/astro';
+
 interface Props {
 	title?: string;
 }
@@ -7,7 +9,10 @@ const { title = 'Límite de interpretación' } = Astro.props;
 ---
 
 <aside class="caveat" aria-label={title}>
-	<strong>{title}</strong>
+	<strong class="caveat__title">
+		<TriangleAlert class="icon" aria-hidden="true" focusable="false" />
+		<span>{title}</span>
+	</strong>
 	<div><slot /></div>
 </aside>
 
@@ -18,6 +23,12 @@ const { title = 'Límite de interpretación' } = Astro.props;
 		border-radius: 0 var(--radius-md) var(--radius-md) 0;
 		background: var(--color-warning-bg);
 		color: #5f390d;
+	}
+
+	.caveat__title {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 
 	.caveat :global(p) {

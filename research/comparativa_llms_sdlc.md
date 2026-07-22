@@ -392,12 +392,12 @@ entrenamiento, retención y confidencialidad en uso** [25].
 
 | Aspecto | Anthropic (Claude) | OpenAI (GPT) | Google (Gemini) |
 | --- | --- | --- | --- |
-| No-entrenamiento (empresa) | ✅ contractual | ✅ por defecto | ✅ (API pago/Vertex) |
-| ZDR disponible | ✅ | ✅ | ✅ (según contrato) |
-| SOC 2 Tipo II | ✅ | ✅ | ✅ (Google Cloud) |
-| ISO/IEC 42001 (gestión de IA) | ✅ (pionero) | (parcial) | (Google Cloud) |
-| HIPAA (BAA) | ✅ Enterprise/API | ✅ vía Azure | ✅ vía GCP |
-| **FedRAMP** | ❌ (jul-2026) | ✅ vía Azure | ✅ vía GCP |
+| No-entrenamiento (empresa) | Contractual | Sí por defecto | Sí (API pago/Vertex) |
+| ZDR disponible | Sí | Sí | Sí (según contrato) |
+| SOC 2 Tipo II | Sí | Sí | Sí (Google Cloud) |
+| ISO/IEC 42001 (gestión de IA) | Sí (pionero) | (parcial) | (Google Cloud) |
+| HIPAA (BAA) | Sí, Enterprise/API | Sí, vía Azure | Sí, vía GCP |
+| **FedRAMP** | No (jul-2026) | Sí, vía Azure | Sí, vía GCP |
 | Residencia de datos | US/UE (AWS Bedrock) | La más granular (Azure) | UE y global (Vertex) |
 | Confidential computing (TEE) | *White paper* publicado; disponibilidad a confirmar | Vía Azure confidential GPU | Vía GCP confidential GPU |
 
@@ -432,9 +432,9 @@ Privacidad 20 %**.
 <!-- ai-sdlc-dataset: id=llm-global-ranking schema=weighted-ranking unit=score-100 -->
 | Puesto | Modelo | Puntuación ponderada |
 | --- | --- | --- |
-| 🥇 | **GPT-5.6 Sol** | **88.5** |
-| 🥈 | **Gemini 3.1 Pro** | **86.0** |
-| 🥉 | **Claude Fable 5** | **82.9** |
+| 1.º | **GPT-5.6 Sol** | **88.5** |
+| 2.º | **Gemini 3.1 Pro** | **86.0** |
+| 3.º | **Claude Fable 5** | **82.9** |
 <!-- /ai-sdlc-dataset -->
 
 ### 10.3 Ponderado — Perfil "Calidad crítica / ingeniería sensible"
@@ -445,9 +445,9 @@ Sube inteligencia, agéntica y privacidad; baja precio y tiempo. Pesos:
 
 | Puesto | Modelo | Puntuación ponderada |
 | --- | --- | --- |
-| 🥇 | **GPT-5.6 Sol** | **90.5** |
-| 🥈 | **Claude Fable 5** | **87.0** |
-| 🥉 | **Gemini 3.1 Pro** | **84.7** |
+| 1.º | **GPT-5.6 Sol** | **90.5** |
+| 2.º | **Claude Fable 5** | **87.0** |
+| 3.º | **Gemini 3.1 Pro** | **84.7** |
 
 **Cómo leer el ponderado (importante):**
 

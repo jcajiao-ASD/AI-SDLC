@@ -26,6 +26,8 @@ import { withBase } from './paths';
 const researchDirectory =
 	process.env.RESEARCH_DIR || resolve(process.cwd(), '..', 'research');
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+const emojiPresentationPattern =
+	/\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\uFE0F/u;
 const dateField = z.preprocess(
 	(value) => (value instanceof Date ? value.toISOString().slice(0, 10) : value),
 	z.string().regex(datePattern),
@@ -86,6 +88,22 @@ export const storyDatasetIds = new Set([
 	'framework-quality-ranking',
 	'framework-sensitivity',
 ]);
+
+export function findEmojiPresentation(value: string): string | undefined {
+	return value.match(emojiPresentationPattern)?.[0];
+}
+
+export function assertNoEmojiPresentation(
+	value: string,
+	sourceFile: string,
+): void {
+	const emoji = findEmojiPresentation(value);
+	if (emoji) {
+		throw new Error(
+			`Contenido ${sourceFile}: emoji pictográfico no permitido (${JSON.stringify(emoji)})`,
+		);
+	}
+}
 
 function normalizeHeader(value: string): string {
 	return value
@@ -330,7 +348,7 @@ export function isPastRevalidation(metadata: ResearchMetadata, today = new Date(
 export function numericValue(value: string): number | undefined {
 	const normalized = value
 		.replace(/<[^>]+>/g, '')
-		.replace(/[*_🥇🥈🥉]/g, '')
+		.replace(/[*_]/g, '')
 		.replace(',', '.')
 		.match(/-?\d+(?:\.\d+)?/);
 	return normalized ? Number(normalized[0]) : undefined;

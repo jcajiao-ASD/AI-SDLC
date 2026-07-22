@@ -205,7 +205,7 @@ modelo en abstracto.
 - **Capacidades:** **MCP**, *grounding* nativo con **Google Search**, extensiones,
   **GEMINI.md**, *GitHub Actions* (`@gemini-cli`), subagentes y *checkpointing*
   [13].
-- **⚠️ Cambio decisivo — sunset para individuos (verificado en fuente primaria):**
+- **Advertencia: cambio decisivo — sunset para individuos (verificado en fuente primaria):**
   el **18 de junio de 2026**, Google **dejó de servir peticiones** de Gemini CLI a
   las cuentas gratuitas/personales, Google AI Pro y Ultra, y **desactivó el
   "Login with Google"** [12]. Anunciado en Google I/O 2026, Google está

@@ -1,4 +1,5 @@
 ---
+import { ArrowRight } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Badge from '../components/Badge.astro';
 import ResearchCard from '../components/ResearchCard.astro';
@@ -58,7 +59,10 @@ const stories = [
 						<Badge tone="info">{story.label}</Badge>
 						<h3>{story.title}</h3>
 						<p>{story.description}</p>
-						<a href={withBase(story.href)}>Abrir historia →</a>
+						<a class="story-link" href={withBase(story.href)}>
+							<span>Abrir historia</span>
+							<ArrowRight class="icon" aria-hidden="true" focusable="false" />
+						</a>
 					</article>
 				))}
 			</div>
@@ -108,6 +112,12 @@ const stories = [
 		font-size: var(--step-3);
 		font-weight: 500;
 		line-height: 1.1;
+	}
+
+	.story-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 
 	.section--contrast {

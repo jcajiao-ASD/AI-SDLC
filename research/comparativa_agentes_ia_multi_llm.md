@@ -251,10 +251,10 @@ abarata [31].
 
 | Capacidad | Copilot CLI | Cursor CLI | Junie CLI | OpenCode |
 | --- | --- | --- | --- | --- |
-| Modo Plan | ✅ | ✅ | ✅ | ✅ |
-| Modo autónomo / Autopilot | ✅ (Autopilot) | ✅ (background agents) | Media | ✅ (Build) |
-| Agentes paralelos / multi-sesión | ✅ (fleet) | ✅ | Parcial | ✅ |
-| Delegación en la nube | ✅ | ✅ | CI/CD | Local-first |
+| Modo Plan | Sí | Sí | Sí | Sí |
+| Modo autónomo / Autopilot | Sí (Autopilot) | Sí (background agents) | Media | Sí (Build) |
+| Agentes paralelos / multi-sesión | Sí (fleet) | Sí | Parcial | Sí |
+| Delegación en la nube | Sí | Sí | CI/CD | Local-first |
 | Integración IDE | VS Code / GitHub | Cursor (VS Code) | **JetBrains (profunda)** | Extensión IDE |
 | Integración VCS/PR | **GitHub nativo** | Jira / PR | Revisión de acciones | Configurable |
 | Modelos locales / privacidad | Limitado (ZDR) | Parcial | Sí | **Local-first, sin telemetría** |

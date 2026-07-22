@@ -114,3 +114,31 @@ test('el contenido principal permanece disponible sin JavaScript', async ({ brow
 	await expect(page.getByRole('table', { name: 'Ranking de frameworks con lente adopción-first' })).toBeVisible();
 	await context.close();
 });
+
+test('los iconos se renderizan como SVG inline local', async ({ page }) => {
+	const requests: string[] = [];
+	page.on('request', (request) => requests.push(request.url()));
+
+	await page.goto('/sistema-diseno/');
+	const iconSection = page.getByRole('region', { name: 'Iconografía SVG' });
+	const icons = iconSection.locator('svg.icon');
+	await expect(icons).toHaveCount(4);
+	await expect(icons.first()).toHaveAttribute('aria-hidden', 'true');
+	await expect(iconSection.getByText('Estado positivo', { exact: true })).toBeVisible();
+	await expect(iconSection.getByText('Advertencia', { exact: true })).toBeVisible();
+	await expect(iconSection.getByText('Información', { exact: true })).toBeVisible();
+	await expect(iconSection.getByText('Acción o avance', { exact: true })).toBeVisible();
+
+	await page.goto('/');
+	const storyLinks = page.getByRole('link', { name: 'Abrir historia' });
+	await expect(storyLinks).toHaveCount(3);
+	await expect(storyLinks.first().locator('svg.icon')).toHaveCount(1);
+
+	await page.goto('/investigaciones/comparativa-llms-sdlc/');
+	await expect(page.getByText('No (jul-2026)', { exact: true })).toBeVisible();
+	await expect(page.getByText('1.º', { exact: true }).first()).toBeVisible();
+
+	const origin = new URL(page.url()).origin;
+	const externalRequests = requests.filter((url) => new URL(url).origin !== origin);
+	expect(externalRequests).toEqual([]);
+});

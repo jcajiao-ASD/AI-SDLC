@@ -1,4 +1,6 @@
 ---
+import { CircleCheck, Info, TriangleAlert } from '@lucide/astro';
+
 interface Props {
 	tone?: 'neutral' | 'success' | 'warning' | 'info';
 }
@@ -6,12 +8,24 @@ interface Props {
 const { tone = 'neutral' } = Astro.props;
 ---
 
-<span class:list={['badge', `badge--${tone}`]}><slot /></span>
+<span class:list={['badge', `badge--${tone}`]}>
+	{tone === 'success' && (
+		<CircleCheck class="icon icon--sm" aria-hidden="true" focusable="false" />
+	)}
+	{tone === 'warning' && (
+		<TriangleAlert class="icon icon--sm" aria-hidden="true" focusable="false" />
+	)}
+	{tone === 'info' && (
+		<Info class="icon icon--sm" aria-hidden="true" focusable="false" />
+	)}
+	<slot />
+</span>
 
 <style>
 	.badge {
 		display: inline-flex;
 		align-items: center;
+		gap: var(--space-1);
 		padding: 0.2rem 0.55rem;
 		border: 1px solid var(--color-line);
 		border-radius: 999px;

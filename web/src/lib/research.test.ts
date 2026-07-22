@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+	assertNoEmojiPresentation,
+	findEmojiPresentation,
 	findDataset,
 	loadStudies,
 	metadataSchema,
@@ -64,5 +66,21 @@ Corte: 2026-01-01`;
 		expect(
 			isPastRevalidation(studies[0].metadata, new Date('2027-02-01T00:00:00Z')),
 		).toBe(true);
+	});
+
+	it('rechaza presentación emoji e identifica el archivo', () => {
+		expect(() =>
+			assertNoEmojiPresentation('Estado ✅ y advertencia', 'ejemplo.md'),
+		).toThrow(/ejemplo\.md.*✅/);
+		expect(findEmojiPresentation('Advertencia ⚠️')).toBe('⚠️');
+		expect(findEmojiPresentation(`Selector huérfano \uFE0F`)).toBe('\uFE0F');
+	});
+
+	it('acepta símbolos técnicos, dígitos y sintaxis Markdown', () => {
+		const source = 'Flujo A → B; límite ≤ 5; 3 × 4 ≈ 12; Σ(x); **valor #7**';
+		expect(findEmojiPresentation(source)).toBeUndefined();
+		expect(() =>
+			assertNoEmojiPresentation(source, 'tecnico.md'),
+		).not.toThrow();
 	});
 });

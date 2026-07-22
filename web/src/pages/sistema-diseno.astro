@@ -1,4 +1,5 @@
 ---
+import { ArrowRight, CircleCheck, Info, TriangleAlert } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Badge from '../components/Badge.astro';
 import ExecutiveSummary from '../components/ExecutiveSummary.astro';
@@ -56,6 +57,39 @@ import Caveat from '../components/Caveat.astro';
 				<Badge tone="info">Evidencia mixta</Badge>
 				<Badge>Metodologías</Badge>
 			</div>
+		</section>
+
+		<section aria-labelledby="iconografia">
+			<h2 id="iconografia">Iconografía SVG</h2>
+			<p>
+				Lucide aporta un conjunto restringido de iconos inline. Heredan el color
+				del texto, comparten grosor de trazo y siempre refuerzan una etiqueta
+				visible en lugar de sustituirla.
+			</p>
+			<div class="icon-specimens">
+				<div class="icon-sample">
+					<CircleCheck class="icon icon--lg" aria-hidden="true" focusable="false" />
+					<span>Estado positivo</span>
+				</div>
+				<div class="icon-sample">
+					<TriangleAlert class="icon icon--lg" aria-hidden="true" focusable="false" />
+					<span>Advertencia</span>
+				</div>
+				<div class="icon-sample">
+					<Info class="icon icon--lg" aria-hidden="true" focusable="false" />
+					<span>Información</span>
+				</div>
+				<div class="icon-sample">
+					<ArrowRight class="icon icon--lg" aria-hidden="true" focusable="false" />
+					<span>Acción o avance</span>
+				</div>
+			</div>
+			<ul class="icon-rules">
+				<li>Tamaños: 14, 16 y 24 píxeles; trazo compartido de 2.</li>
+				<li>Color: <code>currentColor</code>, sin codificación exclusivamente cromática.</li>
+				<li>Accesibilidad: SVG oculto cuando existe texto equivalente adyacente.</li>
+				<li>Un control compuesto solo por un icono requiere nombre accesible explícito.</li>
+			</ul>
 		</section>
 
 		<section>
@@ -137,6 +171,29 @@ import Caveat from '../components/Caveat.astro';
 		gap: var(--space-3);
 	}
 
+	.icon-specimens {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--space-3);
+	}
+
+	.icon-sample {
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: var(--space-3);
+		padding: var(--space-4);
+		border: 1px solid var(--color-line);
+		border-radius: var(--radius-md);
+		background: var(--color-surface);
+		color: var(--color-brand-strong);
+		font-weight: 800;
+	}
+
+	.icon-rules {
+		max-width: var(--measure);
+	}
+
 	.swatch {
 		display: grid;
 		min-height: 8rem;
@@ -163,6 +220,10 @@ import Caveat from '../components/Caveat.astro';
 		}
 
 		.swatches {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.icon-specimens {
 			grid-template-columns: 1fr 1fr;
 		}
 	}

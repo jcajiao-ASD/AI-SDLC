@@ -175,10 +175,10 @@ de la integración, el *harness*, la gobernanza, el precio y el ecosistema:
 <!-- ai-sdlc-dataset: id=agent-candidate-matrix schema=candidate-matrix unit=mixed -->
 | Candidato | ¿Tiene Fable 5? | ¿Tiene GPT-5.6 Sol? | ¿Tiene Gemini 3.x? | Harness / SDLC | Entrada / consumo |
 | --- | --- | --- | --- | --- | --- |
-| **Copilot CLI** | ✅ | ✅ | ✅ (3.1 Pro, 3.5 Flash) | Plan + Autopilot + agentes Task/Explore/Review/Plan + *fleet*; **integración GitHub nativa issue→PR** | **$10/mes (Pro)**; incluye 1.500 AI Credits/mes |
+| **Copilot CLI** | Sí | Sí | Sí (3.1 Pro, 3.5 Flash) | Plan + Autopilot + agentes Task/Explore/Review/Plan + *fleet*; **integración GitHub nativa issue→PR** | **$10/mes (Pro)**; incluye 1.500 AI Credits/mes |
 | **OpenCode** | Vía BYOK | Vía BYOK | Vía BYOK | Multi-agente, LSP, Plan/Build; **local-first**, 75+ proveedores | **Software gratis (MIT)**; API/BYOK de pago |
-| **Cursor CLI** | ✅ nativo | ✅ nativo (Sol/Terra/Luna) | ✅ nativo (3.1 Pro, 3.5 Flash) | Composer 2.5 propio + *cloud agents* + BYOK; integración Jira | $20 |
-| **Junie CLI** | ✅ nativo | ⚠️ Vía BYOK (nativo ≤ GPT-5.5) | ✅ nativo (3.1 Pro, 3.5 Flash) | Modo Plan + **JetBrains** + BYOK/OpenRouter; líder SWE-Rebench | $100/año + IDE |
+| **Cursor CLI** | Nativo | Nativo (Sol/Terra/Luna) | Nativo (3.1 Pro, 3.5 Flash) | Composer 2.5 propio + *cloud agents* + BYOK; integración Jira | $20 |
+| **Junie CLI** | Nativo | Limitado: vía BYOK (nativo ≤ GPT-5.5) | Nativo (3.1 Pro, 3.5 Flash) | Modo Plan + **JetBrains** + BYOK/OpenRouter; líder SWE-Rebench | $100/año + IDE |
 <!-- /ai-sdlc-dataset -->
 
 Fuentes del catálogo y capacidades: [Multi §4.1][Multi §4.2][Multi §4.3][Multi

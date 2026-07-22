@@ -44,6 +44,24 @@ svg {
 	max-width: 100%;
 }
 
+.icon {
+	width: var(--icon-size-md);
+	height: var(--icon-size-md);
+	flex: 0 0 auto;
+	stroke-width: var(--icon-stroke);
+	vertical-align: -0.125em;
+}
+
+.icon--sm {
+	width: var(--icon-size-sm);
+	height: var(--icon-size-sm);
+}
+
+.icon--lg {
+	width: var(--icon-size-lg);
+	height: var(--icon-size-lg);
+}
+
 button,
 select,
 input {
