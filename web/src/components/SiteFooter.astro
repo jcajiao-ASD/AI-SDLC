@@ -1,7 +1,21 @@
+---
+import { secondaryNavigation } from '../lib/navigation';
+import { withBase } from '../lib/paths';
+---
+
 <footer>
 	<div class="shell footer__inner">
-		<p><strong>Observatorio AI-SDLC</strong></p>
-		<p>Investigación fechada, decisiones condicionadas y evidencia auditable.</p>
+		<div>
+			<p><strong>Observatorio AI-SDLC</strong></p>
+			<p>Investigación fechada, decisiones condicionadas y evidencia auditable.</p>
+		</div>
+		<nav aria-label="Recursos secundarios">
+			<ul>
+				{secondaryNavigation.map((item) => (
+					<li><a href={withBase(item.path)}>{item.label}</a></li>
+				))}
+			</ul>
+		</nav>
 	</div>
 </footer>
 
@@ -20,8 +34,27 @@
 		padding-block: var(--space-6);
 	}
 
-	footer p {
+	footer p,
+	ul {
 		margin: 0;
+	}
+
+	ul {
+		padding: 0;
+		list-style: none;
+	}
+
+	a {
+		display: inline-flex;
+		min-height: 2.75rem;
+		align-items: center;
+		color: var(--color-text-inverse);
+		font-weight: 750;
+	}
+
+	a:hover,
+	a:active {
+		color: var(--color-coast-aqua);
 	}
 
 	@media (max-width: 650px) {

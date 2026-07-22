@@ -1,15 +1,110 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+const configuredBase = process.env.BASE_PATH || '/';
+const basePrefix =
+	configuredBase === '/' ? '' : `/${configuredBase.replace(/^\/+|\/+$/g, '')}`;
+const port = Number(process.env.PLAYWRIGHT_PORT || (basePrefix ? 4322 : 4321));
+const origin = `http://127.0.0.1:${port}`;
+
+function sitePath(path: string): string {
+	const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+	return `${basePrefix}${normalizedPath}` || '/';
+}
+
+function siteUrl(path: string): string {
+	return `${origin}${sitePath(path)}`;
+}
+
 test('la portada conduce al configurador y a las tres decisiones', async ({ page }) => {
-	await page.goto('/');
+	await page.goto(siteUrl('/'));
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('decisión auditable');
 	await expect(page.getByRole('link', { name: /Configurar stack/ })).toBeVisible();
 	await expect(page.getByRole('link', { name: /Abrir historia/ })).toHaveCount(3);
+	await expect(page.locator('.mobile-action--decision')).toHaveAttribute(
+		'href',
+		sitePath('/#decidir'),
+	);
 	const results = await new AxeBuilder({ page }).analyze();
 	expect(results.violations).toEqual([]);
 	await page.keyboard.press('Tab');
 	await expect(page.getByRole('link', { name: 'Saltar al contenido' })).toBeFocused();
+});
+
+test('la navegación y los breadcrumbs comunican la ruta activa', async ({ page, isMobile }) => {
+	await page.goto(siteUrl('/historias/llm-por-fase/'));
+	if (isMobile) await page.locator('.mobile-menu summary').click();
+	const navigation = page.getByRole('navigation', {
+		name: isMobile ? 'Navegación móvil' : 'Navegación principal',
+	});
+	await expect(navigation.getByRole('link', { name: 'Modelo', exact: true })).toHaveAttribute(
+		'aria-current',
+		'page',
+	);
+	const storyBreadcrumbs = page.getByRole('navigation', { name: 'Ruta de navegación' });
+	await expect(storyBreadcrumbs.getByRole('link', { name: 'Portada' })).toHaveAttribute(
+		'href',
+		sitePath('/'),
+	);
+	await expect(storyBreadcrumbs.locator('[aria-current="page"]')).toHaveText('Modelo');
+
+	await page.goto(siteUrl('/investigaciones/comparativa-llms-sdlc/'));
+	if (isMobile) await page.locator('.mobile-menu summary').click();
+	const researchNavigation = page.getByRole('navigation', {
+		name: isMobile ? 'Navegación móvil' : 'Navegación principal',
+	});
+	await expect(
+		researchNavigation.getByRole('link', { name: 'Investigaciones', exact: true }),
+	).toHaveAttribute('aria-current', 'page');
+	const researchBreadcrumbs = page.getByRole('navigation', { name: 'Ruta de navegación' });
+	await expect(
+		researchBreadcrumbs.getByRole('link', { name: 'Investigaciones', exact: true }),
+	).toHaveAttribute('href', sitePath('/investigaciones/'));
+	await expect(researchBreadcrumbs.locator('[aria-current="page"]')).toContainText(
+		'Comparativa de LLMs',
+	);
+});
+
+test('el menú móvil conserva orden, foco y accesibilidad', async ({ page, isMobile }) => {
+	test.skip(!isMobile, 'La interacción corresponde a la cabecera móvil');
+	await page.goto(siteUrl('/'));
+	const menu = page.locator('.mobile-menu');
+	const summary = menu.locator('summary');
+
+	await summary.focus();
+	await page.keyboard.press('Enter');
+	await expect(menu).toHaveAttribute('open', '');
+	const mobileNavigation = page.getByRole('navigation', { name: 'Navegación móvil' });
+	await expect(mobileNavigation.getByRole('link')).toHaveCount(6);
+	await expect(mobileNavigation.getByRole('link', { name: 'Modelo', exact: true })).toBeVisible();
+	await expect(
+		mobileNavigation.getByRole('link', { name: 'Metodología', exact: true }),
+	).toBeVisible();
+
+	await page.keyboard.press('Enter');
+	await expect(menu).not.toHaveAttribute('open', '');
+	await expect(summary).toBeFocused();
+
+	await page.keyboard.press('Enter');
+	const results = await new AxeBuilder({ page }).analyze();
+	expect(results.violations).toEqual([]);
+});
+
+test('el menú móvil permanece operable sin JavaScript', async ({ browser }) => {
+	const context = await browser.newContext({
+		javaScriptEnabled: false,
+		viewport: { width: 390, height: 844 },
+	});
+	const page = await context.newPage();
+	await page.goto(siteUrl('/'));
+	await page.locator('.mobile-menu summary').click();
+	const mobileNavigation = page.getByRole('navigation', { name: 'Navegación móvil' });
+	await expect(mobileNavigation.getByRole('link')).toHaveCount(6);
+	await expect(page.getByRole('link', { name: 'Buscar investigaciones' })).toHaveAttribute(
+		'href',
+		sitePath('/investigaciones/'),
+	);
+	await context.close();
 });
 
 test('las familias tipográficas cargan localmente sus variantes y roles', async ({ page }) => {
@@ -20,7 +115,7 @@ test('las familias tipográficas cargan localmente sus variantes y roles', async
 		}
 	});
 
-	await page.goto('/sistema-diseno/');
+	await page.goto(siteUrl('/sistema-diseno/'));
 	const atkinsonNormal = page.locator('[data-font-family="atkinson"][data-font-sample="normal"]');
 	const atkinsonItalic = page.locator('[data-font-family="atkinson"][data-font-sample="italic"]');
 	const atkinsonBold = page.locator('[data-font-family="atkinson"][data-font-sample="bold"]');
@@ -93,7 +188,7 @@ test('las familias tipográficas cargan localmente sus variantes y roles', async
 });
 
 test('las superficies estáticas no simulan interacción y los controles conservan estados', async ({ page }) => {
-	await page.goto('/sistema-diseno/');
+	await page.goto(siteUrl('/sistema-diseno/'));
 	const staticSurface = page.locator('[data-surface="static"]');
 	const staticBefore = await staticSurface.evaluate((element) => {
 		const styles = getComputedStyle(element);
@@ -132,7 +227,7 @@ test('las superficies estáticas no simulan interacción y los controles conserv
 });
 
 test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ page }) => {
-	await page.goto('/sistema-diseno/');
+	await page.goto(siteUrl('/sistema-diseno/'));
 
 	const tokens = await page.evaluate(() => {
 		const styles = getComputedStyle(document.documentElement);
@@ -178,12 +273,12 @@ test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ 
 	const results = await new AxeBuilder({ page }).analyze();
 	expect(results.violations).toEqual([]);
 
-	await page.goto('/');
+	await page.goto(siteUrl('/'));
 	const storyLink = page.getByRole('link', { name: 'Abrir historia' }).first();
 	await storyLink.hover();
 	await expect(storyLink).toHaveCSS('color', 'rgb(36, 59, 119)');
 
-	await page.goto('/historias/llm-por-fase/');
+	await page.goto(siteUrl('/historias/llm-por-fase/'));
 	await page.locator('.chart-host').first().scrollIntoViewIfNeeded();
 	const chartBar = page.locator('.chart-host svg g[aria-label="bar"] rect').first();
 	await expect(chartBar).toBeVisible();
@@ -191,8 +286,9 @@ test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ 
 });
 
 test('el catálogo filtra y conserva rutas navegables', async ({ page }) => {
-	await page.goto('/investigaciones/');
-	await expect(page.getByText('13 investigaciones visibles')).toBeVisible();
+	await page.goto(siteUrl('/investigaciones/'));
+	const catalogCount = await page.locator('.catalog-card').count();
+	await expect(page.getByText(`${catalogCount} investigaciones visibles`)).toBeVisible();
 	await page.getByLabel('Categoría').selectOption('modelos');
 	await expect(page.getByText('1 investigaciones visibles')).toBeVisible();
 	await page.getByRole('link', { name: /Comparativa de LLMs/ }).click();
@@ -210,7 +306,7 @@ test('la tipografía no provoca desplazamiento horizontal de página', async ({ 
 		'/historias/configurador-stack/',
 		'/sistema-diseno/',
 	]) {
-		await page.goto(route);
+		await page.goto(siteUrl(route));
 		await page.evaluate(() => document.fonts.ready);
 		const dimensions = await page.evaluate(() => ({
 			clientWidth: document.documentElement.clientWidth,
@@ -221,7 +317,7 @@ test('la tipografía no provoca desplazamiento horizontal de página', async ({ 
 });
 
 test('las historias muestran conclusión y caveat antes de interactuar', async ({ page }) => {
-	await page.goto('/historias/seleccion-framework/');
+	await page.goto(siteUrl('/historias/seleccion-framework/'));
 	await expect(page.getByText('Respuesta ejecutiva')).toBeVisible();
 	await expect(page.getByText(/scorecards son ordinales/i)).toBeVisible();
 	await expect(page.getByLabel(/Peso de adopción/)).toHaveValue('65');
@@ -235,7 +331,7 @@ for (const route of [
 	'/historias/configurador-stack/',
 ]) {
 	test(`la ruta ${route} no presenta violaciones automáticas de accesibilidad`, async ({ page }) => {
-		await page.goto(route);
+		await page.goto(siteUrl(route));
 		const results = await new AxeBuilder({ page }).analyze();
 		expect(results.violations).toEqual([]);
 	});
@@ -244,16 +340,16 @@ for (const route of [
 test('el contenido principal permanece disponible sin JavaScript', async ({ browser }) => {
 	const context = await browser.newContext({ javaScriptEnabled: false });
 	const page = await context.newPage();
-	await page.goto('/investigaciones/');
+	await page.goto(siteUrl('/investigaciones/'));
 	await expect(page.getByRole('link', { name: /Comparativa de LLMs/ })).toBeVisible();
-	await page.goto('/historias/llm-por-fase/');
+	await page.goto(siteUrl('/historias/llm-por-fase/'));
 	await expect(page.getByText(/GPT-5.6 Sol es el generalista/)).toBeVisible();
 	await expect(page.getByRole('table', { name: 'Ranking ponderado de LLMs' })).toBeVisible();
-	await page.goto('/historias/seleccion-agente/');
+	await page.goto(siteUrl('/historias/seleccion-agente/'));
 	await expect(page.getByRole('table', { name: 'Herramienta recomendada por perfil de equipo' })).toBeVisible();
-	await page.goto('/historias/seleccion-framework/');
+	await page.goto(siteUrl('/historias/seleccion-framework/'));
 	await expect(page.getByRole('table', { name: 'Ranking de frameworks con lente adopción-first' })).toBeVisible();
-	await page.goto('/historias/configurador-stack/');
+	await page.goto(siteUrl('/historias/configurador-stack/'));
 	await expect(page.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
 	await expect(page.getByText('Límite de interpretación', { exact: true })).toBeVisible();
 	await expect(page.getByRole('table', { name: 'Compatibilidad entre agentes y modelos' })).toBeVisible();
@@ -271,7 +367,7 @@ test('el contenido principal permanece disponible sin JavaScript', async ({ brow
 });
 
 test('el configurador conserva semántica, compatibilidad y alternativas', async ({ page }) => {
-	await page.goto('/historias/configurador-stack/');
+	await page.goto(siteUrl('/historias/configurador-stack/'));
 
 	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
 	await expect(page.getByLabel('Fase del SDLC')).toHaveValue('diseno');
@@ -314,10 +410,10 @@ test('el configurador conserva semántica, compatibilidad y alternativas', async
 test('el resultado inicial SSR coincide con la primera hidratación', async ({ browser, page }) => {
 	const withoutJavaScript = await browser.newContext({ javaScriptEnabled: false });
 	const staticPage = await withoutJavaScript.newPage();
-	await staticPage.goto('/historias/configurador-stack/');
+	await staticPage.goto(siteUrl('/historias/configurador-stack/'));
 	const staticResult = await staticPage.locator('.stack-result').innerText();
 
-	await page.goto('/historias/configurador-stack/');
+	await page.goto(siteUrl('/historias/configurador-stack/'));
 	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
 	const hydratedResult = await page.locator('.stack-result').innerText();
 
@@ -329,7 +425,7 @@ test('los iconos se renderizan como SVG inline local', async ({ page }) => {
 	const requests: string[] = [];
 	page.on('request', (request) => requests.push(request.url()));
 
-	await page.goto('/sistema-diseno/');
+	await page.goto(siteUrl('/sistema-diseno/'));
 	const iconSection = page.getByRole('region', { name: 'Iconografía SVG' });
 	const icons = iconSection.locator('svg.icon');
 	await expect(icons).toHaveCount(4);
@@ -339,12 +435,12 @@ test('los iconos se renderizan como SVG inline local', async ({ page }) => {
 	await expect(iconSection.getByText('Información', { exact: true })).toBeVisible();
 	await expect(iconSection.getByText('Acción o avance', { exact: true })).toBeVisible();
 
-	await page.goto('/');
+	await page.goto(siteUrl('/'));
 	const storyLinks = page.getByRole('link', { name: 'Abrir historia' });
 	await expect(storyLinks).toHaveCount(3);
 	await expect(storyLinks.first().locator('svg.icon')).toHaveCount(1);
 
-	await page.goto('/investigaciones/comparativa-llms-sdlc/');
+	await page.goto(siteUrl('/investigaciones/comparativa-llms-sdlc/'));
 	await expect(page.getByText('No (jul-2026)', { exact: true })).toBeVisible();
 	await expect(page.getByText('1.º', { exact: true }).first()).toBeVisible();
 

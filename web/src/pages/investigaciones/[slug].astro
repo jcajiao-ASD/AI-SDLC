@@ -6,6 +6,7 @@ import {
 	renderStudy,
 	storyDefinitions,
 } from '../../lib/research';
+import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 import type { ResearchStudy } from '../../lib/types';
 
@@ -33,7 +34,18 @@ const relatedStories = [
 );
 ---
 
-<BaseLayout title={study.metadata.title} description={study.metadata.summary}>
+<BaseLayout
+	title={study.metadata.title}
+	description={study.metadata.summary}
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{
+			label: navigationDestinations.research.label,
+			path: navigationDestinations.research.path,
+		},
+		{ label: study.metadata.title },
+	]}
+>
 	<header class="study-hero">
 		<div class="shell study-hero__inner">
 			<div>

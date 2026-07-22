@@ -97,6 +97,8 @@
 	--measure: 66ch;
 	--measure-data: 78ch;
 	--page: min(1180px, calc(100vw - 2rem));
+	--site-header-height: 5rem;
+	--site-header-offset: 6rem;
 	--motion-fast: 140ms;
 	--motion-normal: 240ms;
 }

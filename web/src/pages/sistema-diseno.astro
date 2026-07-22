@@ -4,11 +4,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Badge from '../components/Badge.astro';
 import ExecutiveSummary from '../components/ExecutiveSummary.astro';
 import Caveat from '../components/Caveat.astro';
+import { secondaryNavigationDestinations } from '../lib/navigation';
 ---
 
 <BaseLayout
 	title="Sistema de diseño"
 	description="Fundamentos, componentes y codificaciones visuales del observatorio editorial AI-SDLC."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: secondaryNavigationDestinations.designSystem.label },
+	]}
 >
 	<header class="shell section">
 		<p class="eyebrow">Sistema de diseño</p>

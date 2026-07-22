@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Badge from '../components/Badge.astro';
 import ResearchCard from '../components/ResearchCard.astro';
 import { loadStudies } from '../lib/research';
+import { navigationDestinations } from '../lib/navigation';
 import { withBase } from '../lib/paths';
 
 const studies = await loadStudies();
@@ -12,20 +13,20 @@ const stories = [
 	{
 		title: 'Qué LLM usar en cada fase del SDLC',
 		description: 'Distingue al mejor generalista de los especialistas en arquitectura, DevOps, documentación y mantenimiento.',
-		href: '/historias/llm-por-fase/',
-		label: 'Modelos',
+		href: navigationDestinations.model.path,
+		label: navigationDestinations.model.label,
 	},
 	{
 		title: 'Qué agente elegir según tu ecosistema',
 		description: 'Convierte una comparación amplia en una recomendación condicionada por GitHub, IDE, JetBrains o apertura.',
-		href: '/historias/seleccion-agente/',
-		label: 'Agentes',
+		href: navigationDestinations.agent.path,
+		label: navigationDestinations.agent.label,
 	},
 	{
 		title: 'Qué framework agéntico adoptar',
 		description: 'Explora cómo cambia el ganador al priorizar adopción progresiva o un piso de calidad más prescriptivo.',
-		href: '/historias/seleccion-framework/',
-		label: 'Metodologías',
+		href: navigationDestinations.framework.path,
+		label: navigationDestinations.framework.label,
 	},
 ];
 ---
@@ -49,7 +50,7 @@ const stories = [
 		</div>
 	</section>
 
-	<section class="section stack-cta-section">
+	<section id="decidir" class="section stack-cta-section">
 		<div class="shell">
 			<article class="stack-cta">
 				<div>
@@ -60,7 +61,7 @@ const stories = [
 						plugins e integraciones antes de tratar el resultado como final.
 					</p>
 				</div>
-				<a class="button-link" href={withBase('/historias/configurador-stack/')}>
+				<a class="button-link" href={withBase(navigationDestinations.stack.path)}>
 					<span>Configurar stack</span>
 					<ArrowRight class="icon" aria-hidden="true" focusable="false" />
 				</a>
@@ -70,7 +71,7 @@ const stories = [
 
 	<section class="section">
 		<div class="shell">
-			<p class="eyebrow">Tres decisiones clave</p>
+			<p class="eyebrow">Decisiones especializadas</p>
 			<h2 class="section-title">Elige una pregunta, no un archivo.</h2>
 			<div class="grid grid--3">
 				{stories.map((story) => (
@@ -91,7 +92,7 @@ const stories = [
 	<section class="section section--contrast">
 		<div class="shell">
 			<p class="eyebrow">Investigación reciente</p>
-			<h2 class="section-title">Trece estudios, una fuente de verdad.</h2>
+			<h2 class="section-title">{studies.length} estudios, una fuente de verdad.</h2>
 			<div class="grid grid--3">
 				{latestStudies.map((study) => <ResearchCard study={study} />)}
 			</div>

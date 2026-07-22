@@ -8,6 +8,7 @@
 
 html {
 	scroll-behavior: smooth;
+	scroll-padding-top: var(--site-header-offset);
 	background: var(--color-page);
 	color: var(--color-text);
 	font-family: var(--font-ui);
@@ -284,7 +285,11 @@ samp,
 	margin-top: 2.2em;
 	font-family: var(--font-ui);
 	line-height: 1.25;
-	scroll-margin-top: 6rem;
+	scroll-margin-top: var(--site-header-offset);
+}
+
+[id] {
+	scroll-margin-top: var(--site-header-offset);
 }
 
 .prose h2 {

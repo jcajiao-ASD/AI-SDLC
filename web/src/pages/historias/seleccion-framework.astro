@@ -9,6 +9,7 @@ import BarChart from '../../components/BarChart';
 import SensitivityExplorer from '../../components/SensitivityExplorer';
 import { findDataset, findStudy, loadStudies } from '../../lib/research';
 import { rankingBars, sensitivityBands } from '../../lib/datasets';
+import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
 const studies = await loadStudies();
@@ -24,6 +25,10 @@ const bands = sensitivityBands(sensitivity);
 <BaseLayout
 	title="Qué framework agéntico adoptar"
 	description="Historia de decisión sobre OpenSpec, GitHub Spec Kit, Superpowers y Open GSD bajo dos prioridades de negocio."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: navigationDestinations.framework.label },
+	]}
 >
 	<StoryHero
 		eyebrow="Historia 3 · Metodologías"

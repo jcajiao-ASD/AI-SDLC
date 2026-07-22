@@ -13,9 +13,12 @@ import {
 import { rankingBars } from './datasets';
 
 describe('contrato editorial', () => {
-	it('carga los trece estudios y el conjunto exacto de datasets canónicos', async () => {
+	it('carga todo el corpus y el conjunto exacto de datasets canónicos', async () => {
 		const studies = await loadStudies();
-		expect(studies).toHaveLength(13);
+		expect(studies.length).toBeGreaterThan(0);
+		expect(studies.map((study) => study.metadata.slug)).toContain(
+			'configuracion-openspec-yaml',
+		);
 		expect(
 			studies
 				.flatMap((study) => study.datasets)

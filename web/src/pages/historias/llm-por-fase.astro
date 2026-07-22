@@ -8,6 +8,7 @@ import DataTable from '../../components/DataTable.astro';
 import BarChart from '../../components/BarChart';
 import { findDataset, findStudy, loadStudies } from '../../lib/research';
 import { column, plainText, rankingBars } from '../../lib/datasets';
+import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
 const studies = await loadStudies();
@@ -23,6 +24,10 @@ const whyHeader = column(sdlcMap, /por que/);
 <BaseLayout
 	title="Qué LLM usar en cada fase del SDLC"
 	description="Historia de decisión sobre modelos generalistas y especialistas por fase del ciclo de desarrollo."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: navigationDestinations.model.label },
+	]}
 >
 	<StoryHero
 		eyebrow="Historia 1 · Modelos"

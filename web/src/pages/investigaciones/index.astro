@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CatalogFilter from '../../components/CatalogFilter';
 import { loadStudies } from '../../lib/research';
+import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
 const studies = await loadStudies();
@@ -20,13 +21,18 @@ const items = studies.map((study) => ({
 <BaseLayout
 	title="Investigaciones"
 	description="Catálogo completo de estudios sobre modelos, agentes, integraciones y metodologías AI-SDLC."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: navigationDestinations.research.label },
+	]}
 >
 	<header class="shell section">
 		<p class="eyebrow">Catálogo</p>
 		<h1 class="display">La evidencia completa, organizada para explorar.</h1>
 		<p class="lede">
-			Filtra por tema, vigencia o tipo de decisión. Sin JavaScript, los trece
-			estudios siguen disponibles como una lista navegable completa.
+			Filtra por tema, vigencia o tipo de decisión. Sin JavaScript, los
+			{studies.length} estudios siguen disponibles como una lista navegable
+			completa.
 		</p>
 	</header>
 	<section class="shell">

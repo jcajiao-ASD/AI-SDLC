@@ -1,18 +1,93 @@
 ---
+import {
+	decisionShortcut,
+	isNavigationDestinationActive,
+	navigationDestinations,
+	navigationGroups,
+	normalizeRoutePath,
+} from '../lib/navigation';
 import { withBase } from '../lib/paths';
+
+interface Props {
+	currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const basePath = import.meta.env.BASE_URL;
+const isHome = normalizeRoutePath(currentPath, basePath) === '/';
 ---
 
 <header class="site-header">
 	<div class="shell site-header__inner">
-		<a class="brand" href={withBase('/')}>
+		<a class="brand" href={withBase('/')} aria-current={isHome ? 'page' : undefined}>
 			<span class="brand__mark" aria-hidden="true">AI</span>
-			<span>Observatorio SDLC</span>
+			<span class="brand__name">Observatorio SDLC</span>
 		</a>
-		<nav aria-label="Navegación principal">
-			<a href={withBase('/investigaciones/')}>Investigaciones</a>
-			<a href={withBase('/metodologia/')}>Metodología</a>
-			<a href={withBase('/sistema-diseno/')}>Sistema de diseño</a>
+
+		<nav class="primary-navigation primary-navigation--desktop" aria-label="Navegación principal">
+			{navigationGroups.map((group) => (
+				<div class:list={['navigation-group', { 'navigation-group--decision': group.id === 'decide' }]}>
+					<span class="navigation-group__label">{group.label}</span>
+					<ul>
+						{group.items.map((item) => {
+							const isActive = isNavigationDestinationActive(item, currentPath, basePath);
+							return (
+								<li>
+									<a
+										class:list={{ 'navigation-link--active': isActive }}
+										href={withBase(item.path)}
+										aria-current={isActive ? 'page' : undefined}
+									>
+										{item.label}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+			))}
 		</nav>
+
+		<div class="mobile-navigation">
+			<a class="mobile-action mobile-action--decision" href={withBase(decisionShortcut.path)}>
+				{decisionShortcut.label}
+			</a>
+			<a
+				class="mobile-action"
+				href={withBase(navigationDestinations.research.path)}
+				aria-label="Buscar investigaciones"
+			>
+				Buscar
+			</a>
+			<details class="mobile-menu">
+				<summary>Menú</summary>
+				<div class="mobile-menu__panel">
+					<nav aria-label="Navegación móvil">
+						{navigationGroups.map((group) => (
+							<div class="mobile-menu__group">
+								<p>{group.label}</p>
+								<ul>
+									{group.items.map((item) => {
+										const isActive = isNavigationDestinationActive(item, currentPath, basePath);
+										return (
+											<li>
+												<a
+													class:list={{ 'navigation-link--active': isActive }}
+													href={withBase(item.path)}
+													aria-current={isActive ? 'page' : undefined}
+												>
+													{item.label}
+												</a>
+											</li>
+										);
+									})}
+								</ul>
+							</div>
+						))}
+					</nav>
+				</div>
+			</details>
+		</div>
 	</div>
 </header>
 
@@ -28,14 +103,15 @@ import { withBase } from '../lib/paths';
 
 	.site-header__inner {
 		display: flex;
-		min-height: 4.5rem;
+		min-height: var(--site-header-height);
 		align-items: center;
 		justify-content: space-between;
-		gap: var(--space-4);
+		gap: var(--space-5);
 	}
 
 	.brand {
 		display: inline-flex;
+		flex: 0 0 auto;
 		align-items: center;
 		gap: var(--space-2);
 		color: var(--color-text);
@@ -55,23 +131,211 @@ import { withBase } from '../lib/paths';
 		font-size: 0.72rem;
 	}
 
-	nav {
+	.primary-navigation {
 		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-4);
-		font-size: var(--step--1);
-		font-weight: 700;
+		align-items: center;
+		gap: var(--space-6);
 	}
 
-	nav a {
+	.navigation-group {
+		display: grid;
+		gap: var(--space-1);
+	}
+
+	.navigation-group__label,
+	.mobile-menu__group p {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-family: var(--font-data);
+		font-size: 0.68rem;
+		font-weight: 800;
+		letter-spacing: 0.09em;
+		text-transform: uppercase;
+	}
+
+	.navigation-group ul,
+	.mobile-menu ul {
+		display: flex;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.navigation-group ul {
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.navigation-group--decision li {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.navigation-group--decision li:not(:last-child)::after {
+		width: 1rem;
+		height: 1px;
+		background: var(--color-line-strong);
+		content: "";
+	}
+
+	.navigation-group a,
+	.mobile-menu a,
+	.mobile-action,
+	summary {
+		min-height: 2.75rem;
+		align-items: center;
+		color: var(--color-action-hover);
+		font-family: var(--font-ui);
+		font-size: var(--step--1);
+		font-weight: 700;
 		text-decoration: none;
 	}
 
-	@media (max-width: 700px) {
+	.navigation-group a {
+		display: inline-flex;
+		border-bottom: 3px solid transparent;
+	}
+
+	.navigation-group a:hover,
+	.navigation-group a:active {
+		border-bottom-color: var(--color-line-strong);
+	}
+
+	.navigation-group a.navigation-link--active {
+		border-bottom-color: var(--color-action);
+		color: var(--color-action);
+		font-weight: 850;
+	}
+
+	.mobile-navigation {
+		display: none;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.mobile-action,
+	summary {
+		display: inline-flex;
+		padding-inline: var(--space-3);
+		border: 1px solid var(--color-line-strong);
+		border-radius: var(--radius-sm);
+		background: var(--color-surface-static);
+	}
+
+	.mobile-action--decision {
+		border-color: var(--color-action);
+		background: var(--color-action);
+		color: var(--color-text-inverse);
+	}
+
+	.mobile-action--decision:hover,
+	.mobile-action--decision:active {
+		background: var(--color-action-hover);
+		color: var(--color-text-inverse);
+	}
+
+	.mobile-menu {
+		position: relative;
+	}
+
+	summary {
+		cursor: pointer;
+		list-style: none;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.mobile-menu[open] summary {
+		border-color: var(--color-action);
+		background: var(--color-surface-selected);
+	}
+
+	.mobile-menu__panel {
+		position: absolute;
+		z-index: 30;
+		top: calc(100% + var(--space-2));
+		right: 0;
+		width: min(22rem, calc(100vw - 1rem));
+		max-height: calc(100vh - var(--site-header-offset));
+		padding: var(--space-4);
+		overflow-y: auto;
+		border: 1px solid var(--color-line-strong);
+		border-radius: var(--radius-md);
+		background: var(--color-page);
+		box-shadow: var(--shadow-md);
+	}
+
+	.mobile-menu__panel nav {
+		display: grid;
+		gap: var(--space-5);
+	}
+
+	.mobile-menu__group {
+		display: grid;
+		gap: var(--space-2);
+	}
+
+	.mobile-menu ul {
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+
+	.mobile-menu a {
+		display: flex;
+		padding-inline: var(--space-3);
+		border-left: 3px solid transparent;
+	}
+
+	.mobile-menu a:hover,
+	.mobile-menu a:active {
+		border-left-color: var(--color-line-strong);
+		background: var(--color-surface-interactive-hover);
+	}
+
+	.mobile-menu a.navigation-link--active {
+		border-left-color: var(--color-action);
+		background: var(--color-surface-selected);
+		color: var(--color-action);
+		font-weight: 850;
+	}
+
+	@media (max-width: 960px) {
+		.primary-navigation--desktop {
+			display: none;
+		}
+
+		.mobile-navigation {
+			display: flex;
+		}
+	}
+
+	@media (max-width: 520px) {
 		.site-header__inner {
-			align-items: flex-start;
-			flex-direction: column;
-			padding-block: var(--space-3);
+			gap: var(--space-2);
+		}
+
+		.brand__name {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		.mobile-navigation {
+			gap: var(--space-1);
+		}
+
+		.mobile-action,
+		summary {
+			padding-inline: 0.65rem;
 		}
 	}
 </style>

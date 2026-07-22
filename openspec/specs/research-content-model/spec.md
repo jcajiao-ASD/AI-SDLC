@@ -115,8 +115,8 @@ consumidor válido.
 - **THEN** la construcción SHALL fallar e identificar la referencia rota
 
 ### Requirement: Catálogo completo del corpus
-Los trece estudios existentes SHALL cumplir el contrato editorial y formar parte
-del modelo normalizado del MVP.
+Todos los estudios existentes SHALL cumplir el contrato editorial y formar parte
+del modelo normalizado.
 
 #### Scenario: Estudio no migrado
 - **WHEN** un archivo Markdown de investigación no cumple el contrato editorial

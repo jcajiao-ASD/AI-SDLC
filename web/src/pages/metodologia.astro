@@ -1,11 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Caveat from '../components/Caveat.astro';
+import { navigationDestinations } from '../lib/navigation';
 ---
 
 <BaseLayout
 	title="Metodología y evidencia"
 	description="Guía para interpretar niveles de evidencia, scorecards, fechas de corte, confianza y límites de comparación."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: navigationDestinations.methodology.label },
+	]}
 >
 	<header class="shell section">
 		<p class="eyebrow">Metodología</p>

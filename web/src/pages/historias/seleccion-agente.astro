@@ -8,6 +8,7 @@ import DataTable from '../../components/DataTable.astro';
 import RecommendationPicker from '../../components/RecommendationPicker';
 import { findDataset, findStudy, loadStudies } from '../../lib/research';
 import { recommendationOptions } from '../../lib/stack';
+import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
 const studies = await loadStudies();
@@ -19,6 +20,10 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 <BaseLayout
 	title="Qué agente elegir según tu ecosistema"
 	description="Historia de decisión para seleccionar un agente de codificación según ecosistema, integración, apertura y coste."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: navigationDestinations.agent.label },
+	]}
 >
 	<StoryHero
 		eyebrow="Historia 2 · Agentes"

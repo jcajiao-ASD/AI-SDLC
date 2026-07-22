@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:subpath": "BASE_PATH=/AI-SDLC/ PLAYWRIGHT_PORT=4322 playwright test",
     "verify": "npm run validate:content && npm run check && npm run test && npm run build && npm run check:links",
     "preview": "astro preview",
     "astro": "astro"

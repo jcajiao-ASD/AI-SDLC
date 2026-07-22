@@ -11,6 +11,7 @@ import {
 	compatibilityRecords,
 	recommendationOptions,
 } from '../../lib/stack';
+import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
 const studies = await loadStudies();
@@ -33,6 +34,10 @@ const sourceLinks = {
 <BaseLayout
 	title="Configurar un stack AI-SDLC compatible"
 	description="Recomendación trazable de agente, modelo y capa de especificación con compatibilidad verificada."
+	breadcrumbs={[
+		{ label: 'Portada', path: '/' },
+		{ label: navigationDestinations.stack.label },
+	]}
 >
 	<StoryHero
 		eyebrow="Vista transversal · Stack AI-SDLC"

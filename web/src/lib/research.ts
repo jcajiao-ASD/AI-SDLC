@@ -536,8 +536,8 @@ export async function loadStudies(): Promise<ResearchStudy[]> {
 			}),
 		);
 
-		if (studies.length !== 13) {
-			throw new Error(`El catálogo debe contener 13 estudios; se encontraron ${studies.length}`);
+		if (studies.length === 0) {
+			throw new Error('El catálogo debe contener al menos un estudio');
 		}
 
 		const slugs = new Set<string>();

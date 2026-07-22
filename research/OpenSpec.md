@@ -209,6 +209,10 @@ OpenSpec también usa `openspec/config.yaml` para:
 
 El diseño oficial muestra que contexto y reglas se insertan en las instrucciones que recibe el agente. Es una influencia directa sobre el prompt, no sobre los pesos del modelo.
 
+La investigación [Configuración empresarial de OpenSpec mediante
+`openspec/config.yaml`](configuracion-openspec-yaml.md) detalla los campos,
+precedencia, parseo resiliente, stores y una plantilla orientada a Secure SDLC.
+
 ### Copilot IDE versus Copilot CLI
 
 Este matiz debe quedar en la política de adopción:
