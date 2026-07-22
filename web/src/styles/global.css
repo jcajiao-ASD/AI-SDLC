@@ -11,6 +11,7 @@ html {
 	background: var(--color-paper);
 	color: var(--color-ink);
 	font-family: var(--font-sans);
+	font-synthesis: none;
 	font-size: 100%;
 }
 
@@ -84,17 +85,17 @@ input {
 }
 
 .display {
-	max-width: 16ch;
+	max-width: 22ch;
 	margin: 0;
 	font-family: var(--font-serif);
 	font-size: var(--step-4);
 	font-weight: 500;
-	letter-spacing: -0.035em;
 	line-height: 1.03;
+	overflow-wrap: anywhere;
 }
 
 .lede {
-	max-width: 65ch;
+	max-width: var(--measure);
 	color: var(--color-ink-soft);
 	font-size: var(--step-1);
 }
@@ -162,6 +163,8 @@ input {
 	margin-inline: auto;
 	font-family: var(--font-serif);
 	font-size: var(--step-0);
+	hyphens: auto;
+	overflow-wrap: anywhere;
 }
 
 .prose h2,
@@ -364,7 +367,7 @@ input {
 .picker__label {
 	color: var(--color-brand);
 	font-size: var(--step--1);
-	font-weight: 900;
+	font-weight: 800;
 	text-transform: uppercase;
 }
 
@@ -395,7 +398,7 @@ input {
 	border-right: 2px solid white;
 	background: #c9ded5;
 	font-size: 0.72rem;
-	font-weight: 850;
+	font-weight: 800;
 	text-align: center;
 }
 

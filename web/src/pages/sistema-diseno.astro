@@ -16,6 +16,28 @@ import Caveat from '../components/Caveat.astro';
 	</header>
 
 	<div class="shell showcase">
+		<section aria-labelledby="tipografia">
+			<h2 id="tipografia">Tipografía</h2>
+			<p>
+				JetBrains Mono Variable define todos los roles editoriales. Las variantes
+				normal e itálica se sirven localmente con pesos de 100 a 800.
+			</p>
+			<div class="type-specimens">
+				<p class="type-sample" data-font-sample="normal">
+					<span>Regular 400</span>
+					Claridad antes que espectáculo.
+				</p>
+				<p class="type-sample type-sample--italic" data-font-sample="italic">
+					<span>Italic 400</span>
+					Evidencia trazable, decisiones explícitas.
+				</p>
+				<p class="type-sample type-sample--bold" data-font-sample="bold">
+					<span>Bold 800</span>
+					AI-SDLC: observar, comparar, decidir.
+				</p>
+			</div>
+		</section>
+
 		<section>
 			<h2>Color semántico</h2>
 			<div class="swatches">
@@ -74,6 +96,41 @@ import Caveat from '../components/Caveat.astro';
 		font-weight: 500;
 	}
 
+	.type-specimens {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--space-3);
+	}
+
+	.type-sample {
+		display: grid;
+		gap: var(--space-3);
+		min-width: 0;
+		margin: 0;
+		padding: var(--space-5);
+		border: 1px solid var(--color-line);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		font-size: var(--step-1);
+		overflow-wrap: anywhere;
+	}
+
+	.type-sample span {
+		color: var(--color-brand);
+		font-size: var(--step--1);
+		font-style: normal;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.type-sample--italic {
+		font-style: italic;
+	}
+
+	.type-sample--bold {
+		font-weight: 800;
+	}
+
 	.swatches {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -101,6 +158,10 @@ import Caveat from '../components/Caveat.astro';
 	}
 
 	@media (max-width: 700px) {
+		.type-specimens {
+			grid-template-columns: 1fr;
+		}
+
 		.swatches {
 			grid-template-columns: 1fr 1fr;
 		}

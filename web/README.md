@@ -27,6 +27,13 @@ Para simular GitHub Pages:
 BASE_PATH=/AI-SDLC SITE_URL=https://usuario.github.io npm run build
 ```
 
+## Tipografía
+
+El observatorio usa JetBrains Mono Variable en interfaz, títulos, prosa y datos.
+Las variantes normal e itálica se empaquetan desde
+`@fontsource-variable/jetbrains-mono`; Astro publica los WOFF2 junto con los
+demás assets, por lo que el sitio no solicita fuentes a proveedores externos.
+
 ## Contrato editorial
 
 Cada archivo `research/*.md`, salvo `_index.md`, declara:

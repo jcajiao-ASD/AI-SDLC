@@ -23,17 +23,17 @@ const { eyebrow, title, description } = Astro.props;
 	}
 
 	h1 {
-		max-width: 18ch;
+		max-width: 22ch;
 		margin: 0;
 		font-family: var(--font-serif);
 		font-size: var(--step-4);
 		font-weight: 500;
-		letter-spacing: -0.035em;
 		line-height: 1.02;
+		overflow-wrap: anywhere;
 	}
 
 	header p:not(.eyebrow) {
-		max-width: 62ch;
+		max-width: var(--measure);
 		color: var(--color-ink-soft);
 		font-size: var(--step-1);
 	}
