@@ -1,32 +1,76 @@
 :root {
+	/* Identity primitives */
 	--color-coast-deep: #12233f;
 	--color-coast-indigo: #243b77;
 	--color-coast-teal: #2f7ea8;
 	--color-coast-aqua: #cbeaf2;
 	--color-coast-paper: #f7fbff;
-	--color-ink: var(--color-coast-deep);
-	--color-ink-soft: var(--color-coast-indigo);
-	--color-paper: var(--color-coast-paper);
-	--color-surface: #ffffff;
-	--color-surface-muted: var(--color-coast-aqua);
+	--color-neutral-white: #ffffff;
+	--color-warning-ink: #5f390d;
+	--color-warning-strong: #8a4b08;
+	--color-warning-line: #e2b166;
+	--color-warning-surface: #fff3dc;
+
+	/* Semantic color roles */
+	--color-text: var(--color-coast-deep);
+	--color-text-muted: var(--color-coast-indigo);
+	--color-text-inverse: var(--color-neutral-white);
+	--color-page: var(--color-coast-paper);
+	--color-page-atmosphere: rgb(47 126 168 / 8%);
+	--color-surface: var(--color-neutral-white);
+	--color-surface-static: var(--color-neutral-white);
+	--color-surface-raised: var(--color-neutral-white);
+	--color-surface-muted: rgb(203 234 242 / 62%);
+	--color-surface-interactive: var(--color-neutral-white);
+	--color-surface-interactive-hover: rgb(203 234 242 / 38%);
+	--color-surface-selected: var(--color-coast-aqua);
+	--color-surface-overlay: rgb(247 251 255 / 92%);
+	--color-surface-control: var(--color-neutral-white);
 	--color-line: rgb(47 126 168 / 28%);
 	--color-line-strong: var(--color-coast-teal);
-	--color-brand: var(--color-coast-indigo);
-	--color-brand-strong: var(--color-coast-deep);
+	--color-action: var(--color-coast-indigo);
+	--color-action-hover: var(--color-coast-deep);
+	--color-action-active: var(--color-coast-teal);
 	--color-accent: var(--color-coast-teal);
-	--color-warning: #8a4b08;
-	--color-warning-bg: #fff3dc;
-	--color-success: var(--color-coast-indigo);
-	--color-success-bg: var(--color-coast-aqua);
-	--color-success-line: var(--color-coast-indigo);
-	--color-info: var(--color-coast-deep);
-	--color-info-bg: rgb(203 234 242 / 48%);
-	--color-info-line: var(--color-coast-teal);
+	--color-selection: var(--color-coast-indigo);
+	--color-selection-line: var(--color-coast-teal);
+	--color-selection-surface: var(--color-coast-aqua);
+	--color-status-success: var(--color-coast-indigo);
+	--color-status-success-surface: var(--color-coast-aqua);
+	--color-status-success-line: var(--color-coast-indigo);
+	--color-status-info: var(--color-coast-deep);
+	--color-status-info-surface: rgb(203 234 242 / 48%);
+	--color-status-info-line: var(--color-coast-teal);
+	--color-status-warning: var(--color-warning-strong);
+	--color-status-warning-text: var(--color-warning-ink);
+	--color-status-warning-surface: var(--color-warning-surface);
+	--color-status-warning-line: var(--color-warning-line);
+	--color-data-primary: var(--color-coast-teal);
+	--color-data-label: var(--color-coast-deep);
+	--color-data-emphasis: rgb(47 126 168 / 35%);
 	--color-focus: var(--color-coast-teal);
+
+	/* Compatibility aliases for existing consumers */
+	--color-ink: var(--color-text);
+	--color-ink-soft: var(--color-text-muted);
+	--color-paper: var(--color-page);
+	--color-brand: var(--color-action);
+	--color-brand-strong: var(--color-action-hover);
+	--color-warning: var(--color-status-warning);
+	--color-warning-bg: var(--color-status-warning-surface);
+	--color-success: var(--color-status-success);
+	--color-success-bg: var(--color-status-success-surface);
+	--color-success-line: var(--color-status-success-line);
+	--color-info: var(--color-status-info);
+	--color-info-bg: var(--color-status-info-surface);
+	--color-info-line: var(--color-status-info-line);
+
+	/* Functional type roles */
+	--font-atkinson: "Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", Arial, sans-serif;
 	--font-jetbrains-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-	--font-sans: var(--font-jetbrains-mono);
-	--font-serif: var(--font-jetbrains-mono);
-	--font-mono: var(--font-jetbrains-mono);
+	--font-ui: var(--font-atkinson);
+	--font-body: var(--font-atkinson);
+	--font-data: var(--font-jetbrains-mono);
 	--step--1: clamp(0.83rem, 0.8rem + 0.12vw, 0.9rem);
 	--step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
 	--step-1: clamp(1.2rem, 1.08rem + 0.55vw, 1.5rem);
@@ -50,7 +94,8 @@
 	--icon-stroke: 2;
 	--shadow-sm: 0 1px 2px rgb(18 35 63 / 8%);
 	--shadow-md: 0 14px 35px rgb(18 35 63 / 10%);
-	--measure: 60ch;
+	--measure: 66ch;
+	--measure-data: 78ch;
 	--page: min(1180px, calc(100vw - 2rem));
 	--motion-fast: 140ms;
 	--motion-normal: 240ms;

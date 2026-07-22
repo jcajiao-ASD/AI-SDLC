@@ -20,22 +20,51 @@ import Caveat from '../components/Caveat.astro';
 		<section aria-labelledby="tipografia">
 			<h2 id="tipografia">Tipografía</h2>
 			<p>
-				JetBrains Mono Variable define todos los roles editoriales. Las variantes
-				normal e itálica se sirven localmente con pesos de 100 a 800.
+				Atkinson Hyperlegible Next sostiene interfaz y lectura prolongada.
+				JetBrains Mono conserva la precisión técnica de datos, metadatos,
+				comandos y etiquetas. Ambas familias se sirven localmente.
 			</p>
-			<div class="type-specimens">
-				<p class="type-sample" data-font-sample="normal">
-					<span>Regular 400</span>
-					Claridad antes que espectáculo.
-				</p>
-				<p class="type-sample type-sample--italic" data-font-sample="italic">
-					<span>Italic 400</span>
-					Evidencia trazable, decisiones explícitas.
-				</p>
-				<p class="type-sample type-sample--bold" data-font-sample="bold">
-					<span>Bold 800</span>
-					AI-SDLC: observar, comparar, decidir.
-				</p>
+			<div class="type-role">
+				<header>
+					<p class="type-role__token"><code>--font-body / --font-ui</code></p>
+					<h3>Atkinson Hyperlegible Next</h3>
+					<p>Para entender instrucciones, conclusiones y prosa con rapidez.</p>
+				</header>
+				<div class="type-specimens">
+					<p class="type-sample" data-font-family="atkinson" data-font-sample="normal">
+						<span>Lectura · Regular 400</span>
+						Claridad antes que espectáculo.
+					</p>
+					<p class="type-sample type-sample--italic" data-font-family="atkinson" data-font-sample="italic">
+						<span>Énfasis · Italic 400</span>
+						Evidencia trazable, decisiones explícitas.
+					</p>
+					<p class="type-sample type-sample--bold" data-font-family="atkinson" data-font-sample="bold">
+						<span>Interfaz · Bold 800</span>
+						Observar, comparar y decidir.
+					</p>
+				</div>
+			</div>
+			<div class="type-role type-role--data">
+				<header>
+					<p class="type-role__token"><code>--font-data</code></p>
+					<h3>JetBrains Mono</h3>
+					<p>Para conservar alineación y reconocer cifras, estados y comandos.</p>
+				</header>
+				<div class="type-specimens">
+					<p class="type-sample" data-font-family="jetbrains" data-font-sample="normal">
+						<span>Dato · Regular 400</span>
+						Puntaje: 66,1 / 100
+					</p>
+					<p class="type-sample type-sample--italic" data-font-family="jetbrains" data-font-sample="italic">
+						<span>Nota · Italic 400</span>
+						Evidencia mixta · corte 2026-07-22
+					</p>
+					<p class="type-sample type-sample--bold" data-font-family="jetbrains" data-font-sample="bold">
+						<span>Estado · Bold 800</span>
+						REVALIDACIÓN PENDIENTE
+					</p>
+				</div>
 			</div>
 		</section>
 
@@ -84,12 +113,55 @@ import Caveat from '../components/Caveat.astro';
 			</div>
 			<p class="palette-note">
 				El ámbar se conserva exclusivamente para advertencias; el teal no se usa
-				como texto normal sobre fondos claros.
+				como texto normal sobre fondos claros. Los componentes consumen roles
+				semánticos, no estos valores primitivos directamente.
 			</p>
 		</section>
 
-		<section>
-			<h2>Estados y evidencia</h2>
+		<section aria-labelledby="superficies">
+			<h2 id="superficies">Jerarquía de superficies</h2>
+			<p>
+				Una superficie estática organiza información sin anunciar una acción.
+				Solo las superficies accionables responden al puntero, foco y activación.
+			</p>
+			<div class="surface-specimens">
+				<article class="surface surface-sample" data-surface="static">
+					<p class="surface-sample__label">Panel estático</p>
+					<h3>Contexto de lectura</h3>
+					<p>Usa borde y fondo para agrupar contenido, sin elevación ni respuesta hover.</p>
+				</article>
+				<a
+					class="surface surface--interactive surface-sample"
+					data-surface="interactive"
+					href="#estados-interaccion"
+				>
+					<p class="surface-sample__label">Superficie interactiva</p>
+					<h3>Consultar estados</h3>
+					<p>Expone destino, foco visible y respuesta coherente al activarse.</p>
+				</a>
+				<article class="surface surface--selected surface-sample" data-surface="selected">
+					<p class="surface-sample__label">Selección</p>
+					<h3>Opción activa</h3>
+					<p>El texto y el contorno complementan el cambio de color.</p>
+				</article>
+				<article class="surface surface--warning surface-sample" data-surface="warning">
+					<p class="surface-sample__label">Advertencia</p>
+					<h3>Revalidación necesaria</h3>
+					<p>El estado combina lenguaje explícito, borde y superficie semántica.</p>
+				</article>
+			</div>
+		</section>
+
+		<section id="estados-interaccion" aria-labelledby="estados">
+			<h2 id="estados">Estados de interacción y evidencia</h2>
+			<p>
+				Hover refuerza una acción; el foco visible la hace navegable con teclado;
+				disabled comunica indisponibilidad sin simular una respuesta.
+			</p>
+			<div class="interaction-specimens">
+				<a class="button-link" href="#jerarquia-editorial">Acción disponible</a>
+				<button type="button" disabled>Acción no disponible</button>
+			</div>
 			<div class="meta-row">
 				<Badge tone="success">Vigente</Badge>
 				<Badge tone="warning">Revalidación pendiente</Badge>
@@ -131,7 +203,7 @@ import Caveat from '../components/Caveat.astro';
 			</ul>
 		</section>
 
-		<section>
+		<section id="jerarquia-editorial">
 			<h2>Jerarquía editorial</h2>
 			<ExecutiveSummary>
 				<p>La conclusión ejecutiva debe entenderse antes de cualquier interacción.</p>
@@ -164,9 +236,34 @@ import Caveat from '../components/Caveat.astro';
 	}
 
 	h2 {
-		font-family: var(--font-serif);
+		font-family: var(--font-ui);
 		font-size: var(--step-3);
-		font-weight: 500;
+		font-weight: 650;
+	}
+
+	.type-role {
+		display: grid;
+		gap: var(--space-4);
+		margin-top: var(--space-5);
+		padding-top: var(--space-5);
+		border-top: 1px solid var(--color-line);
+	}
+
+	.type-role header {
+		max-width: var(--measure);
+	}
+
+	.type-role h3 {
+		margin-block: var(--space-1);
+		font-size: var(--step-2);
+	}
+
+	.type-role__token {
+		margin: 0;
+		color: var(--color-action);
+		font-family: var(--font-data);
+		font-size: var(--step--1);
+		font-weight: 800;
 	}
 
 	.type-specimens {
@@ -183,13 +280,15 @@ import Caveat from '../components/Caveat.astro';
 		padding: var(--space-5);
 		border: 1px solid var(--color-line);
 		border-radius: var(--radius-lg);
-		background: var(--color-surface);
+		background: var(--color-surface-static);
+		font-family: var(--font-body);
 		font-size: var(--step-1);
 		overflow-wrap: anywhere;
 	}
 
 	.type-sample span {
-		color: var(--color-brand);
+		color: var(--color-action);
+		font-family: var(--font-data);
 		font-size: var(--step--1);
 		font-style: normal;
 		font-weight: 800;
@@ -202,6 +301,60 @@ import Caveat from '../components/Caveat.astro';
 
 	.type-sample--bold {
 		font-weight: 800;
+	}
+
+	.type-role--data .type-sample {
+		font-family: var(--font-data);
+	}
+
+	.surface-specimens {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--space-3);
+	}
+
+	.surface-sample {
+		display: block;
+		min-width: 0;
+		padding: var(--space-4);
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.surface-sample h3 {
+		margin-block: var(--space-1);
+	}
+
+	.surface-sample p {
+		margin-bottom: 0;
+	}
+
+	.surface-sample__label {
+		color: var(--color-action);
+		font-family: var(--font-data);
+		font-size: var(--step--1);
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	.surface--warning .surface-sample__label {
+		color: var(--color-status-warning);
+	}
+
+	.interaction-specimens {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+		margin-block: var(--space-4);
+	}
+
+	.interaction-specimens button {
+		padding: 0.7rem 1rem;
+		border: 1px solid var(--color-line-strong);
+		border-radius: 999px;
+		background: var(--color-surface-control);
+		color: var(--color-text);
+		font-weight: 750;
 	}
 
 	.swatches {
@@ -224,8 +377,8 @@ import Caveat from '../components/Caveat.astro';
 		padding: var(--space-4);
 		border: 1px solid var(--color-line);
 		border-radius: var(--radius-md);
-		background: var(--color-surface);
-		color: var(--color-brand-strong);
+		background: var(--color-surface-static);
+		color: var(--color-action-hover);
 		font-weight: 800;
 	}
 
@@ -249,8 +402,8 @@ import Caveat from '../components/Caveat.astro';
 		gap: var(--space-1);
 		margin-top: auto;
 		padding: var(--space-3) var(--space-4);
-		background: var(--color-surface);
-		color: var(--color-ink);
+		background: var(--color-surface-static);
+		color: var(--color-text);
 	}
 
 	.swatch__label strong {
@@ -259,7 +412,7 @@ import Caveat from '../components/Caveat.astro';
 
 	.swatch__label code {
 		color: inherit;
-		font-family: var(--font-mono);
+		font-family: var(--font-data);
 		font-size: var(--step--1);
 	}
 
@@ -281,7 +434,7 @@ import Caveat from '../components/Caveat.astro';
 
 	.palette-note {
 		max-width: var(--measure);
-		color: var(--color-ink-soft);
+		color: var(--color-text-muted);
 	}
 
 	section > :global(.summary),
@@ -291,6 +444,10 @@ import Caveat from '../components/Caveat.astro';
 
 	@media (max-width: 700px) {
 		.type-specimens {
+			grid-template-columns: 1fr;
+		}
+
+		.surface-specimens {
 			grid-template-columns: 1fr;
 		}
 

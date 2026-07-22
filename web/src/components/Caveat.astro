@@ -19,16 +19,17 @@ const { title = 'Límite de interpretación' } = Astro.props;
 <style>
 	.caveat {
 		padding: var(--space-4) var(--space-5);
-		border-left: 4px solid var(--color-warning);
+		border-left: 4px solid var(--color-status-warning);
 		border-radius: 0 var(--radius-md) var(--radius-md) 0;
-		background: var(--color-warning-bg);
-		color: #5f390d;
+		background: var(--color-status-warning-surface);
+		color: var(--color-status-warning-text);
 	}
 
 	.caveat__title {
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
+		font-family: var(--font-data);
 	}
 
 	.caveat :global(p) {

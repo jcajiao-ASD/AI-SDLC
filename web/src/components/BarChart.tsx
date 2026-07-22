@@ -20,12 +20,14 @@ export default function BarChart({ data, title, description, max = 100 }: Props)
 	useEffect(() => {
 		if (!host.current) return;
 		const rootStyles = getComputedStyle(document.documentElement);
-		const coastTeal = rootStyles.getPropertyValue('--color-coast-teal').trim();
-		const coastDeep = rootStyles.getPropertyValue('--color-coast-deep').trim();
+		const dataPrimary = rootStyles.getPropertyValue('--color-data-primary').trim();
+		const dataLabel = rootStyles.getPropertyValue('--color-data-label').trim();
+		const dataFont = rootStyles.getPropertyValue('--font-data').trim();
 		const chart = Plot.plot({
 			ariaLabel: `${title}. ${description}`,
 			height: Math.max(260, data.length * 54),
 			marginLeft: 150,
+			style: { fontFamily: dataFont },
 			x: { domain: [0, max], grid: true, label: 'Puntuación' },
 			y: { label: null },
 			color: { legend: false },
@@ -34,7 +36,7 @@ export default function BarChart({ data, title, description, max = 100 }: Props)
 					x: 'value',
 					y: 'label',
 					sort: { y: '-x' },
-					fill: coastTeal,
+					fill: dataPrimary,
 					tip: true,
 					title: (datum) => `${datum.label}: ${datum.value}${datum.detail ? ` · ${datum.detail}` : ''}`,
 				}),
@@ -43,7 +45,7 @@ export default function BarChart({ data, title, description, max = 100 }: Props)
 					y: 'label',
 					text: (datum) => String(datum.value),
 					dx: 16,
-					fill: coastDeep,
+					fill: dataLabel,
 					fontWeight: 700,
 				}),
 			],

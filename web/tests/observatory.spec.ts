@@ -12,7 +12,7 @@ test('la portada conduce al configurador y a las tres decisiones', async ({ page
 	await expect(page.getByRole('link', { name: 'Saltar al contenido' })).toBeFocused();
 });
 
-test('JetBrains Mono carga localmente sus variantes reales', async ({ page }) => {
+test('las familias tipográficas cargan localmente sus variantes y roles', async ({ page }) => {
 	const fontRequests: string[] = [];
 	page.on('request', (request) => {
 		if (request.resourceType() === 'font') {
@@ -21,35 +21,114 @@ test('JetBrains Mono carga localmente sus variantes reales', async ({ page }) =>
 	});
 
 	await page.goto('/sistema-diseno/');
-	await expect(page.locator('[data-font-sample="normal"]')).toBeVisible();
-	await expect(page.locator('[data-font-sample="italic"]')).toHaveCSS('font-style', 'italic');
-	await expect(page.locator('[data-font-sample="bold"]')).toHaveCSS('font-weight', '800');
+	const atkinsonNormal = page.locator('[data-font-family="atkinson"][data-font-sample="normal"]');
+	const atkinsonItalic = page.locator('[data-font-family="atkinson"][data-font-sample="italic"]');
+	const atkinsonBold = page.locator('[data-font-family="atkinson"][data-font-sample="bold"]');
+	const jetbrainsNormal = page.locator('[data-font-family="jetbrains"][data-font-sample="normal"]');
+	const jetbrainsItalic = page.locator('[data-font-family="jetbrains"][data-font-sample="italic"]');
+	const jetbrainsBold = page.locator('[data-font-family="jetbrains"][data-font-sample="bold"]');
+
+	await expect(atkinsonNormal).toHaveCSS('font-family', /Atkinson Hyperlegible Next Variable/);
+	await expect(atkinsonItalic).toHaveCSS('font-style', 'italic');
+	await expect(atkinsonBold).toHaveCSS('font-weight', '800');
+	await expect(jetbrainsNormal).toHaveCSS('font-family', /JetBrains Mono Variable/);
+	await expect(jetbrainsItalic).toHaveCSS('font-style', 'italic');
+	await expect(jetbrainsBold).toHaveCSS('font-weight', '800');
+	await expect(page.getByText('Vigente', { exact: true })).toHaveCSS(
+		'font-family',
+		/JetBrains Mono Variable/,
+	);
+	await expect(page.getByRole('button', { name: 'Acción no disponible' })).toHaveCSS(
+		'font-family',
+		/Atkinson Hyperlegible Next Variable/,
+	);
 
 	const loaded = await page.evaluate(async () => {
 		await document.fonts.ready;
-		const [normal, italic, bold] = await Promise.all([
-			document.fonts.load('400 16px "JetBrains Mono Variable"', 'Claridad'),
-			document.fonts.load('italic 400 16px "JetBrains Mono Variable"', 'Evidencia'),
-			document.fonts.load('800 16px "JetBrains Mono Variable"', 'Decidir'),
+		const [
+			atkinsonNormal,
+			atkinsonItalic,
+			atkinsonBold,
+			jetbrainsNormal,
+			jetbrainsItalic,
+			jetbrainsBold,
+		] = await Promise.all([
+			document.fonts.load('400 16px "Atkinson Hyperlegible Next Variable"', 'Claridad'),
+			document.fonts.load('italic 400 16px "Atkinson Hyperlegible Next Variable"', 'Evidencia'),
+			document.fonts.load('800 16px "Atkinson Hyperlegible Next Variable"', 'Decidir'),
+			document.fonts.load('400 16px "JetBrains Mono Variable"', 'Puntaje'),
+			document.fonts.load('italic 400 16px "JetBrains Mono Variable"', 'Corte'),
+			document.fonts.load('800 16px "JetBrains Mono Variable"', 'Vigente'),
 		]);
 
 		return {
-			normal: normal.length > 0 && document.fonts.check('400 16px "JetBrains Mono Variable"'),
-			italic: italic.length > 0 && document.fonts.check('italic 400 16px "JetBrains Mono Variable"'),
-			bold: bold.length > 0 && document.fonts.check('800 16px "JetBrains Mono Variable"'),
+			atkinsonNormal: atkinsonNormal.length > 0 &&
+				document.fonts.check('400 16px "Atkinson Hyperlegible Next Variable"'),
+			atkinsonItalic: atkinsonItalic.length > 0 &&
+				document.fonts.check('italic 400 16px "Atkinson Hyperlegible Next Variable"'),
+			atkinsonBold: atkinsonBold.length > 0 &&
+				document.fonts.check('800 16px "Atkinson Hyperlegible Next Variable"'),
+			jetbrainsNormal: jetbrainsNormal.length > 0 &&
+				document.fonts.check('400 16px "JetBrains Mono Variable"'),
+			jetbrainsItalic: jetbrainsItalic.length > 0 &&
+				document.fonts.check('italic 400 16px "JetBrains Mono Variable"'),
+			jetbrainsBold: jetbrainsBold.length > 0 &&
+				document.fonts.check('800 16px "JetBrains Mono Variable"'),
 			family: getComputedStyle(document.documentElement).fontFamily,
 		};
 	});
 
 	expect(loaded).toEqual({
-		normal: true,
-		italic: true,
-		bold: true,
-		family: expect.stringContaining('JetBrains Mono Variable'),
+		atkinsonNormal: true,
+		atkinsonItalic: true,
+		atkinsonBold: true,
+		jetbrainsNormal: true,
+		jetbrainsItalic: true,
+		jetbrainsBold: true,
+		family: expect.stringContaining('Atkinson Hyperlegible Next Variable'),
 	});
 	expect(fontRequests.length).toBeGreaterThan(0);
 	const pageOrigin = new URL(page.url()).origin;
 	expect(fontRequests.every((url) => new URL(url).origin === pageOrigin)).toBe(true);
+});
+
+test('las superficies estáticas no simulan interacción y los controles conservan estados', async ({ page }) => {
+	await page.goto('/sistema-diseno/');
+	const staticSurface = page.locator('[data-surface="static"]');
+	const staticBefore = await staticSurface.evaluate((element) => {
+		const styles = getComputedStyle(element);
+		return {
+			border: styles.borderTopColor,
+			background: styles.backgroundColor,
+			shadow: styles.boxShadow,
+			cursor: styles.cursor,
+		};
+	});
+	await staticSurface.hover();
+	const staticAfter = await staticSurface.evaluate((element) => {
+		const styles = getComputedStyle(element);
+		return {
+			border: styles.borderTopColor,
+			background: styles.backgroundColor,
+			shadow: styles.boxShadow,
+			cursor: styles.cursor,
+		};
+	});
+	expect(staticAfter).toEqual(staticBefore);
+
+	const interactiveSurface = page.locator('[data-surface="interactive"]');
+	await interactiveSurface.hover();
+	await expect(interactiveSurface).toHaveCSS('border-top-color', 'rgb(36, 59, 119)');
+	await interactiveSurface.focus();
+	await expect(interactiveSurface).toBeFocused();
+	await expect(interactiveSurface).toHaveCSS('outline-style', 'solid');
+
+	const disabledButton = page.getByRole('button', { name: 'Acción no disponible' });
+	await expect(disabledButton).toBeDisabled();
+	await expect(disabledButton).toHaveCSS('cursor', 'not-allowed');
+
+	const results = await new AxeBuilder({ page }).analyze();
+	expect(results.violations).toEqual([]);
 });
 
 test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ page }) => {
@@ -64,6 +143,10 @@ test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ 
 				'--color-coast-teal',
 				'--color-coast-aqua',
 				'--color-coast-paper',
+				'--color-text',
+				'--color-action',
+				'--color-selection-surface',
+				'--color-status-warning-line',
 			].map((name) => [name, styles.getPropertyValue(name).trim().toLowerCase()]),
 		);
 	});
@@ -73,6 +156,10 @@ test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ 
 		'--color-coast-teal': '#2f7ea8',
 		'--color-coast-aqua': '#cbeaf2',
 		'--color-coast-paper': '#f7fbff',
+		'--color-text': '#12233f',
+		'--color-action': '#243b77',
+		'--color-selection-surface': '#cbeaf2',
+		'--color-status-warning-line': '#e2b166',
 	});
 
 	await expect(page.locator('[data-palette-color]')).toHaveCount(5);

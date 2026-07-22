@@ -21,6 +21,12 @@ const legacyColors = [
 	'#c9ded5',
 	'rgb(21 94 75',
 ];
+const centralizedWarningColors = [
+	'#5f390d',
+	'#8a4b08',
+	'#e2b166',
+	'#fff3dc',
+];
 
 async function sourceFiles(directory: string): Promise<string[]> {
 	const entries = await readdir(directory, { withFileTypes: true });
@@ -44,12 +50,34 @@ describe('paleta Tinta Costera', () => {
 		expect(tokens).toContain('--color-coast-paper: #f7fbff;');
 	});
 
+	it('separa valores primitivos de roles semánticos', async () => {
+		const tokens = await readFile(new URL('./tokens.css', import.meta.url), 'utf8');
+		expect(tokens).toContain('--color-text: var(--color-coast-deep);');
+		expect(tokens).toContain('--color-action: var(--color-coast-indigo);');
+		expect(tokens).toContain('--color-selection-surface: var(--color-coast-aqua);');
+		expect(tokens).toContain('--color-status-warning-line: var(--color-warning-line);');
+		expect(tokens).toContain('--color-surface-interactive-hover:');
+	});
+
 	it('no conserva los verdes heredados en el código fuente', async () => {
 		const matches: string[] = [];
 		for (const file of await sourceFiles(sourceRoot)) {
 			if (file === currentFile) continue;
 			const content = (await readFile(file, 'utf8')).toLowerCase();
 			for (const color of legacyColors) {
+				if (content.includes(color)) matches.push(`${file}: ${color}`);
+			}
+		}
+		expect(matches).toEqual([]);
+	});
+
+	it('centraliza los tonos de advertencia en tokens', async () => {
+		const matches: string[] = [];
+		const tokensPath = fileURLToPath(new URL('./tokens.css', import.meta.url));
+		for (const file of await sourceFiles(sourceRoot)) {
+			if (file === currentFile || file === tokensPath) continue;
+			const content = (await readFile(file, 'utf8')).toLowerCase();
+			for (const color of centralizedWarningColors) {
 				if (content.includes(color)) matches.push(`${file}: ${color}`);
 			}
 		}

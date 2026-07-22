@@ -36,12 +36,13 @@ const stale = isPastRevalidation(metadata);
 		padding: var(--space-5);
 		border: 1px solid var(--color-line);
 		border-radius: var(--radius-lg);
-		background: var(--color-surface);
+		background: var(--color-surface-static);
 	}
 
 	.evidence__label {
 		margin: 0;
-		color: var(--color-brand);
+		color: var(--color-action);
+		font-family: var(--font-data);
 		font-size: var(--step--1);
 		font-weight: 800;
 		text-transform: uppercase;
@@ -57,6 +58,7 @@ const stale = isPastRevalidation(metadata);
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: var(--space-4);
 		margin: 0;
+		font-family: var(--font-data);
 	}
 
 	dt {

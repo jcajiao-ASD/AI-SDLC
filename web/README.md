@@ -30,8 +30,10 @@ BASE_PATH=/AI-SDLC SITE_URL=https://usuario.github.io npm run build
 
 ## Tipografía
 
-El observatorio usa JetBrains Mono Variable en interfaz, títulos, prosa y datos.
-Las variantes normal e itálica se empaquetan desde
+El observatorio usa Atkinson Hyperlegible Next Variable para interfaz, títulos y
+prosa, y reserva JetBrains Mono Variable para datos, metadatos, etiquetas
+técnicas y comandos. Las variantes normal e itálica se empaquetan desde
+`@fontsource-variable/atkinson-hyperlegible-next` y
 `@fontsource-variable/jetbrains-mono`; Astro publica los WOFF2 junto con los
 demás assets, por lo que el sitio no solicita fuentes a proveedores externos.
 
