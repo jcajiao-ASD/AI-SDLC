@@ -416,8 +416,11 @@ test('el contenido principal permanece disponible sin JavaScript', async ({ brow
 	await page.goto(siteUrl('/historias/seleccion-framework/'));
 	await expect(page.getByRole('table', { name: 'Ranking de frameworks con lente adopción-first' })).toBeVisible();
 	await page.goto(siteUrl('/historias/configurador-stack/'));
-	await expect(page.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
-	await expect(page.getByText('Límite de interpretación', { exact: true })).toBeVisible();
+	await expect(page.locator('.stack-step')).toHaveCount(3);
+	await expect(
+		page.locator('#stack-detail').getByText('Stack compatible documentado', { exact: true }),
+	).toBeVisible();
+	await expect(page.getByText('Límite de interpretación', { exact: true }).first()).toBeVisible();
 	await expect(page.getByRole('table', { name: 'Compatibilidad entre agentes y modelos' })).toBeVisible();
 	const frameworkTable = page.getByRole('table', {
 		name: 'Compatibilidad entre agentes y frameworks',
@@ -454,12 +457,19 @@ test('las filas móviles permanecen operables sin JavaScript', async ({ browser,
 test('el configurador conserva semántica, compatibilidad y alternativas', async ({ page }) => {
 	await page.goto(siteUrl('/historias/configurador-stack/'));
 
+	const detail = page.locator('#stack-detail');
+	const summary = page.locator('.stack-summary');
+	const frameworkStep = page.locator('[data-stack-layer="framework"]');
+	const agentStep = page.locator('[data-stack-layer="agent"]');
+
+	await expect(page.locator('.stack-step')).toHaveCount(3);
 	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
 	await expect(
 		page.getByRole('combobox', { name: 'Fase del SDLC' }),
 	).toHaveValue('diseno');
 	await expect(page.getByLabel('Escenario de proceso')).toHaveValue('adopcion-progresiva');
-	await expect(page.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
+	await expect(detail.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
+	await expect(summary.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
 	const agentSelector = page.getByLabel('Contexto del agente');
 	await agentSelector.focus();
 	await page.keyboard.press('ArrowDown');
@@ -471,27 +481,49 @@ test('el configurador conserva semántica, compatibilidad y alternativas', async
 	await agentSelector.selectOption('github');
 
 	await page.getByRole('combobox', { name: 'Fase del SDLC' }).selectOption('implementacion');
-	await expect(page.getByText('Stacks compatibles documentados', { exact: true })).toBeVisible();
+	await expect(detail.getByText('Stacks compatibles documentados', { exact: true })).toBeVisible();
 	await expect(page.locator('.stack-combination')).toHaveCount(2);
+	// Editar un paso posterior no reinicia los otros dos.
+	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
+	await expect(page.getByLabel('Escenario de proceso')).toHaveValue('adopcion-progresiva');
 
 	await page.getByLabel('Contexto del agente').selectOption('sin-centro');
-	await expect(page.getByText('La selección requiere un piloto comparativo', { exact: true })).toBeVisible();
-	await expect(page.getByText(/Cursor, Junie, OpenCode/)).toBeVisible();
+	await expect(detail.getByText('La selección requiere un piloto comparativo', { exact: true })).toBeVisible();
+	await expect(agentStep.getByText(/Cursor, Junie, OpenCode/)).toBeVisible();
 
 	await page.getByLabel('Contexto del agente').selectOption('jetbrains');
 	await page.getByRole('combobox', { name: 'Fase del SDLC' }).selectOption('pruebas');
 	await page.getByLabel('Escenario de proceso').selectOption('tdd');
-	await expect(page.getByText('No hay un stack verificable con estas selecciones', { exact: true })).toBeVisible();
+	await expect(detail.getByText('No hay un stack verificable con estas selecciones', { exact: true })).toBeVisible();
+	// El conflicto y su alternativa aparecen junto al paso de framework que lo origina.
+	await expect(frameworkStep.getByText('no-confirmada')).toBeVisible();
 	await expect(
-		page.locator('.stack-result li').filter({
-			hasText: /Cursor.*Superpowers.*condicionada/i,
-		}),
+		frameworkStep.getByText(/Cursor.*Superpowers.*condicionada/i),
 	).toBeVisible();
+	await expect(agentStep.getByText(/Superpowers/)).toHaveCount(0);
 
 	await page.getByLabel('Contexto del agente').selectOption('github');
 	await page.getByRole('combobox', { name: 'Fase del SDLC' }).selectOption('devops');
 	await page.getByLabel('Escenario de proceso').selectOption('hotfix');
 	await expect(page.getByRole('heading', { name: /sin framework/ })).toBeVisible();
+});
+
+test('el resumen permanece próximo a las entradas y enlaza al detalle completo', async ({ page, isMobile }) => {
+	await page.goto(siteUrl('/historias/configurador-stack/'));
+	const summary = page.locator('.stack-summary');
+
+	await expect(summary).toBeVisible();
+	const summaryLink = summary.getByRole('link', { name: 'Ver detalle completo de compatibilidad' });
+	await expect(summaryLink).toHaveAttribute('href', '#stack-detail');
+	await summaryLink.click();
+	await expect(page).toHaveURL(/#stack-detail$/);
+
+	if (isMobile) {
+		const summaryBox = await summary.boundingBox();
+		const flowBox = await page.locator('.stack-flow').boundingBox();
+		expect(summaryBox?.y).toBeLessThan(flowBox?.y ?? Number.POSITIVE_INFINITY);
+		await expect(summary).toHaveCSS('position', 'static');
+	}
 });
 
 test('el resultado inicial SSR coincide con la primera hidratación', async ({ browser, page }) => {

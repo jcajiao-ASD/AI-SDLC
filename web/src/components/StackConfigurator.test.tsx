@@ -178,4 +178,63 @@ describe('configurador de stack', () => {
 		);
 		expect(view.textContent).toContain('Stack verificado con condiciones');
 	});
+
+	it('presenta tres pasos independientes con un resumen derivado del mismo resultado', () => {
+		const view = mount();
+		const steps = view.querySelectorAll('.stack-step');
+
+		expect(steps).toHaveLength(3);
+		expect([...steps].map((step) => step.getAttribute('data-stack-layer'))).toEqual([
+			'agent',
+			'model',
+			'framework',
+		]);
+
+		const summary = view.querySelector('.stack-summary');
+		expect(summary).not.toBeNull();
+		expect(summary?.textContent).toContain('Stacks compatibles documentados');
+		expect(summary?.querySelectorAll('.stack-summary__combinations li')).toHaveLength(2);
+		expect(summary?.textContent).toContain('Stack verificado con condiciones');
+		expect(summary?.querySelector('a[href="#stack-detail"]')).not.toBeNull();
+		expect(view.querySelector('#stack-detail')).not.toBeNull();
+	});
+
+	it('editar un paso no reinicia las selecciones de los otros dos', () => {
+		const view = mount();
+		selectAt(1, 'pruebas');
+
+		const selects = [...view.querySelectorAll('select')];
+		expect(selects.map(({ value }) => value)).toEqual(['github', 'pruebas', 'adopcion']);
+
+		selectAt(2, 'tdd');
+		expect(selects.map(({ value }) => value)).toEqual(['github', 'pruebas', 'tdd']);
+	});
+
+	it('muestra el conflicto no confirmado junto al paso de framework que lo origina', () => {
+		const view = mount();
+		selectAt(0, 'jetbrains');
+		selectAt(1, 'pruebas');
+		selectAt(2, 'tdd');
+
+		const frameworkStep = view.querySelector('[data-stack-layer="framework"]');
+		expect(frameworkStep?.textContent).toContain('no-confirmada');
+		expect(frameworkStep?.textContent).toContain('Cursor con Superpowers: condicionada');
+
+		const agentStep = view.querySelector('[data-stack-layer="agent"]');
+		expect(agentStep?.textContent).not.toContain('Superpowers');
+	});
+
+	it('anuncia el estado global y el conflicto principal en una región concentrada', () => {
+		const view = mount();
+		const status = view.querySelector('[role="status"]');
+		expect(status).not.toBeNull();
+		expect(status?.textContent).toContain('Stack verificado');
+		expect(status?.textContent).not.toContain('con condiciones');
+
+		selectAt(0, 'jetbrains');
+		selectAt(1, 'pruebas');
+		selectAt(2, 'tdd');
+		expect(status?.textContent).toContain('Superpowers');
+		expect(status?.textContent).toContain('no-confirmada');
+	});
 });
