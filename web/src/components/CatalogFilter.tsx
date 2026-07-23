@@ -1,85 +1,217 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
+import {
+	applyCatalogState,
+	catalogFacetValues,
+	catalogFilterFields,
+	defaultCatalogState,
+	isDefaultCatalogState,
+	parseCatalogSearch,
+	serializeCatalogSearch,
+	type CatalogFilterField,
+	type CatalogItem,
+	type CatalogState,
+} from '../lib/catalog';
 
-export interface CatalogItem {
-	id: string;
-	title: string;
-	summary: string;
-	category: string;
-	status: string;
-	year: string;
-	decisionType: string;
-	href: string;
-}
+export type { CatalogItem };
 
 interface Props {
 	items: CatalogItem[];
 }
 
+const filterFieldLabels: Record<CatalogFilterField, string> = {
+	category: 'Categoría',
+	status: 'Estado',
+	year: 'Año de corte',
+	decision: 'Tipo de decisión',
+};
+
+function writeLocationState(state: CatalogState, mode: 'push' | 'replace') {
+	const url = `${window.location.pathname}${serializeCatalogSearch(state)}${window.location.hash}`;
+	if (mode === 'push') {
+		window.history.pushState(null, '', url);
+	} else {
+		window.history.replaceState(null, '', url);
+	}
+}
+
 export default function CatalogFilter({ items }: Props) {
-	const [category, setCategory] = useState('');
-	const [status, setStatus] = useState('');
-	const [year, setYear] = useState('');
-	const [decision, setDecision] = useState('');
+	// El primer render debe coincidir con el HTML estático (sin JS ni URL
+	// aplicada); el estado de la URL se adopta después del montaje para que
+	// Preact lo aplique como una actualización normal, no como hidratación.
+	const [state, setState] = useState<CatalogState>(defaultCatalogState);
 
-	const filtered = useMemo(
-		() =>
-			items.filter(
-				(item) =>
-					(!category || item.category === category) &&
-					(!status || item.status === status) &&
-					(!year || item.year === year) &&
-					(!decision || item.decisionType === decision),
-			),
-		[category, decision, items, status, year],
-	);
+	useEffect(() => {
+		setState(parseCatalogSearch(window.location.search));
+		const handlePopState = () => setState(parseCatalogSearch(window.location.search));
+		window.addEventListener('popstate', handlePopState);
+		return () => window.removeEventListener('popstate', handlePopState);
+	}, []);
 
-	const options = (field: keyof CatalogItem) =>
-		[...new Set(items.map((item) => item[field]))].sort((a, b) =>
-			String(a).localeCompare(String(b), 'es'),
-		);
+	function commit(next: CatalogState, mode: 'push' | 'replace') {
+		setState(next);
+		writeLocationState(next, mode);
+	}
+
+	function updateSearch(value: string) {
+		commit({ ...state, q: value }, 'replace');
+	}
+
+	function updateFilter(field: CatalogFilterField, value: string) {
+		commit({ ...state, [field]: value }, 'push');
+	}
+
+	function updateSort(value: CatalogState['sort']) {
+		commit({ ...state, sort: value }, 'push');
+	}
+
+	function clearFilter(field: CatalogFilterField) {
+		commit({ ...state, [field]: '' }, 'push');
+	}
+
+	function clearSearch() {
+		commit({ ...state, q: '' }, 'push');
+	}
+
+	function clearAll() {
+		commit(defaultCatalogState(), 'push');
+	}
+
+	const results = useMemo(() => applyCatalogState(items, state), [items, state]);
+	const trimmedQuery = state.q.trim();
+	const activeFilters = catalogFilterFields.filter((field) => state[field]);
+	const hasActiveCriteria = !isDefaultCatalogState(state);
+	const resultsLabel = results.length === 1 ? 'investigación visible' : 'investigaciones visibles';
+	const activeSummary = [
+		...(trimmedQuery ? [`«${trimmedQuery}»`] : []),
+		...activeFilters.map((field) => `${filterFieldLabels[field]}: ${state[field]}`),
+	].join(', ');
 
 	return (
 		<div class="catalog">
 			<div class="filters" aria-label="Filtros del catálogo">
+				<label class="filters__search">
+					Buscar
+					<input
+						type="search"
+						value={state.q}
+						placeholder="Título, resumen o metadatos"
+						onInput={(event) => updateSearch(event.currentTarget.value)}
+					/>
+				</label>
 				<label>
 					Categoría
-					<select value={category} onChange={(event) => setCategory(event.currentTarget.value)}>
+					<select
+						value={state.category}
+						onChange={(event) => updateFilter('category', event.currentTarget.value)}
+					>
 						<option value="">Todas</option>
-						{options('category').map((value) => <option value={value}>{value}</option>)}
+						{catalogFacetValues(items, 'category').map((value) => (
+							<option value={value}>{value}</option>
+						))}
 					</select>
 				</label>
 				<label>
 					Estado
-					<select value={status} onChange={(event) => setStatus(event.currentTarget.value)}>
+					<select
+						value={state.status}
+						onChange={(event) => updateFilter('status', event.currentTarget.value)}
+					>
 						<option value="">Todos</option>
-						{options('status').map((value) => <option value={value}>{value}</option>)}
+						{catalogFacetValues(items, 'status').map((value) => (
+							<option value={value}>{value}</option>
+						))}
 					</select>
 				</label>
 				<label>
 					Año de corte
-					<select value={year} onChange={(event) => setYear(event.currentTarget.value)}>
+					<select
+						value={state.year}
+						onChange={(event) => updateFilter('year', event.currentTarget.value)}
+					>
 						<option value="">Todos</option>
-						{options('year').map((value) => <option value={value}>{value}</option>)}
+						{catalogFacetValues(items, 'year').map((value) => (
+							<option value={value}>{value}</option>
+						))}
 					</select>
 				</label>
 				<label>
 					Tipo de decisión
-					<select value={decision} onChange={(event) => setDecision(event.currentTarget.value)}>
+					<select
+						value={state.decision}
+						onChange={(event) => updateFilter('decision', event.currentTarget.value)}
+					>
 						<option value="">Todos</option>
-						{options('decisionType').map((value) => <option value={value}>{value}</option>)}
+						{catalogFacetValues(items, 'decision').map((value) => (
+							<option value={value}>{value}</option>
+						))}
+					</select>
+				</label>
+				<label>
+					Ordenar por
+					<select
+						value={state.sort}
+						onChange={(event) => updateSort(event.currentTarget.value as CatalogState['sort'])}
+					>
+						<option value="relevancia" disabled={!trimmedQuery}>
+							Relevancia
+						</option>
+						<option value="fecha">Fecha de corte</option>
+						<option value="titulo">Título</option>
 					</select>
 				</label>
 			</div>
-			<p aria-live="polite"><strong>{filtered.length}</strong> investigaciones visibles</p>
-			<div class="catalog__grid">
-				{filtered.map((item) => (
-					<article class="catalog-card" key={item.id}>
-						<p class="catalog-card__meta">{item.category} · {item.status} · {item.year}</p>
-						<h2><a href={item.href}>{item.title}</a></h2>
-						<p>{item.summary}</p>
-					</article>
-				))}
-			</div>
+
+			{hasActiveCriteria && (
+				<div class="catalog__chips" aria-label="Criterios activos">
+					{trimmedQuery && (
+						<button type="button" class="chip" aria-label={`Quitar búsqueda: ${trimmedQuery}`} onClick={clearSearch}>
+							<span aria-hidden="true">Búsqueda: «{trimmedQuery}» ×</span>
+						</button>
+					)}
+					{activeFilters.map((field) => (
+						<button
+							type="button"
+							class="chip"
+							aria-label={`Quitar filtro ${filterFieldLabels[field]}: ${state[field]}`}
+							onClick={() => clearFilter(field)}
+						>
+							<span aria-hidden="true">
+								{filterFieldLabels[field]}: {state[field]} ×
+							</span>
+						</button>
+					))}
+					<button type="button" class="catalog__clear" onClick={clearAll}>
+						Limpiar filtros
+					</button>
+				</div>
+			)}
+
+			<p class="catalog__count" aria-live="polite">
+				<strong>{results.length}</strong> de {items.length} {resultsLabel}
+			</p>
+
+			{results.length === 0 ? (
+				<div class="catalog__empty" role="status">
+					<p>
+						Ningún estudio coincide con {activeSummary || 'los criterios activos'}.
+					</p>
+					<button type="button" class="button-link button-link--secondary" onClick={clearAll}>
+						Limpiar filtros
+					</button>
+				</div>
+			) : (
+				<div class="catalog__grid">
+					{results.map((item) => (
+						<a class="catalog-card" href={item.href} key={item.id}>
+							<p class="catalog-card__meta">
+								{item.category} · {item.status} · {item.year}
+							</p>
+							<h2>{item.title}</h2>
+							<p>{item.summary}</p>
+						</a>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

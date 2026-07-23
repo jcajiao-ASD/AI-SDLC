@@ -288,14 +288,107 @@ test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ 
 	await expect(setFill).toHaveCSS('background-color', 'rgba(18, 35, 63, 0.4)');
 });
 
-test('el catálogo filtra y conserva rutas navegables', async ({ page }) => {
+test('el catálogo busca, filtra con chips y limpia el estado completo', async ({ page }) => {
 	await page.goto(siteUrl('/investigaciones/'));
-	const catalogCount = await page.locator('.catalog-card').count();
-	await expect(page.getByText(`${catalogCount} investigaciones visibles`)).toBeVisible();
-	await page.getByLabel('Categoría').selectOption('modelos');
-	await expect(page.getByText('1 investigaciones visibles')).toBeVisible();
+	const total = await page.locator('.catalog-card').count();
+	await expect(page.locator('.catalog__count')).toHaveText(
+		`${total} de ${total} investigaciones visibles`,
+	);
+	await expect(page.locator('.catalog__chips')).toHaveCount(0);
+
+	await page.getByRole('searchbox', { name: 'Buscar' }).fill('agentes');
+	await expect(page.locator('.chip', { hasText: 'Búsqueda' })).toBeVisible();
+	const searchCount = await page.locator('.catalog-card').count();
+	expect(searchCount).toBeGreaterThan(0);
+	expect(searchCount).toBeLessThan(total);
+
+	await page.getByRole('combobox', { name: 'Categoría' }).selectOption('agentes');
+	await expect(page.locator('.chip')).toHaveCount(2);
+
+	await page.locator('.chip', { hasText: 'Categoría' }).click();
+	await expect(page.locator('.chip')).toHaveCount(1);
+	await expect(page.getByRole('combobox', { name: 'Categoría' })).toHaveValue('');
+
+	await page.getByRole('button', { name: 'Limpiar filtros' }).first().click();
+	await expect(page.locator('.catalog__chips')).toHaveCount(0);
+	await expect(page.locator('.catalog-card')).toHaveCount(total);
+
 	await page.getByRole('link', { name: /Comparativa de LLMs/ }).click();
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Comparativa de LLMs');
+});
+
+test('el catálogo ordena de forma determinista y ofrece un estado vacío accionable', async ({ page }) => {
+	await page.goto(siteUrl('/investigaciones/'));
+
+	await page.getByRole('combobox', { name: 'Ordenar por' }).selectOption('titulo');
+	const titles = await page.locator('.catalog-card h2').allInnerTexts();
+	expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b, 'es')));
+
+	await page.getByRole('searchbox', { name: 'Buscar' }).fill('zzzznoexiste');
+	await expect(page.locator('.catalog__empty')).toBeVisible();
+	await expect(page.locator('.catalog__empty')).toContainText('zzzznoexiste');
+	await expect(page.locator('.catalog__count')).toContainText('0 de');
+
+	await page.locator('.catalog__empty').getByRole('button', { name: 'Limpiar filtros' }).click();
+	await expect(page.locator('.catalog__empty')).toHaveCount(0);
+	await expect(page.getByRole('searchbox', { name: 'Buscar' })).toHaveValue('');
+});
+
+test('el catálogo persiste el estado en la URL, restaura enlaces compartidos y responde al historial', async ({ page }) => {
+	await page.goto(siteUrl('/investigaciones/?category=modelos&sort=titulo'));
+	await expect(page.getByRole('combobox', { name: 'Categoría' })).toHaveValue('modelos');
+	await expect(page.getByRole('combobox', { name: 'Ordenar por' })).toHaveValue('titulo');
+	await expect(page.locator('.chip', { hasText: 'Categoría' })).toBeVisible();
+
+	await page.goto(siteUrl('/investigaciones/?sort=inventado&desconocido=1'));
+	await expect(page.getByRole('combobox', { name: 'Ordenar por' })).toHaveValue('relevancia');
+	const totalAfterUnknownParams = await page.locator('.catalog-card').count();
+	expect(totalAfterUnknownParams).toBeGreaterThan(1);
+
+	await page.getByRole('searchbox', { name: 'Buscar' }).fill('modelos');
+	await expect
+		.poll(() => new URL(page.url()).pathname)
+		.toBe(sitePath('/investigaciones/'));
+	await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe('modelos');
+
+	await page.getByRole('combobox', { name: 'Estado' }).selectOption({ index: 1 });
+	const filteredUrl = page.url();
+
+	await page.goBack();
+	await expect.poll(() => new URL(page.url()).searchParams.get('status')).toBeNull();
+	await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe('modelos');
+
+	await page.goForward();
+	await expect.poll(() => page.url()).toBe(filteredUrl);
+});
+
+test('las tarjetas del catálogo son una única superficie enlazada operable por teclado', async ({ page }) => {
+	await page.goto(siteUrl('/investigaciones/'));
+	const firstCard = page.locator('.catalog-card').first();
+	await expect(firstCard).toHaveJSProperty('tagName', 'A');
+	await expect(firstCard.locator('a')).toHaveCount(0);
+	await firstCard.focus();
+	await expect(firstCard).toBeFocused();
+	await page.keyboard.press('Enter');
+	await expect(page).toHaveURL(new RegExp(`${sitePath('/investigaciones/')}[a-z0-9-]+/$`));
+});
+
+test('el catálogo permanece completo y navegable sin JavaScript aunque la URL traiga parámetros', async ({ browser }) => {
+	const context = await browser.newContext({ javaScriptEnabled: false });
+	const page = await context.newPage();
+	await page.goto(siteUrl('/investigaciones/?category=modelos&q=inexistente'));
+	const total = await page.locator('.catalog-card').count();
+	expect(total).toBeGreaterThan(1);
+	await expect(page.getByRole('link', { name: /Comparativa de LLMs/ })).toBeVisible();
+	await context.close();
+});
+
+test('el catálogo no presenta violaciones de accesibilidad en su estado vacío', async ({ page }) => {
+	await page.goto(siteUrl('/investigaciones/'));
+	await page.getByRole('searchbox', { name: 'Buscar' }).fill('zzzznoexiste');
+	await expect(page.locator('.catalog__empty')).toBeVisible();
+	const results = await new AxeBuilder({ page }).analyze();
+	expect(results.violations).toEqual([]);
 });
 
 test('la tipografía no provoca desplazamiento horizontal de página', async ({ page }) => {

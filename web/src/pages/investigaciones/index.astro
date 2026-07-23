@@ -14,6 +14,7 @@ const items = studies.map((study) => ({
 	status: study.metadata.status,
 	year: study.metadata.cutoffDate.slice(0, 4),
 	decisionType: study.metadata.decisionType,
+	cutoffDate: study.metadata.cutoffDate,
 	href: withBase(`/investigaciones/${study.metadata.slug}/`),
 }));
 ---
@@ -30,9 +31,9 @@ const items = studies.map((study) => ({
 		<p class="eyebrow">Catálogo</p>
 		<h1 class="display">La evidencia completa, organizada para explorar.</h1>
 		<p class="lede">
-			Filtra por tema, vigencia o tipo de decisión. Sin JavaScript, los
-			{studies.length} estudios siguen disponibles como una lista navegable
-			completa.
+			Busca por texto, filtra por tema, vigencia o tipo de decisión, y
+			comparte la URL con tus criterios aplicados. Sin JavaScript, los {studies.length} estudios
+			siguen disponibles como una lista navegable completa.
 		</p>
 	</header>
 	<section class="shell">
