@@ -762,6 +762,7 @@ hubiese competido en el ranking.
 ## 10. Mejor alternativa por escenario
 
 <!-- ai-sdlc-dataset: id=framework-profile-recommendations schema=profile-recommendation unit=categorical -->
+<!-- ai-sdlc-table: {"rowHeader":"Escenario","essentialColumns":["Escenario","Recomendación","Motivo"],"initiallyHiddenColumns":["Clave de contexto","Candidatos"],"summaryColumns":["Recomendación"],"contentKinds":{"Clave de contexto":"data","Escenario":"prose","Candidatos":"data","Recomendación":"data","Motivo":"prose","Caveat":"prose"}} -->
 | Clave de contexto | Escenario | Candidatos | Recomendación | Motivo | Caveat |
 | --- | --- | --- | --- | --- | --- |
 | `adopcion-progresiva` | **Adopción progresiva y liderada por humanos, brownfield, mínima ceremonia, Git/CI ya gobernados** | `primary:openspec` | **OpenSpec** + gobernanza externa obligatoria | Máxima flexibilidad, integración progresiva y facilidad de uso. | El piso de calidad se repone con controles deterministas de plataforma (§9, §11). |
@@ -781,6 +782,7 @@ skills. “No confirmada” conserva la ausencia de evidencia oficial como
 incertidumbre, no como incompatibilidad.
 
 <!-- ai-sdlc-dataset: id=agent-framework-compatibility schema=compatibility-matrix unit=categorical -->
+<!-- ai-sdlc-table: {"rowHeader":"Agente","essentialColumns":["Agente","Componente","Estado"],"initiallyHiddenColumns":["Clave de agente","Clave de componente"],"summaryColumns":["Componente","Estado"],"contentKinds":{"Clave de agente":"data","Agente":"data","Clave de componente":"data","Componente":"data","Estado":"data","Mecanismo":"prose","Nota":"prose","Fuente":"prose","Verificado el":"data"}} -->
 | Clave de agente | Agente | Clave de componente | Componente | Estado | Mecanismo | Nota | Fuente | Verificado el |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `copilot-cli` | GitHub Copilot CLI | `openspec` | OpenSpec 1.6.0 | nativa | Skills en `.github/skills/openspec-*/SKILL.md` | Los prompt files son para IDE; Copilot CLI consume las skills. | <https://github.com/Fission-AI/OpenSpec/blob/v1.6.0/docs/supported-tools.md> | 2026-07-22 |

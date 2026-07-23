@@ -1,22 +1,43 @@
 ---
 import type { ResearchDataset } from '../lib/types';
+import {
+	datasetTablePresentation,
+	displayTableHeader,
+	type TablePresentation,
+} from '../lib/tables';
 import { renderInlineMarkdown } from '../lib/research';
 
 interface Props {
 	dataset: ResearchDataset;
 	caption: string;
-	hiddenColumns?: string[];
+	initiallyHiddenColumns?: string[];
+	presentation?: TablePresentation;
 }
 
-const { dataset, caption, hiddenColumns = [] } = Astro.props;
-const visibleHeaders = dataset.headers.filter(
-	(header) => !hiddenColumns.includes(header),
+const {
+	dataset,
+	caption,
+	initiallyHiddenColumns,
+	presentation: presentationOverrides = {},
+} = Astro.props;
+const presentation = datasetTablePresentation(dataset, {
+	...presentationOverrides,
+	initiallyHiddenColumns:
+		initiallyHiddenColumns ?? presentationOverrides.initiallyHiddenColumns,
+});
+const renderedHeaders = Object.fromEntries(
+	await Promise.all(
+		dataset.headers.map(async (header) => [
+			header,
+			await renderInlineMarkdown(header),
+		]),
+	),
 );
 const renderedRows = await Promise.all(
 	dataset.rows.map(async (row) =>
 		Object.fromEntries(
 			await Promise.all(
-				visibleHeaders.map(async (header) => [
+				dataset.headers.map(async (header) => [
 					header,
 					await renderInlineMarkdown(row[header]),
 				]),
@@ -24,18 +45,143 @@ const renderedRows = await Promise.all(
 		),
 	),
 );
+const essential = new Set(presentation.essentialColumns);
+const initiallyHidden = new Set(presentation.initiallyHiddenColumns);
+const rowHeaderIndex = presentation.rowHeader
+	? dataset.headers.indexOf(presentation.rowHeader)
+	: -1;
+const hasSelector =
+	essential.size > 0 && essential.size < dataset.headers.length;
+const hasSummary =
+	Boolean(presentation.rowHeader) &&
+	presentation.summaryColumns.length > 0 &&
+	dataset.headers.length >= 5;
+const isWide = dataset.headers.length >= 5 || dataset.rows.length >= 12;
+const frameId = `dataset-table-${dataset.id}`;
+const captionId = `${frameId}-caption`;
+const visibleCount = dataset.headers.length - initiallyHidden.size;
 ---
 
-<div class="table-scroll" tabindex="0" role="region" aria-label={caption}>
-	<table class="data-table">
-		<caption class="sr-only">{caption}</caption>
-		<thead>
-			<tr>{visibleHeaders.map((header) => <th scope="col">{header}</th>)}</tr>
-		</thead>
-		<tbody>
+<div
+	class:list={[
+		'table-frame',
+		{
+			'table-frame--wide': isWide,
+			'table-frame--has-selector': hasSelector,
+			'table-frame--has-summary': hasSummary,
+		},
+	]}
+	data-table-frame
+	data-table-wide={String(isWide)}
+	data-table-row-header-index={rowHeaderIndex >= 0 ? rowHeaderIndex : undefined}
+>
+	<div class="table-frame__header">
+		<p id={captionId} class="table-caption">{caption}</p>
+		{hasSelector && (
+			<details class="table-column-picker">
+				<summary>
+					Columnas: <span data-table-column-count aria-live="polite">
+						{visibleCount} de {dataset.headers.length}
+					</span>
+				</summary>
+				<fieldset>
+					<legend class="sr-only">Columnas visibles</legend>
+					{dataset.headers.map((header, index) => {
+						const locked = essential.has(header);
+						const inputId = `${frameId}-column-${index}`;
+						return (
+							<label class="table-column-picker__option" for={inputId}>
+								<input
+									id={inputId}
+									type="checkbox"
+									checked={locked || !initiallyHidden.has(header)}
+									disabled={locked}
+									data-table-column-toggle
+									data-column-index={index}
+								/>
+								<span>{displayTableHeader(header)}</span>
+								{locked && <small class="table-column-picker__locked">Siempre visible</small>}
+							</label>
+						);
+					})}
+				</fieldset>
+			</details>
+		)}
+	</div>
+
+	<div
+		class="table-scroll"
+		tabindex={isWide ? 0 : undefined}
+		role={isWide ? 'region' : undefined}
+		aria-labelledby={isWide ? captionId : undefined}
+		data-table-scroll
+		data-table-label-id={captionId}
+	>
+		<table class="data-table" data-column-count={dataset.headers.length}>
+			<caption class="sr-only">{caption}</caption>
+			<thead>
+				<tr>
+					{dataset.headers.map((header, index) => (
+						<th
+							scope="col"
+							class:list={[
+								'table-cell--data',
+								{ 'table-cell--row-axis': header === presentation.rowHeader },
+							]}
+							data-column-index={index}
+							data-initially-hidden={initiallyHidden.has(header) ? '' : undefined}
+							set:html={renderedHeaders[header]}
+						/>
+					))}
+				</tr>
+			</thead>
+			<tbody>
+				{renderedRows.map((row) => (
+					<tr>
+						{dataset.headers.map((header, index) => {
+							const properties = {
+								class: [
+									`table-cell--${presentation.contentKinds[header] ?? 'prose'}`,
+									header === presentation.rowHeader ? 'table-cell--row-axis' : '',
+								].filter(Boolean).join(' '),
+								'data-column-index': index,
+								'data-initially-hidden': initiallyHidden.has(header) ? '' : undefined,
+							};
+							return header === presentation.rowHeader ? (
+								<th scope="row" {...properties} set:html={row[header]} />
+							) : (
+								<td {...properties} set:html={row[header]} />
+							);
+						})}
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</div>
+
+	{hasSummary && presentation.rowHeader && (
+		<div class="table-mobile" role="region" aria-labelledby={captionId}>
 			{renderedRows.map((row) => (
-				<tr>{visibleHeaders.map((header) => <td set:html={row[header]} />)}</tr>
+				<details class="table-mobile__row">
+					<summary>
+						<span class="table-mobile__identity" set:html={row[presentation.rowHeader!]} />
+						{presentation.summaryColumns.map((header) => (
+							<span class="table-mobile__summary-value">
+								<span class="sr-only">{displayTableHeader(header)}: </span>
+								<span set:html={row[header]} />
+							</span>
+						))}
+					</summary>
+					<dl>
+						{dataset.headers.map((header) => (
+							<div class="table-mobile__pair">
+								<dt>{displayTableHeader(header)}</dt>
+								<dd set:html={row[header]} />
+							</div>
+						))}
+					</dl>
+				</details>
 			))}
-		</tbody>
-	</table>
+		</div>
+	)}
 </div>

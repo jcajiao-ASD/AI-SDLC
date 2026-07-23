@@ -8,9 +8,33 @@ import {
 	metadataSchema,
 	parseDatasets,
 	parseStudy,
+	renderStudy,
 	isPastRevalidation,
 } from './research';
 import { rankingBars } from './datasets';
+import type { ResearchStudy } from './types';
+
+function studyWithBody(body: string): ResearchStudy {
+	return {
+		fileName: 'ejemplo.md',
+		filePath: '/tmp/ejemplo.md',
+		metadata: {
+			id: 'ejemplo',
+			title: 'Documento de ejemplo',
+			slug: 'ejemplo',
+			summary: 'Resumen suficientemente largo para representar un estudio.',
+			category: 'modelos',
+			status: 'vigente',
+			cutoffDate: '2026-07-22',
+			revalidateAfter: '2027-01-01',
+			evidenceLevel: 'media',
+			decisionType: 'prueba',
+			role: 'catalog',
+		},
+		body,
+		datasets: [],
+	};
+}
 
 describe('contrato editorial', () => {
 	it('carga todo el corpus y el conjunto exacto de datasets canónicos', async () => {
@@ -140,6 +164,56 @@ Corte: 2026-01-01`;
 		const bars = rankingBars(dataset);
 		expect(bars).toHaveLength(dataset.rows.length);
 		expect(bars[0]).toMatchObject({ label: 'GPT-5.6 Sol', value: 88.5 });
+	});
+
+	it('conserva el dataset al insertar metadata de presentación', () => {
+		const plain = `<!-- ai-sdlc-dataset: id=ranking schema=weighted-ranking unit=score-100 -->
+| Puesto | Modelo | Puntuación |
+| --- | --- | --- |
+| 1 | Sol | 90 |
+<!-- /ai-sdlc-dataset -->`;
+		const annotated = plain.replace(
+			'| Puesto',
+			'<!-- ai-sdlc-table: {"rowHeader":"Modelo","essentialColumns":["Puesto","Modelo","Puntuación"]} -->\n| Puesto',
+		);
+		expect(parseDatasets(annotated, 'ejemplo.md')).toEqual(
+			parseDatasets(plain, 'ejemplo.md'),
+		);
+	});
+
+	it('renderiza filas semánticas y resumen móvil conservando markup inline', async () => {
+		const study = studyWithBody(`## Compatibilidad
+
+<!-- ai-sdlc-table: {"rowHeader":"Agente","essentialColumns":["Agente","Estado"],"initiallyHiddenColumns":["Clave"],"summaryColumns":["Estado"],"contentKinds":{"Agente":"data","Estado":"data","Nota":"prose"}} -->
+| Clave | Agente | Estado | Nota | Fuente |
+| --- | --- | --- | --- | --- |
+| copilot | **Copilot CLI** | <span id="estado-prueba">nativa</span> | Nota *editorial* | [Fuente](https://example.com) |`);
+		const html = await renderStudy(study, [study]);
+
+		expect(html).toContain('data-table-frame');
+		expect(html).toContain('scope="row"');
+		expect(html).toContain('table-column-picker');
+		expect(html).toContain('table-mobile');
+		expect(html).toContain('<em>editorial</em>');
+		expect(html.match(/href="https:\/\/example\.com"/g)).toHaveLength(2);
+		expect(html.match(/id="estado-prueba"/g)).toHaveLength(1);
+		expect(html).not.toContain('ai-sdlc-table');
+	});
+
+	it('degrada una tabla amplia sin metadata a scroll etiquetado', async () => {
+		const study = studyWithBody(`## Matriz abierta
+
+| A | B | C | D | E |
+| --- | --- | --- | --- | --- |
+| 1 | 2 | 3 | 4 | 5 |`);
+		const html = await renderStudy(study, [study]);
+
+		expect(html).toContain('table-frame--wide');
+		expect(html).toContain('role="region"');
+		expect(html).toContain('Tabla 1 de la sección Matriz abierta');
+		expect(html).not.toContain('table-column-picker');
+		expect(html).not.toContain('table-mobile');
+		expect(html).not.toContain('scope="row"');
 	});
 
 	it('marca una investigación cuando supera su fecha de revalidación', async () => {

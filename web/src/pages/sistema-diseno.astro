@@ -4,7 +4,51 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Badge from '../components/Badge.astro';
 import ExecutiveSummary from '../components/ExecutiveSummary.astro';
 import Caveat from '../components/Caveat.astro';
+import DataTable from '../components/DataTable.astro';
 import { secondaryNavigationDestinations } from '../lib/navigation';
+import type { ResearchDataset } from '../lib/types';
+
+const tableExample: ResearchDataset = {
+	id: 'design-system-compatibility',
+	schema: 'compatibility-matrix',
+	unit: 'categorical',
+	sourceFile: 'sistema-diseno.astro',
+	headers: [
+		'Clave de agente',
+		'Agente',
+		'Clave de componente',
+		'Componente',
+		'Estado',
+		'Mecanismo',
+		'Nota',
+		'Fuente',
+		'Verificado el',
+	],
+	rows: [
+		{
+			'Clave de agente': '`copilot-cli`',
+			Agente: 'Copilot CLI',
+			'Clave de componente': '`openspec`',
+			Componente: 'OpenSpec',
+			Estado: 'nativa',
+			Mecanismo: 'Skills del repositorio',
+			Nota: 'La relación se conserva como evidencia verificable.',
+			Fuente: 'Documentación oficial',
+			'Verificado el': '2026-07-22',
+		},
+		{
+			'Clave de agente': '`opencode`',
+			Agente: 'OpenCode',
+			'Clave de componente': '`openspec`',
+			Componente: 'OpenSpec',
+			Estado: 'nativa',
+			Mecanismo: 'Skills y comandos',
+			Nota: 'La columna identificadora mantiene el contexto al desplazarse.',
+			Fuente: 'Documentación oficial',
+			'Verificado el': '2026-07-22',
+		},
+	],
+};
 ---
 
 <BaseLayout
@@ -220,16 +264,15 @@ import { secondaryNavigationDestinations } from '../lib/navigation';
 
 		<section>
 			<h2>Tabla accesible</h2>
-			<div class="table-scroll" tabindex="0" role="region" aria-label="Ejemplo de codificación">
-				<table class="data-table">
-					<thead><tr><th>Señal</th><th>Representación</th><th>Alternativa no cromática</th></tr></thead>
-					<tbody>
-						<tr><td>Vigencia</td><td>Índigo / ámbar</td><td>Texto e icono de estado</td></tr>
-						<tr><td>Confianza</td><td>Badge informativo</td><td>Etiqueta explícita</td></tr>
-						<tr><td>Selección</td><td>Contorno y contraste</td><td>Foco y atributo seleccionado</td></tr>
-					</tbody>
-				</table>
-			</div>
+			<p>
+				El marco en L conserva los ejes de consulta; el selector cambia la
+				presentación sin retirar evidencia del HTML canónico.
+			</p>
+			<DataTable
+				dataset={tableExample}
+				caption="Ejemplo de compatibilidad verificable"
+				initiallyHiddenColumns={['Clave de agente', 'Clave de componente']}
+			/>
 		</section>
 	</div>
 </BaseLayout>

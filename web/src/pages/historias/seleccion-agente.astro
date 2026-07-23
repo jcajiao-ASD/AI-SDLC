@@ -67,7 +67,7 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 			<DataTable
 				dataset={candidates}
 				caption="Comparación de agentes multi-LLM"
-				hiddenColumns={['Clave de agente']}
+				initiallyHiddenColumns={['Clave de agente']}
 			/>
 			<Caveat title="Límite de comparabilidad">
 				<p>Los scores de terminal dependen del modelo, harness, versión y tarea. No se fusionan en una escala nueva.</p>
@@ -84,7 +84,7 @@ const profiles = findDataset(studies, 'agent-profile-recommendations');
 			<DataTable
 				dataset={profiles}
 				caption="Herramienta recomendada por perfil de equipo"
-				hiddenColumns={['Clave de contexto', 'Configurable', 'Candidatos']}
+				initiallyHiddenColumns={['Clave de contexto', 'Configurable', 'Candidatos']}
 			/>
 		</div>
 	</section>

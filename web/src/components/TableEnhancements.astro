@@ -1,0 +1,75 @@
+<script>
+	function tableCells(frame: HTMLElement, columnIndex: string): HTMLElement[] {
+		return Array.from(
+			frame.querySelectorAll<HTMLElement>(
+				`.data-table [data-column-index="${columnIndex}"]`,
+			),
+		);
+	}
+
+	function initializeTable(frame: HTMLElement): void {
+		if (frame.dataset.tableReady === 'true') return;
+		const scroll = frame.querySelector<HTMLElement>('[data-table-scroll]');
+		const table = frame.querySelector<HTMLTableElement>('.data-table');
+		if (!scroll || !table) return;
+
+		const toggles = Array.from(
+			frame.querySelectorAll<HTMLInputElement>('[data-table-column-toggle]'),
+		);
+		const count = frame.querySelector<HTMLElement>('[data-table-column-count]');
+		const updateCount = () => {
+			if (!count) return;
+			const visible = toggles.filter((toggle) => toggle.checked).length;
+			count.textContent = `${visible} de ${toggles.length}`;
+		};
+		const setColumnHidden = (columnIndex: string, hidden: boolean) => {
+			for (const cell of tableCells(frame, columnIndex)) cell.hidden = hidden;
+		};
+
+		for (const toggle of toggles) {
+			if (!toggle.checked) setColumnHidden(toggle.dataset.columnIndex ?? '', true);
+			toggle.addEventListener('change', () => {
+				setColumnHidden(toggle.dataset.columnIndex ?? '', !toggle.checked);
+				updateCount();
+			});
+		}
+		updateCount();
+		frame.dataset.tableReady = 'true';
+
+		const updateLayout = () => {
+			const overflows = scroll.scrollWidth > scroll.clientWidth + 1;
+			const labelId = scroll.dataset.tableLabelId;
+			if (overflows) {
+				scroll.setAttribute('role', 'region');
+				scroll.tabIndex = 0;
+				if (labelId) scroll.setAttribute('aria-labelledby', labelId);
+			} else if (frame.dataset.tableWide !== 'true') {
+				scroll.removeAttribute('role');
+				scroll.removeAttribute('tabindex');
+				scroll.removeAttribute('aria-labelledby');
+			}
+
+			const rowHeader = table.querySelector<HTMLElement>('tbody th[scope="row"]');
+			const remainingWidth = rowHeader
+				? scroll.clientWidth - rowHeader.getBoundingClientRect().width
+				: 0;
+			const minimumRemaining = 18 * Number.parseFloat(
+				getComputedStyle(document.documentElement).fontSize,
+			);
+			const canStick = Boolean(
+				overflows &&
+				rowHeader &&
+				rowHeader.getBoundingClientRect().width <= scroll.clientWidth * 0.42 &&
+				remainingWidth >= minimumRemaining,
+			);
+			frame.classList.toggle('table-frame--sticky-column', canStick);
+		};
+
+		updateLayout();
+		new ResizeObserver(updateLayout).observe(scroll);
+	}
+
+	for (const frame of document.querySelectorAll<HTMLElement>('[data-table-frame]')) {
+		initializeTable(frame);
+	}
+</script>

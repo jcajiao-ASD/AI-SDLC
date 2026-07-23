@@ -175,6 +175,7 @@ frontera **crea la lista corta y ya no es el diferenciador**; la elección depen
 de la integración, el *harness*, la gobernanza, el precio y el ecosistema:
 
 <!-- ai-sdlc-dataset: id=agent-candidate-matrix schema=candidate-matrix unit=mixed -->
+<!-- ai-sdlc-table: {"rowHeader":"Candidato","essentialColumns":["Candidato","Harness / SDLC","Entrada / consumo"],"initiallyHiddenColumns":["Clave de agente"],"summaryColumns":["Harness / SDLC"],"contentKinds":{"Clave de agente":"data","Candidato":"data","¿Tiene Fable 5?":"data","¿Tiene GPT-5.6 Sol?":"data","¿Tiene Gemini 3.x?":"data","Harness / SDLC":"prose","Entrada / consumo":"prose"}} -->
 | Clave de agente | Candidato | ¿Tiene Fable 5? | ¿Tiene GPT-5.6 Sol? | ¿Tiene Gemini 3.x? | Harness / SDLC | Entrada / consumo |
 | --- | --- | --- | --- | --- | --- | --- |
 | `copilot-cli` | **Copilot CLI** | Sí | Sí | Sí (3.1 Pro, 3.5 Flash) | Plan + Autopilot + agentes Task/Explore/Review/Plan + *fleet*; **integración GitHub nativa issue→PR** | **$10/mes (Pro)**; incluye 1.500 AI Credits/mes |
@@ -221,6 +222,7 @@ o BYOK. La disponibilidad comercial sigue dependiendo del plan, la superficie y
 las políticas del proveedor.
 
 <!-- ai-sdlc-dataset: id=agent-model-compatibility schema=compatibility-matrix unit=categorical -->
+<!-- ai-sdlc-table: {"rowHeader":"Agente","essentialColumns":["Agente","Componente","Estado"],"initiallyHiddenColumns":["Clave de agente","Clave de componente"],"summaryColumns":["Componente","Estado"],"contentKinds":{"Clave de agente":"data","Agente":"data","Clave de componente":"data","Componente":"data","Estado":"data","Mecanismo":"prose","Nota":"prose","Fuente":"prose","Verificado el":"data"}} -->
 | Clave de agente | Agente | Clave de componente | Componente | Estado | Mecanismo | Nota | Fuente | Verificado el |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `copilot-cli` | GitHub Copilot CLI | `gpt-5-6-sol` | GPT-5.6 Sol | nativa | Catálogo Copilot y selector `/model` | Depende del plan y de la disponibilidad de la superficie CLI. | <https://docs.github.com/en/copilot/reference/ai-models/supported-models> | 2026-07-22 |
@@ -384,6 +386,7 @@ la condición GitHub-céntrica** y mientras su catálogo cubra las necesidades.
 ## 11. Recomendación final por perfil
 
 <!-- ai-sdlc-dataset: id=agent-profile-recommendations schema=profile-recommendation unit=categorical -->
+<!-- ai-sdlc-table: {"rowHeader":"Perfil del equipo / necesidad","essentialColumns":["Perfil del equipo / necesidad","Herramienta seleccionada","Motivo"],"initiallyHiddenColumns":["Clave de contexto","Configurable","Candidatos"],"summaryColumns":["Herramienta seleccionada"],"contentKinds":{"Clave de contexto":"data","Configurable":"data","Perfil del equipo / necesidad":"prose","Candidatos":"data","Herramienta seleccionada":"data","Motivo":"prose","Caveat":"prose"}} -->
 | Clave de contexto | Configurable | Perfil del equipo / necesidad | Candidatos | Herramienta seleccionada | Motivo | Caveat |
 | --- | --- | --- | --- | --- | --- | --- |
 | `github` | sí | **GitHub es el sistema central del SDLC** y se priorizan issue→PR, gobernanza y el menor precio mensual de entrada entre los planes comerciales comparados | `primary:copilot-cli` | **GitHub Copilot CLI** (opción predeterminada) | Integración nativa issue→PR y gobernanza GitHub. | Catálogo, créditos y coste efectivo deben revalidarse. |

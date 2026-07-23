@@ -93,7 +93,7 @@ const sourceLinks = {
 				<DataTable
 					dataset={agentRules}
 					caption="Reglas de selección de agente"
-					hiddenColumns={['Clave de contexto', 'Configurable', 'Candidatos']}
+					initiallyHiddenColumns={['Clave de contexto', 'Configurable', 'Candidatos']}
 				/>
 			</details>
 			<details>
@@ -101,7 +101,7 @@ const sourceLinks = {
 				<DataTable
 					dataset={modelRules}
 					caption="Reglas de modelo por fase"
-					hiddenColumns={['Clave de contexto', 'Candidatos']}
+					initiallyHiddenColumns={['Clave de contexto', 'Candidatos']}
 				/>
 			</details>
 			<details open>
@@ -109,7 +109,7 @@ const sourceLinks = {
 				<DataTable
 					dataset={frameworkRules}
 					caption="Reglas de framework por escenario"
-					hiddenColumns={['Clave de contexto', 'Candidatos']}
+					initiallyHiddenColumns={['Clave de contexto', 'Candidatos']}
 				/>
 			</details>
 		</div>
@@ -126,7 +126,7 @@ const sourceLinks = {
 				<DataTable
 					dataset={agentModels}
 					caption="Compatibilidad entre agentes y modelos"
-					hiddenColumns={['Clave de agente', 'Clave de componente']}
+					initiallyHiddenColumns={['Clave de agente', 'Clave de componente']}
 				/>
 			</details>
 			<details open>
@@ -134,7 +134,7 @@ const sourceLinks = {
 				<DataTable
 					dataset={agentFrameworks}
 					caption="Compatibilidad entre agentes y frameworks"
-					hiddenColumns={['Clave de agente', 'Clave de componente']}
+					initiallyHiddenColumns={['Clave de agente', 'Clave de componente']}
 				/>
 			</details>
 		</div>

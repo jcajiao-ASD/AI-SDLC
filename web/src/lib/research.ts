@@ -10,6 +10,8 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeStringify from 'rehype-stringify';
 import { z } from 'zod';
+import { rehypeTableFrames } from './table-transform';
+import { validateMarkdownTableDirectives } from './tables';
 import {
 	categories,
 	evidenceLevels,
@@ -379,6 +381,7 @@ export function parseStudy(
 	if (!result.success) {
 		throw formatZodError(fileName, result.error);
 	}
+	validateMarkdownTableDirectives(parsed.content, fileName);
 	return {
 		fileName,
 		filePath,
@@ -620,6 +623,7 @@ export async function renderStudy(
 		.use(rehypeRaw)
 		.use(rehypeSlug)
 		.use(rehypeAutolinkHeadings, { behavior: 'wrap' })
+		.use(rehypeTableFrames, { sourceFile: study.fileName })
 		.use(rehypeStringify)
 		.process(markdown);
 	return String(rendered);

@@ -481,6 +481,7 @@ recuerda que **la especialización, no la dominancia universal, define 2026**
 [29][30].
 
 <!-- ai-sdlc-dataset: id=llm-sdlc-map schema=sdlc-map unit=categorical -->
+<!-- ai-sdlc-table: {"rowHeader":"Fase del SDLC","essentialColumns":["Fase del SDLC","Mejor LLM","Por qué"],"initiallyHiddenColumns":["Clave de contexto","Candidatos"],"summaryColumns":["Mejor LLM"],"contentKinds":{"Clave de contexto":"data","Candidatos":"data","Fase del SDLC":"prose","Qué exige la fase":"prose","Mejor LLM":"data","Alternativa / económico":"data","Por qué":"prose"}} -->
 | Clave de contexto | Candidatos | Fase del SDLC | Qué exige la fase | **Mejor LLM** | Alternativa / económico | Por qué |
 | --- | --- | --- | --- | --- | --- | --- |
 | `requisitos` | `primary:gpt-5-6-sol` | **1. Requisitos y especificación** | Comprensión de lenguaje natural ambiguo, razonamiento, ingerir mucha documentación de stakeholders, investigación de mercado/normativa | **GPT-5.6 Sol** (razonamiento) | **Gemini 3.1 Pro** (1M contexto + *grounding* con Google Search para requisitos investigados) | Razonamiento frontera para desambiguar y estructurar; Gemini si hay que leer corpus enormes o investigar en la web [3][8][29] |

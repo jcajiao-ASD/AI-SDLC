@@ -316,6 +316,61 @@ test('la tipografía no provoca desplazamiento horizontal de página', async ({ 
 	}
 });
 
+test('las tablas amplias conservan contexto y controlan columnas sin retirar datos', async ({ page, isMobile }) => {
+	test.skip(isMobile, 'La interacción tabular corresponde a escritorio');
+	await page.goto(siteUrl('/historias/seleccion-agente/'));
+	const table = page.getByRole('table', { name: 'Comparación de agentes multi-LLM' });
+	const frame = page.locator('[data-table-frame]').filter({ has: table });
+	const hiddenHeader = table.getByRole('columnheader', { name: 'Clave de agente' });
+
+	await expect(frame.getByText('Columnas:')).toBeVisible();
+	await expect(hiddenHeader).toBeHidden();
+	await expect(table.getByRole('rowheader', { name: 'Copilot CLI' })).toBeVisible();
+	await frame.locator('.table-column-picker > summary').click();
+	const hiddenToggle = frame.getByRole('checkbox', { name: 'Clave de agente' });
+	await expect(hiddenToggle).not.toBeChecked();
+	await hiddenToggle.check();
+	await expect(hiddenHeader).toBeVisible();
+	await expect(frame.getByText('7 de 7')).toBeVisible();
+	await expect(frame.getByRole('checkbox', { name: /Candidato/ })).toBeDisabled();
+
+	await page.goto(siteUrl('/historias/llm-por-fase/'));
+	const compact = page.locator('[data-table-frame]').filter({
+		has: page.getByRole('table', { name: 'Ranking ponderado de LLMs' }),
+	});
+	await expect(compact.locator('.table-column-picker')).toHaveCount(0);
+
+	await page.setViewportSize({ width: 900, height: 900 });
+	await page.goto(siteUrl('/historias/configurador-stack/'));
+	const compatibility = page.locator('[data-table-frame]').filter({
+		has: page.getByRole('table', {
+			name: 'Compatibilidad entre agentes y modelos',
+		}),
+	});
+	await expect(compatibility).toHaveClass(/table-frame--sticky-column/);
+	await expect(
+		compatibility.getByRole('rowheader', { name: 'GitHub Copilot CLI' }).first(),
+	).toHaveCSS('position', 'sticky');
+});
+
+test('la vista móvil usa filas desplegables y reserva el scroll para el fallback', async ({ page, isMobile }) => {
+	test.skip(!isMobile, 'La representación corresponde a móvil');
+	await page.goto(siteUrl('/historias/seleccion-agente/'));
+	const adaptive = page.locator('[data-table-frame]').filter({
+		hasText: 'Comparación de agentes multi-LLM',
+	});
+	await expect(adaptive.locator('.table-scroll')).toBeHidden();
+	await expect(adaptive.locator('.table-mobile')).toBeVisible();
+	await expect(adaptive.locator('.table-mobile__row')).toHaveCount(4);
+	await adaptive.locator('.table-mobile__row summary').first().click();
+	await expect(adaptive.locator('.table-mobile__pair').first()).toBeVisible();
+
+	await page.goto(siteUrl('/investigaciones/comparativa-llms-sdlc/'));
+	const fallback = page.locator('.table-frame--wide:not(.table-frame--has-summary)').first();
+	await expect(fallback.locator('.table-scroll')).toBeVisible();
+	await expect(fallback.locator('.table-mobile')).toHaveCount(0);
+});
+
 test('las historias muestran conclusión y caveat antes de interactuar', async ({ page }) => {
 	await page.goto(siteUrl('/historias/seleccion-framework/'));
 	await expect(page.getByText('Respuesta ejecutiva')).toBeVisible();
@@ -337,7 +392,8 @@ for (const route of [
 	});
 }
 
-test('el contenido principal permanece disponible sin JavaScript', async ({ browser }) => {
+test('el contenido principal permanece disponible sin JavaScript', async ({ browser, isMobile }) => {
+	test.skip(isMobile, 'La representación móvil sin JavaScript se cubre por separado');
 	const context = await browser.newContext({ javaScriptEnabled: false });
 	const page = await context.newPage();
 	await page.goto(siteUrl('/investigaciones/'));
@@ -347,6 +403,13 @@ test('el contenido principal permanece disponible sin JavaScript', async ({ brow
 	await expect(page.getByRole('table', { name: 'Ranking ponderado de LLMs' })).toBeVisible();
 	await page.goto(siteUrl('/historias/seleccion-agente/'));
 	await expect(page.getByRole('table', { name: 'Herramienta recomendada por perfil de equipo' })).toBeVisible();
+	const candidateFrame = page.locator('[data-table-frame]').filter({
+		has: page.getByRole('table', { name: 'Comparación de agentes multi-LLM' }),
+	});
+	await expect(
+		candidateFrame.getByRole('columnheader', { name: 'Clave de agente' }),
+	).toBeVisible();
+	await expect(candidateFrame.locator('.table-column-picker')).toBeHidden();
 	await page.goto(siteUrl('/historias/seleccion-framework/'));
 	await expect(page.getByRole('table', { name: 'Ranking de frameworks con lente adopción-first' })).toBeVisible();
 	await page.goto(siteUrl('/historias/configurador-stack/'));
@@ -366,11 +429,32 @@ test('el contenido principal permanece disponible sin JavaScript', async ({ brow
 	await context.close();
 });
 
+test('las filas móviles permanecen operables sin JavaScript', async ({ browser, isMobile }) => {
+	test.skip(!isMobile, 'La representación corresponde a móvil');
+	const context = await browser.newContext({
+		javaScriptEnabled: false,
+		viewport: { width: 390, height: 844 },
+	});
+	const page = await context.newPage();
+	await page.goto(siteUrl('/historias/seleccion-agente/'));
+	const adaptive = page.locator('[data-table-frame]').filter({
+		hasText: 'Comparación de agentes multi-LLM',
+	});
+	await expect(adaptive.locator('.table-mobile')).toBeVisible();
+	await expect(adaptive.locator('.table-column-picker')).toBeHidden();
+	const row = adaptive.locator('.table-mobile__row').first();
+	await row.locator('summary').click();
+	await expect(row.locator('.table-mobile__pair').first()).toBeVisible();
+	await context.close();
+});
+
 test('el configurador conserva semántica, compatibilidad y alternativas', async ({ page }) => {
 	await page.goto(siteUrl('/historias/configurador-stack/'));
 
 	await expect(page.getByLabel('Contexto del agente')).toHaveValue('github');
-	await expect(page.getByLabel('Fase del SDLC')).toHaveValue('diseno');
+	await expect(
+		page.getByRole('combobox', { name: 'Fase del SDLC' }),
+	).toHaveValue('diseno');
 	await expect(page.getByLabel('Escenario de proceso')).toHaveValue('adopcion-progresiva');
 	await expect(page.getByText('Stack compatible documentado', { exact: true })).toBeVisible();
 	const agentSelector = page.getByLabel('Contexto del agente');
@@ -383,7 +467,7 @@ test('el configurador conserva semántica, compatibilidad y alternativas', async
 	);
 	await agentSelector.selectOption('github');
 
-	await page.getByLabel('Fase del SDLC').selectOption('implementacion');
+	await page.getByRole('combobox', { name: 'Fase del SDLC' }).selectOption('implementacion');
 	await expect(page.getByText('Stacks compatibles documentados', { exact: true })).toBeVisible();
 	await expect(page.locator('.stack-combination')).toHaveCount(2);
 
@@ -392,7 +476,7 @@ test('el configurador conserva semántica, compatibilidad y alternativas', async
 	await expect(page.getByText(/Cursor, Junie, OpenCode/)).toBeVisible();
 
 	await page.getByLabel('Contexto del agente').selectOption('jetbrains');
-	await page.getByLabel('Fase del SDLC').selectOption('pruebas');
+	await page.getByRole('combobox', { name: 'Fase del SDLC' }).selectOption('pruebas');
 	await page.getByLabel('Escenario de proceso').selectOption('tdd');
 	await expect(page.getByText('No hay un stack verificable con estas selecciones', { exact: true })).toBeVisible();
 	await expect(
@@ -402,7 +486,7 @@ test('el configurador conserva semántica, compatibilidad y alternativas', async
 	).toBeVisible();
 
 	await page.getByLabel('Contexto del agente').selectOption('github');
-	await page.getByLabel('Fase del SDLC').selectOption('devops');
+	await page.getByRole('combobox', { name: 'Fase del SDLC' }).selectOption('devops');
 	await page.getByLabel('Escenario de proceso').selectOption('hotfix');
 	await expect(page.getByRole('heading', { name: /sin framework/ })).toBeVisible();
 });
