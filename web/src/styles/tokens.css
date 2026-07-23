@@ -48,6 +48,12 @@
 	--color-data-primary: var(--color-coast-teal);
 	--color-data-label: var(--color-coast-deep);
 	--color-data-emphasis: rgb(47 126 168 / 35%);
+	--color-data-set: rgb(18 35 63 / 40%);
+	--color-data-set-track: rgb(18 35 63 / 10%);
+	--color-data-selection: var(--color-coast-teal);
+	--color-data-selection-surface: var(--color-coast-aqua);
+	--color-data-leader: var(--color-coast-indigo);
+	--color-data-leader-surface: rgb(36 59 119 / 12%);
 	--color-focus: var(--color-coast-teal);
 
 	/* Compatibility aliases for existing consumers */

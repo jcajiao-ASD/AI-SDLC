@@ -5,9 +5,11 @@ import ExecutiveSummary from '../../components/ExecutiveSummary.astro';
 import Caveat from '../../components/Caveat.astro';
 import EvidencePanel from '../../components/EvidencePanel.astro';
 import DataTable from '../../components/DataTable.astro';
+import VisualizationFigure from '../../components/VisualizationFigure.astro';
 import BarChart from '../../components/BarChart';
 import { findDataset, findStudy, loadStudies } from '../../lib/research';
-import { column, plainText, rankingBars } from '../../lib/datasets';
+import { column, plainText } from '../../lib/datasets';
+import { buildRankingVisualization } from '../../lib/visualization';
 import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
@@ -15,7 +17,12 @@ const studies = await loadStudies();
 const study = findStudy(studies, 'comparativa-llms-sdlc');
 const ranking = findDataset(studies, 'llm-global-ranking');
 const sdlcMap = findDataset(studies, 'llm-sdlc-map');
-const bars = rankingBars(ranking);
+const rankingModel = buildRankingVisualization(ranking, study, {
+	title: 'Ranking ponderado de LLMs',
+	description: 'GPT-5.6 Sol lidera el perfil equilibrado.',
+	caveat:
+		'Es un modelo ordinal ponderado con pesos explícitos. Una diferencia de puntos no equivale a mejora porcentual medida.',
+});
 const phaseHeader = column(sdlcMap, /fase del sdlc/);
 const modelHeader = column(sdlcMap, /mejor llm/);
 const whyHeader = column(sdlcMap, /por que/);
@@ -56,18 +63,14 @@ const whyHeader = column(sdlcMap, /por que/);
 				<p>Scorecard de decisión 0–100; no representa porcentaje de productividad.</p>
 			</header>
 			<div class="chart-grid">
-				<BarChart
-					data={bars}
-					title="Ranking ponderado de LLMs"
-					description="GPT-5.6 Sol lidera el perfil equilibrado."
-					client:visible
+				<VisualizationFigure model={rankingModel}>
+					<BarChart model={rankingModel} client:load />
+				</VisualizationFigure>
+				<DataTable
+					dataset={ranking}
+					caption="Ranking ponderado de LLMs"
+					coordinateGroup={rankingModel.groupId}
 				/>
-				<div>
-					<Caveat title="Cómo leer la puntuación">
-						<p>Es un modelo ordinal ponderado con pesos explícitos. Una diferencia de puntos no equivale a mejora porcentual medida.</p>
-					</Caveat>
-					<DataTable dataset={ranking} caption="Ranking ponderado de LLMs" />
-				</div>
 			</div>
 		</div>
 	</section>

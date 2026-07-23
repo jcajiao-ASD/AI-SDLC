@@ -279,10 +279,13 @@ test('la paleta Tinta Costera conserva roles, contraste y semántica', async ({ 
 	await expect(storyLink).toHaveCSS('color', 'rgb(36, 59, 119)');
 
 	await page.goto(siteUrl('/historias/llm-por-fase/'));
-	await page.locator('.chart-host').first().scrollIntoViewIfNeeded();
-	const chartBar = page.locator('.chart-host svg g[aria-label="bar"] rect').first();
-	await expect(chartBar).toBeVisible();
-	await expect(chartBar).toHaveCSS('fill', 'rgb(47, 126, 168)');
+	const chartHost = page.locator('.chart-host').first();
+	await chartHost.scrollIntoViewIfNeeded();
+	const leaderFill = chartHost.locator('.chart-row--leader .chart-row__fill').first();
+	await expect(leaderFill).toBeVisible();
+	await expect(leaderFill).toHaveCSS('background-color', 'rgb(36, 59, 119)');
+	const setFill = chartHost.locator('.chart-row:not(.chart-row--leader) .chart-row__fill').first();
+	await expect(setFill).toHaveCSS('background-color', 'rgba(18, 35, 63, 0.4)');
 });
 
 test('el catálogo filtra y conserva rutas navegables', async ({ page }) => {

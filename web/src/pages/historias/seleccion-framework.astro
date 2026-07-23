@@ -5,10 +5,12 @@ import ExecutiveSummary from '../../components/ExecutiveSummary.astro';
 import Caveat from '../../components/Caveat.astro';
 import EvidencePanel from '../../components/EvidencePanel.astro';
 import DataTable from '../../components/DataTable.astro';
+import VisualizationFigure from '../../components/VisualizationFigure.astro';
 import BarChart from '../../components/BarChart';
 import SensitivityExplorer from '../../components/SensitivityExplorer';
 import { findDataset, findStudy, loadStudies } from '../../lib/research';
-import { rankingBars, sensitivityBands } from '../../lib/datasets';
+import { sensitivityBands } from '../../lib/datasets';
+import { buildRankingVisualization } from '../../lib/visualization';
 import { navigationDestinations } from '../../lib/navigation';
 import { withBase } from '../../lib/paths';
 
@@ -17,8 +19,16 @@ const study = findStudy(studies, 'comparacion-skills-sdlc');
 const adoption = findDataset(studies, 'framework-adoption-ranking');
 const quality = findDataset(studies, 'framework-quality-ranking');
 const sensitivity = findDataset(studies, 'framework-sensitivity');
-const adoptionBars = rankingBars(adoption);
-const qualityBars = rankingBars(quality);
+const adoptionModel = buildRankingVisualization(adoption, study, {
+	title: 'Ranking adopción-first',
+	description: 'OpenSpec lidera cuando la adopción concentra el 65% del peso.',
+	caveat: 'Scorecard ordinal y documental; no mide porcentaje de productividad, calidad o velocidad.',
+});
+const qualityModel = buildRankingVisualization(quality, study, {
+	title: 'Ranking de piso de calidad',
+	description: 'Open GSD lidera bajo control, precisión, organización y efectividad.',
+	caveat: 'Scorecard ordinal y documental; no mide porcentaje de productividad, calidad o velocidad.',
+});
 const bands = sensitivityBands(sensitivity);
 ---
 
@@ -56,13 +66,14 @@ const bands = sensitivityBands(sensitivity);
 				<h2>Adopción progresiva y liderada por humanos</h2>
 			</header>
 			<div class="chart-grid">
-				<BarChart
-					data={adoptionBars}
-					title="Ranking adopción-first"
-					description="OpenSpec lidera cuando la adopción concentra el 65% del peso."
-					client:visible
+				<VisualizationFigure model={adoptionModel}>
+					<BarChart model={adoptionModel} client:load />
+				</VisualizationFigure>
+				<DataTable
+					dataset={adoption}
+					caption="Ranking de frameworks con lente adopción-first"
+					coordinateGroup={adoptionModel.groupId}
 				/>
-				<DataTable dataset={adoption} caption="Ranking de frameworks con lente adopción-first" />
 			</div>
 		</div>
 	</section>
@@ -74,13 +85,14 @@ const bands = sensitivityBands(sensitivity);
 				<h2>Piso de calidad y proceso prescriptivo</h2>
 			</header>
 			<div class="chart-grid">
-				<BarChart
-					data={qualityBars}
-					title="Ranking de piso de calidad"
-					description="Open GSD lidera bajo control, precisión, organización y efectividad."
-					client:visible
+				<VisualizationFigure model={qualityModel}>
+					<BarChart model={qualityModel} client:load />
+				</VisualizationFigure>
+				<DataTable
+					dataset={quality}
+					caption="Ranking de frameworks con lente de piso de calidad"
+					coordinateGroup={qualityModel.groupId}
 				/>
-				<DataTable dataset={quality} caption="Ranking de frameworks con lente de piso de calidad" />
 			</div>
 		</div>
 	</section>

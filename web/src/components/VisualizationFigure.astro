@@ -1,0 +1,90 @@
+---
+import type { VisualizationModel } from '../lib/visualization';
+
+interface Props {
+	model: VisualizationModel;
+}
+
+const { model } = Astro.props;
+---
+
+<figure class="visualization-figure">
+	<figcaption>
+		<h3>{model.title}</h3>
+		<p class="visualization-figure__description">{model.description}</p>
+		<dl class="visualization-figure__meta">
+			<div>
+				<dt>Unidad</dt>
+				<dd>{model.unit}</dd>
+			</div>
+			<div>
+				<dt>Corte</dt>
+				<dd>{model.cutoffDate}</dd>
+			</div>
+			<div>
+				<dt>Confianza</dt>
+				<dd>{model.confidence}</dd>
+			</div>
+			<div>
+				<dt>Fuente</dt>
+				<dd><a href={model.source.href}>{model.source.label}</a></dd>
+			</div>
+		</dl>
+		<p class="visualization-figure__caveat">{model.caveat}</p>
+	</figcaption>
+	<slot />
+</figure>
+
+<style>
+	.visualization-figure {
+		margin: 0;
+		display: grid;
+		gap: var(--space-4);
+	}
+
+	.visualization-figure h3 {
+		margin: 0;
+		font-size: var(--step-1);
+	}
+
+	.visualization-figure__description {
+		margin: var(--space-1) 0 0;
+		color: var(--color-text-muted);
+	}
+
+	.visualization-figure__meta {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--space-3);
+		margin: var(--space-3) 0 0;
+		padding: var(--space-3);
+		border: 1px solid var(--color-line);
+		border-radius: var(--radius-md);
+		background: var(--color-surface-muted);
+		font-family: var(--font-data);
+	}
+
+	.visualization-figure__meta dt {
+		color: var(--color-text-muted);
+		font-size: var(--step--1);
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	.visualization-figure__meta dd {
+		margin: 0;
+		font-weight: 750;
+	}
+
+	.visualization-figure__caveat {
+		margin: var(--space-2) 0 0;
+		color: var(--color-status-warning-text);
+		font-size: var(--step--1);
+	}
+
+	@media (max-width: 560px) {
+		.visualization-figure__meta {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+</style>

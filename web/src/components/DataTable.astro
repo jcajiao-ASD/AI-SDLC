@@ -6,12 +6,14 @@ import {
 	type TablePresentation,
 } from '../lib/tables';
 import { renderInlineMarkdown } from '../lib/research';
+import { assertUniqueKeys, slugifyKey } from '../lib/keys';
 
 interface Props {
 	dataset: ResearchDataset;
 	caption: string;
 	initiallyHiddenColumns?: string[];
 	presentation?: TablePresentation;
+	coordinateGroup?: string;
 }
 
 const {
@@ -19,6 +21,7 @@ const {
 	caption,
 	initiallyHiddenColumns,
 	presentation: presentationOverrides = {},
+	coordinateGroup,
 } = Astro.props;
 const presentation = datasetTablePresentation(dataset, {
 	...presentationOverrides,
@@ -60,6 +63,12 @@ const isWide = dataset.headers.length >= 5 || dataset.rows.length >= 12;
 const frameId = `dataset-table-${dataset.id}`;
 const captionId = `${frameId}-caption`;
 const visibleCount = dataset.headers.length - initiallyHidden.size;
+const rowKeys = presentation.rowHeader
+	? dataset.rows.map((row) => slugifyKey(row[presentation.rowHeader!]))
+	: undefined;
+if (coordinateGroup && rowKeys) {
+	assertUniqueKeys(rowKeys, `Dataset ${dataset.id}`);
+}
 ---
 
 <div
@@ -74,6 +83,7 @@ const visibleCount = dataset.headers.length - initiallyHidden.size;
 	data-table-frame
 	data-table-wide={String(isWide)}
 	data-table-row-header-index={rowHeaderIndex >= 0 ? rowHeaderIndex : undefined}
+	data-viz-group={coordinateGroup}
 >
 	<div class="table-frame__header">
 		<p id={captionId} class="table-caption">{caption}</p>
@@ -136,8 +146,12 @@ const visibleCount = dataset.headers.length - initiallyHidden.size;
 				</tr>
 			</thead>
 			<tbody>
-				{renderedRows.map((row) => (
-					<tr>
+				{renderedRows.map((row, rowIndex) => (
+					<tr
+						data-row-key={coordinateGroup ? rowKeys?.[rowIndex] : undefined}
+						tabindex={coordinateGroup && rowKeys?.[rowIndex] ? 0 : undefined}
+						aria-selected={coordinateGroup && rowKeys?.[rowIndex] ? 'false' : undefined}
+					>
 						{dataset.headers.map((header, index) => {
 							const properties = {
 								class: [

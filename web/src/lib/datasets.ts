@@ -1,14 +1,5 @@
 import type { ResearchDataset } from './types';
 
-function numericValue(value: string): number | undefined {
-	const normalized = value
-		.replace(/<[^>]+>/g, '')
-		.replace(/[*_]/g, '')
-		.replace(',', '.')
-		.match(/-?\d+(?:\.\d+)?/);
-	return normalized ? Number(normalized[0]) : undefined;
-}
-
 export function plainText(value: string): string {
 	return value
 		.replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
@@ -30,27 +21,6 @@ export function column(dataset: ResearchDataset, pattern: RegExp): string {
 	);
 	if (!header) throw new Error(`Dataset ${dataset.id}: columna no encontrada (${pattern})`);
 	return header;
-}
-
-export function rankingBars(dataset: ResearchDataset) {
-	const labelHeader = column(dataset, /(modelo|framework)/);
-	const valueHeader = column(dataset, /(puntuacion|puntaje|total)/);
-	const detailHeader = dataset.headers.find((header) =>
-		/confianza/i.test(
-			header.normalize('NFD').replace(/\p{Diacritic}/gu, ''),
-		),
-	);
-	return dataset.rows.map((row) => {
-		const value = numericValue(row[valueHeader]);
-		if (value === undefined) {
-			throw new Error(`Dataset ${dataset.id}: valor numérico inválido (${row[valueHeader]})`);
-		}
-		return {
-			label: plainText(row[labelHeader]),
-			value,
-			detail: detailHeader ? plainText(row[detailHeader]) : undefined,
-		};
-	});
 }
 
 export function sensitivityBands(dataset: ResearchDataset) {

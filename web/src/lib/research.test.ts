@@ -4,6 +4,7 @@ import {
 	assertKnownStoryReferences,
 	findEmojiPresentation,
 	findDataset,
+	findStudy,
 	loadStudies,
 	metadataSchema,
 	parseDatasets,
@@ -11,7 +12,7 @@ import {
 	renderStudy,
 	isPastRevalidation,
 } from './research';
-import { rankingBars } from './datasets';
+import { buildRankingVisualization } from './visualization';
 import type { ResearchStudy } from './types';
 
 function studyWithBody(body: string): ResearchStudy {
@@ -161,9 +162,14 @@ Corte: 2026-01-01`;
 	it('deriva tabla y serie gráfica del mismo dataset Markdown', async () => {
 		const studies = await loadStudies();
 		const dataset = findDataset(studies, 'llm-global-ranking');
-		const bars = rankingBars(dataset);
-		expect(bars).toHaveLength(dataset.rows.length);
-		expect(bars[0]).toMatchObject({ label: 'GPT-5.6 Sol', value: 88.5 });
+		const source = findStudy(studies, 'comparativa-llms-sdlc');
+		const model = buildRankingVisualization(dataset, source, {
+			title: 'Ranking ponderado de LLMs',
+			description: 'Descripción de prueba.',
+			caveat: 'Caveat de prueba.',
+		});
+		expect(model.data).toHaveLength(dataset.rows.length);
+		expect(model.data[0]).toMatchObject({ label: 'GPT-5.6 Sol', value: 88.5 });
 	});
 
 	it('conserva el dataset al insertar metadata de presentación', () => {

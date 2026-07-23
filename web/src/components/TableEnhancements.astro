@@ -69,7 +69,55 @@
 		new ResizeObserver(updateLayout).observe(scroll);
 	}
 
+	interface SelectDetail {
+		group: string;
+		key: string | null;
+	}
+
+	const selectEventName = 'datavis:select';
+
+	function initializeCoordination(frame: HTMLElement): void {
+		const group = frame.dataset.vizGroup;
+		if (!group || frame.dataset.coordinationReady === 'true') return;
+		const rows = Array.from(
+			frame.querySelectorAll<HTMLTableRowElement>('tbody tr[data-row-key]'),
+		);
+		if (rows.length === 0) return;
+
+		const select = (key: string | null) => {
+			for (const row of rows) {
+				row.setAttribute('aria-selected', String(row.dataset.rowKey === key));
+				row.classList.toggle('table-row--selected', row.dataset.rowKey === key);
+			}
+		};
+
+		for (const row of rows) {
+			const key = row.dataset.rowKey ?? null;
+			row.addEventListener('click', () => {
+				const next = row.getAttribute('aria-selected') === 'true' ? null : key;
+				select(next);
+				document.dispatchEvent(
+					new CustomEvent<SelectDetail>(selectEventName, { detail: { group, key: next } }),
+				);
+			});
+			row.addEventListener('keydown', (event) => {
+				if (event.key !== 'Enter' && event.key !== ' ') return;
+				event.preventDefault();
+				row.click();
+			});
+		}
+
+		document.addEventListener(selectEventName, (event) => {
+			const detail = (event as CustomEvent<SelectDetail>).detail;
+			if (!detail || detail.group !== group) return;
+			select(detail.key);
+		});
+
+		frame.dataset.coordinationReady = 'true';
+	}
+
 	for (const frame of document.querySelectorAll<HTMLElement>('[data-table-frame]')) {
 		initializeTable(frame);
+		initializeCoordination(frame);
 	}
 </script>
